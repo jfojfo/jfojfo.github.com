@@ -1,0 +1,247 @@
+<!DOCTYPE>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HTML5 Game</title>
+<!-- <base href="/game/hearthurt/" /> -->
+<script type="text/javascript" src="js/jquery-1.4.2.js"></script>
+<script type="text/javascript">
+   var backgroundImg=new Image();  //背景图片
+   var reneeImg=new Image();       //移动物
+   var chanxImage=new Image();     //障碍物
+   var ctx;                        //2d画布
+   var screenWidth;                //画布宽度
+   var screenHeight;               //画布高度
+   var speed=2;                    //常量，重新开始的速度
+   var hSpeed=speed;               //水平速度
+   var vSpeed=-speed;              //垂直速度
+   var gameRunning=false;          //游戏运行状态
+   var gameId;                     //记住循环的变量
+   var score=0;                    //分数
+   var scoreImg=new Image();       //分数板
+   
+   //定义一个游戏物体对象
+   function GameObject(){
+      this.x=0;
+	  this.y=0;
+	  this.image=null;
+   }
+   
+   //定义物体继承游戏对象GameObject
+   function Renee(){};
+   Renee.prototype=new GameObject();//游戏对象GameObject
+   
+   //物体实例
+   var renee=new Renee();
+   
+   //定义障碍物Chanx继承 游戏对象GameObject
+   function Chanx(){};
+   Chanx.prototype=new GameObject();//游戏对象GameObject
+   Chanx.prototype.hit=false;       //障碍物是否被撞击
+   Chanx.prototype.hSpeed=speed;
+   Chanx.prototype.VSpeed=-speed;
+   
+   //障碍物实例
+   //var chanx=new Chanx();
+   
+   var score=0;
+   
+   function gameLoop(){
+      //清除屏幕
+	  ctx.clearRect(0,0,screenWidth,screenHeight);
+	  ctx.save();
+	  
+	  //绘制背景
+	  ctx.drawImage(backgroundImg,0,0);
+	  
+	  //绘制物体
+	  ctx.drawImage(renee.image,renee.x,renee.y);
+	  
+	  //绘制分数板
+	  DrawScore();
+	  
+	  score=score+0.1*i;
+	  
+	  //障碍物移动X和Y位置
+	  for(var x=0;x<i;x++){
+	     chanx[x].x+=chanx[x].hSpeed;
+	     chanx[x].y+=chanx[x].vSpeed;
+		 ctx.drawImage(chanx[x].image,chanx[x].x,chanx[x].y);
+	  }
+	  
+	  //绘制障碍物
+	  //ctx.drawImage(chanx.image,chanx.x,chanx.y);
+	  
+	  ctx.restore();
+	  //检测边界
+	  HasEdge();
+	  //检测撞击
+	  HasHit();
+   }
+   
+   //加载图片
+   function loadImages(){
+       reneeImg.src="images/heart.png";   //物体
+	   backgroundImg.src="images/bg.jpg";
+	   chanxImage.src="images/close.png";   
+	   backgroundImg.onload = function(){gameLoop(); }; 
+	   scoreImg.src="images/score.png";  //分数板  
+   }
+   
+   //初始化
+   $(window).ready(function(){	 
+       addEventHandlers();  
+       loadImages();
+	   ctx=document.getElementById('canvas').getContext('2d'); //获取2d
+	   screenWidth=parseInt($("#canvas").attr("width"));  //画布宽度
+	   screenHeight=parseInt($("#canvas").attr("height"));
+	   renee.image=reneeImg;
+	   renee.x=parseInt(screenWidth/2);      //物体X坐标 
+	   renee.y=screenHeight-160;            //物体y坐标
+	   
+	   //障碍物
+	   DrawChanx();
+	   //chanx.image=chanxImage;
+	   //chanx.x=parseInt(screenWidth/3);
+	   //chanx.y=parseInt(0);   
+	});
+   
+    function Gameplay(){
+	    gameRunning=!gameRunning;
+		if(gameRunning){
+		  $("#StartImg").hide();
+		  gameId=setInterval(gameLoop,20);
+		  setInterval(DrawChanx,10000);
+		}else{
+		   clearInterval(gameId);
+		}
+	}
+     //结束游戏   
+    function GameOver(){   
+        gameRunning = false;   
+        clearInterval(gameloopId);   
+        alert("GameOver!");   
+    } 
+   
+    function addEventHandlers(){                        //移动事件
+       $("#container").mousemove(function(e){
+	      renee.x=e.pageX-(renee.image.width/2);
+		  renee.y=e.pageY-(renee.image.height/2);
+	   });
+	   $("#StartImg").click(function(){
+		   Gameplay();
+		});
+	}
+	
+	//撞击事件
+	function HasHit(){
+	  for(var x=0;x<i;x++){
+	    if(!chanx[x].hit){
+		   if(Check(chanx[x],renee,0)){
+		      chanx[x].hit=true;
+			  gameRunning = false;  
+			  clearInterval(gameId); 
+			  alert("Game Over and u got  "+parseInt(score)+"  Points");
+		   }
+		}
+	  }
+	}
+	
+	function HasEdge(){                              //边界问题
+	  for(var x=0;x<i;x++){
+         if(chanx[x].x>screenWidth-chanx[x].image.width){   //右边边界
+		    if(chanx[x].hSpeed>0){
+			   chanx[x].hSpeed=-chanx[x].hSpeed;                        //改变速度方向
+			}
+		 }
+		 if(chanx[x].x<0){                        //左边边界
+		    if(chanx[x].hSpeed<0){
+		       chanx[x].hSpeed=-chanx[x].hSpeed; 
+			}
+		 }
+		 if(chanx[x].y>screenHeight-chanx[x].image.height){   //下边边界
+		    if(chanx[x].vSpeed>0){
+			   chanx[x].vSpeed=-chanx[x].vSpeed;
+			}
+		 }
+		 
+		 if(chanx[x].y<0){                          //上边边界
+		    chanx[x].vSpeed=-chanx[x].vSpeed;
+		 }
+	  }
+	}
+	
+	//检测2 物体是否碰撞
+	function Check(object1,object2,overlap){
+		//overlap是重叠区域值
+	    A1 = object1.x + overlap;
+        B1 = object1.x + object1.image.width - overlap;   
+        C1 = object1.y + overlap;   
+        D1 = object1.y + object1.image.height - overlap;   
+        
+        A2 = object2.x + overlap;   
+        B2 = object2.x + object2.image.width - overlap;   
+        C2 = object2.y + overlap;   
+        D2 = object2.y + object2.image.width - overlap;   
+		//假如他们在x-轴重叠   
+        if(A1 > A2 && A1 < B2 || B1 > A2 && B1 < B2)
+        {
+            //判断y-轴重叠   
+            if(C1 > C2 && C1 < D2 || D1 > C2 && D1 < D2)   
+            {
+                //碰撞   
+                return true;
+            }
+		}
+        return false;
+	}
+	
+	var i=0;
+	var chanx=new Array();
+	
+	//添加撞击物品
+	function DrawChanx(){
+	   chanx[i]=new Chanx();
+	   chanx[i].image=chanxImage;
+	   var rbian=parseInt(Math.random()*4);
+	   var rx=parseInt(Math.random()*400+20);
+	   var ry=parseInt(Math.random()*260+20);
+       if(rbian==0){
+	     chanx[i].x=rx;
+	     chanx[i].y=0;
+	     chanx[i].hSpeed=speed;
+	     chanx[i].vSpeed=speed;
+	   }else if(rbian==1){
+	     chanx[i].x=480;
+	     chanx[i].y=ry;
+	     chanx[i].hSpeed=-speed;
+	     chanx[i].vSpeed=speed;
+	   }else if(rbian==2){
+	     chanx[i].x=rx;
+	     chanx[i].y=320;
+	     chanx[i].hSpeed=-speed;
+	     chanx[i].vSpeed=-speed;
+	   }else if(rbian==3){
+	     chanx[i].x=0;
+	     chanx[i].y=ry;
+	     chanx[i].hSpeed=speed;
+	     chanx[i].vSpeed=-speed;
+	   }
+	   i++;
+	}
+	
+	function DrawScore(){
+	   ctx.drawImage(scoreImg,screenWidth-(scoreImg.width),0); //分数板
+	   ctx.font="12pt Arial";
+	   ctx.fillText(""+parseInt(score),425,25);  //得分
+	}
+	
+</script>
+</head>
+<body>
+     <div id="container" style="border:1px solid; cursor:none; width:480px; height:320px;">  
+        <canvas id="canvas" width="480" height="320">
+        </canvas>
+        <img id="StartImg" style="position: absolute; left: 200px; top: 200px; cursor: pointer; float: left; display: block; " src="images/Button.png"> 
+      </div>
+</body>
+</html>
