@@ -1,0 +1,35 @@
+* { margin: 0; padding: 0; }
+canvas { display: block; }
+
+h1 {
+    margin: 100px 0 0;
+    font-size: 50px;
+}
+
+a {
+    background: #eee;
+    display: block;
+    margin: 100px 0 0 96px;
+    padding: 20px;
+    width: 232px;
+    font-size: 30px;
+    color: #666;
+    text-decoration: none;
+}
+
+#ui {
+    width: 465px;
+    height: 465px;
+    position: absolute;
+    color: #fff;
+}
+
+#title {
+    text-align: center;
+}
+
+#playing {
+    margin: 10px;
+}
+
+#canvas { background: #888; }
