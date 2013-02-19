@@ -1,98 +1,1184 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8" />
-    <title>jojo Home page</title>
-<script type="text/javascript">
-window.onload = function() {
-    splash();
-    music();
-};
-function music() {
-}
-function splash() {
-	C = Math.cos; // cache Math objects
-	S = Math.sin;
-	U = 0;
-	w = window;
-	j = document;
-	d = j.getElementById("c");
-	c = d.getContext("2d");
-	W = d.width = w.innerWidth;
-	H = d.height = w.innerHeight;
-	c.fillRect(0, 0, W, H); // resize <canvas> and draw black rect (default)
-	c.globalCompositeOperation = "lighter"; // switch to additive color application
-	c.lineWidth = 0.2;
-	c.lineCap = "round";
-	var bool = 0, 
-		t = 0; // theta
-	d.onmousemove = function (e) {
-		if(window.T) {
-			if(D==9) { D=Math.random()*15; f(1); }
-			clearTimeout(T);
-		}
-		X = e.pageX; // grab mouse pixel coords
-		Y = e.pageY;
-		a=0; // previous coord.x
-		b=0; // previous coord.y 
-		A = X, // original coord.x
-		B = Y; // original coord.y
-		R=(e.pageX/W * 999>>0)/999;
-		r=(e.pageY/H * 999>>0)/999;
-		U=e.pageX/H * 360 >>0;
-		D=9;
-		g = 360 * Math.PI / 180;
-		T = setInterval(f = function (e) { // start looping spectrum
-			c.save();
-			c.globalCompositeOperation = "source-over"; // switch to additive color application
-			if(e!=1) {
-				c.fillStyle = "rgba(0,0,0,0.02)";
-				c.fillRect(0, 0, W, H); // resize <canvas> and draw black rect (default)
-			}
-			c.restore();
-			i = 25; while(i --) {
-				c.beginPath();
-				if(D > 450 || bool) { // decrease diameter
-					if(!bool) { // has hit maximum
-						bool = 1;
-					}
-					if(D < 0.1) { // has hit minimum
-						bool = 0;
-					}
-					t -= g; // decrease theta
-					D -= 0.1; // decrease size
-				}
-				if(!bool) {
-					t += g; // increase theta
-					D += 0.1; // increase size
-				}
-				q = (R / r - 1) * t; // create hypotrochoid from current mouse position, and setup variables (see: http://en.wikipedia.org/wiki/Hypotrochoid)
-				x = (R - r) * C(t) + D * C(q) + (A + (X - A) * (i / 25)) + (r - R); // center on xy coords
-				y = (R - r) * S(t) - D * S(q) + (B + (Y - B) * (i / 25));
-				if (a) { // draw once two points are set
-					c.moveTo(a, b);
-					c.lineTo(x, y)
-				}
-				c.strokeStyle = "hsla(" + (U % 360) + ",100%,50%,0.75)"; // draw rainbow hypotrochoid
-				c.stroke();
-				a = x; // set previous coord.x
-				b = y; // set previous coord.y
-			}
-			U -= 0.5; // increment hue
-			A = X; // set original coord.x
-			B = Y; // set original coord.y
-		}, 16);
-	}
-	j.onkeydown = function(e) { a=b=0; R += 0.05 }
-	d.onmousemove({pageX:300, pageY:290})
-}
+<html itemscope itemtype='http://schema.org/Event' xmlns:fb='https://www.facebook.com/2008/fbml' xmlns:og='http://ogp.me/ns#' xmlns='http://www.w3.org/1999/xhtml'>
 
+  <!-- Mirrored from www.strikingly.com/site13404-1361245793 by HTTrack Website Copier/3.x [XR&CO'2010], Tue, 19 Feb 2013 04:00:23 GMT -->
+  <!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
+  <head><script type="text/javascript">var NREUMQ=NREUMQ||[];NREUMQ.push(["mark","firstbyte",new Date().getTime()]);</script>
+    <title>jfo&#x27;s Site on Striking.ly</title>
+    <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+    <meta content='width=device-width, initial-scale=1.0,user-scalable=no,maximum-scale=1.0' id='viewport' name='viewport'>
+    <link href="http://fonts.googleapis.com/css?family=Lobster" media="screen" rel="stylesheet" type="text/css" />
+    <link href="assets/page_show-878bbb5b3d5b067af0562dbe5bc553e0.css" media="screen" rel="stylesheet" type="text/css" />
+    <link href="assets/themes/bright/main-f62259e88374ea9deb2243e984b91125.css" media="screen" rel="stylesheet" type="text/css" /><link href="http://fonts.googleapis.com/css?family=Quando|Josefin+Slab:400,700,400italic,700italic|Trocchi|Arvo|Lato:400,700,400italic,700italic&amp;subset=latin,latin-ext" media="screen" rel="stylesheet" type="text/css" /><link href='favicon.ico' rel='shortcut icon' type='image/x-icon'>
+    <meta content="jfo's Site" property='og:title'>
+    <meta content='http://www.strikingly.com/site13404-1361245793' property='og:url'>
+    <meta content='http://www.strikingly.com/assets/fb_images/original/missing.png' property='og:image'>
+    <meta content='Striking.ly' property='og:site_name'>
+    <meta property='fb:admins'>
+    <meta property='og:description'>
+    <meta content="jfo's Site" itemprop='name'>
+    <meta itemprop='description'>
+    <meta content='http://www.strikingly.com/assets/fb_images/original/missing.png' itemprop='image'>
+    <meta name='description'>
+    <meta name='tags'>
+
+    <script>
+      //<![CDATA[
+      if (!console) var console = {
+        log: function() {},
+        warn: function() {},
+        error: function() {}
+      };
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-25124444-1']);
+      _gaq.push(['_setDomainName', 'strikingly.com']);
+      _gaq.push(['_trackPageview']);
+      (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+      window.Muscula = { settings:{
+          logId:"x0FfqrC-zpmMh", branding: 'none', suppressErrors: false
+      }};
+      (function () {
+        var m = document.createElement('script'); m.type = 'text/javascript'; m.async = true;
+        m.src = (window.location.protocol == 'https:' ? 'https:' : 'http:') +
+        '//musculahq.appspot.com/Muscula.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(m, s);
+        window.Muscula.run=function(c){eval(c);window.Muscula.run=function(){};};
+        window.Muscula.errors=[];window.onerror=function(){window.Muscula.errors.push(arguments);
+          return window.Muscula.settings.suppressErrors===undefined;}
+      })();
+      //]]>
+    </script>
+
+    <meta content="authenticity_token" name="csrf-param" />
+    <meta content="AmMOXhXM3juArpf41egdio4zNIty7FzPkAqnTtfQMoQ=" name="csrf-token" />
+	
+	<style>
+	  .game_icon {
+		width: 78px;
+		height: 78px;
+		margin: 5px;
+	  }
+	</style>
+  </head>
+  <body class='show' id='pages' spellcheck='false'><script src="assets/pages_show-6f2bde04eedc158959ce874e5913f9c6.js" type="text/javascript"></script><script src="assets/themes/bright/main-394ab46dcdbb6fa62366b5dfe325c618.js" type="text/javascript"></script>
+
+    <div class='show-content'>
+      <div class='navigator' data-bind-page='visible: showNav()' id='header-container'>
+        <!-- page header -->
+        <div class='container header'>
+          <div class='six columns'>
+            <div class="logo feature-box image" id='logo' style="float:left;">
+              <div class="content content2" style="visibility: visible; opacity: 1; padding-right: 20px;">
+			    <a href="http://127.0.0.1/splash.html">
+                  <img alt="" src="/assets/themes/bright/linux_penguin.jpg" height="75px">
+				</a>
+              </div>
+            </div>
+            <div class="feature-box">
+              <h3 class="title text-component">
+                <div class="content content2" style="color: rgb(63, 167, 203); font-size: 50px; font-weight: normal; text-shadow: -2px 2px #00a;">
+                  jfo's planet
+                </div>
+              </h3>
+              <div class="p text-component">
+                <div class="content content2" style="font-family: Arial; padding-top: 6px;">
+                  Hope is the best gift that tomorrow gives.
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <div class='ten columns nav-column'>
+            <div class='nav' data-bind-page='visible: showNav()'>
+              <ul>
+                <span data-bind-page="template: {name:'navbarItemTemplate', foreach: slides}"></span>
+                <span data-bind-page="template: {name:'navbarLinkTemplate', foreach: submenu.list}"></span>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class='top-spacer' data-bind-page='visible: showNav()'></div>
+      <script id='navbarItemTemplate' type='text/x-jquery-tmpl'>
+        <li data-bind='visible: components.slideSettings.show_nav'>
+        <a data-bind='text:components.slideSettings.name, css: {selected: isSelected()}, attr: { href: hashHref() }'></a>
+        </li>
+      </script>
+      <script id='navbarLinkTemplate' type='text/x-jquery-tmpl'>
+        <li>
+        <a data-bind='text:components.link.text, attr: { href: components.link.link_url(), target: components.link.target() }'></a>
+        </li>
+      </script>
+
+      <div class='logo-footer' data-bind-page='visible: showStrikinglyLogo' id='strikingly-footer-logo'>
+        <a href='https://www.striking.ly/?ref=logo&amp;permalink=site13404-1361245793' target='_blank'></a>
+        <div class='logo-hover'></div>
+      </div>
+
+      <div class='navigation-buttons strikingly-fixed' data-bind-page='visible: showNavigationButtons()'>
+        <span class='prev' data-bind-page='fadeVisible: !window.slide_navigator.isFirst()' onclick='window.slide_navigator.prev();' title='Previous Section'></span>
+        <span class='next' data-bind-page='fadeVisible: !window.slide_navigator.isLast()' onclick='window.slide_navigator.next();' title='Next Section'></span>
+      </div>
+
+      <!-- page content slides -->
+      <ul class='slides'>
+
+        <!--li class='slide'>
+        <a class='section-anchor' data-scroll-name='#1'></a>
+        <div class='wide'>
+          <div class='container'>
+            <div class='row'>
+              <div class='sixteen columns'>
+                <h1 class='title'><div data-component='text' data-name='title' data-text-type='heading'> TEAM </div></h1>
+              </div>
+              <div class='features'><div class="teamMembers content repeatable-component" data-bind="template: {
+                  foreach: teamMembers.list, 
+                  name: &#x27;team_box&#x27;
+                  }, sortableRepeatable: teamMembers.list"></div></div>
+            </div>
+          </div>
+        </div>
+        <script data-component='repeatable_item_template' id='team_box' type='text/x-jquery-tmpl'>
+          <div class='third columns repeatable feature' data-bind='sortableItem: $data, mouseenter: mouseenterHandler, mouseleave: mouseleaveHandler'>
+
+            <div class='team-box'>
+              <div class='team-padding' data-bind="css:{'overflow-hidden':!components.image.isState('editor')}">
+                <div class='image' data-component='image' data-image-size='440x288#' data-name='components.image' data-use-url='true'>
+                  <img src='assets/icons/transparent.png'>
+                </div>
+              </div>
+            </div>
+            <h4 class='subtitle mb5' data-component='text' data-name='components.name' data-text-type='heading' data-use-font='true'></h4>
+            <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
+          </div>
+        </script>
+        </li-->
+
+        <li class='slide'>
+        <a class='section-anchor' data-scroll-name='#1'></a>
+        <div class='wide gray'>
+          <div class='container'>
+            <div class='row'>
+              <div class='sixteen columns'>
+              </div>
+              <div class='features'><div class="features content repeatable-component" data-bind="template: {
+                  foreach: features.list, 
+                  name: &#x27;client_box&#x27;
+                  }, sortableRepeatable: features.list"></div></div>
+            </div>
+          </div>
+        </div>
+        <script data-component='repeatable_item_template' id='client_box' type='text/x-jquery-tmpl'>
+          <div class='eight columns repeatable feature' data-bind='sortableItem: $data, mouseenter: mouseenterHandler, mouseleave: mouseleaveHandler'>
+
+            <div class='feature-box image game_icon' data-component='image' data-name='components.image' data-use-url='true'>
+              <img src='assets/icons/transparent.png'>
+            </div>
+            <div class='feature-box'>
+              <h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3>
+              <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
+            </div>
+          </div>
+        </script>
+        </li>
+
+        <li class='slide'>
+        <a class='section-anchor' data-scroll-name='#2'></a>
+        <div class='wide gray'>
+          <div class='container'>
+            <div class='sixteen columns'>
+              <h1 class='title'><div data-component='text' data-name='title' data-text-type='heading'> CONTACT US </div></h1>
+              <div class='p'><div data-component='text' data-name='subtitle' data-text-type='body'></div></div>
+            </div>
+            <div class='sixteen columns'>
+              <div class="email content"><div class='email-form'>
+                  <div class='form' data-bind='visible: !email.isSuccess()'>
+                    <form accept-charset="UTF-8" action="http://www.strikingly.com/site13404-1361245793/collected_emails.jsm" class="new_collected_email" id="new_collected_email" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="xBhgGNW/ggdFAHFIKs5Tz1inmC554/+qdrOoF5W/jQg=" /></div>
+                      <input data-bind="value:email.recipient" id="collected_email_recipient" name="collected_email[recipient]" type="hidden" />
+                      <div class='input'>
+                        <label data-bind-page="style: (bodyFont &amp;&amp; bodyFont() !== '') ? {fontFamily: bodyFont()  } : {fontFamily : 'inherit'}" data-bind='text: email.name_label'>Name</label>
+                        <input id="collected_email_name" name="collected_email[name]" size="30" type="text" />
+                        <div class='error' data-bind='visible: email.isNameEmpty()'>
+                          Please enter a name.
+                        </div>
+                      </div>
+                      <div class='input'>
+                        <label data-bind-page="style: (bodyFont &amp;&amp; bodyFont() !== '') ? {fontFamily: bodyFont()  } : {fontFamily : 'inherit'}" data-bind='text: email.email_label'>Email</label>
+                        <input id="collected_email_email" name="collected_email[email]" size="30" type="text" />
+                        <div class='error' data-bind='visible: email.isEmailInvalid()'>
+                          Invalid email.
+                        </div>
+                      </div>
+                      <div class='input' data-bind='visible: email.hasMessageBox()'>
+                        <label data-bind-page="style: (bodyFont &amp;&amp; bodyFont() !== '') ? {fontFamily: bodyFont()  } : {fontFamily : 'inherit'}" data-bind='text: email.message_label'>Message</label>
+                        <textarea cols="40" html="{:rows=&gt;4, :cols=&gt;35}" id="collected_email_comment" name="collected_email[comment]" rows="20"></textarea>
+                      </div>
+                      <div class='input'>
+                        <input class='submit-button' data-bind-page="style: (bodyFont &amp;&amp; bodyFont() !== '') ? {fontFamily: bodyFont()  } : {fontFamily : 'inherit'}" data-bind='mouseclick: email.submit' type='button' value='Submit'>
+                        <div class='loading-icon' data-bind='visible: email.isLoading()'></div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class='hint thanks' data-bind-page="style: (bodyFont &amp;&amp; bodyFont() !== '') ? {fontFamily: bodyFont()  } : {fontFamily : 'inherit'}" data-bind='visible: email.isSuccess()'>
+                    Thanks! We've received your message, and we'll contact you shortly.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </li>
+
+      </ul>
+      <div class='widecontainer' data-bind-page='visible:showFooter' id='footer-container'>
+        <div class='container' id='footer'>
+          <div class='sixteen columns'>
+            <div id='footer-social-media'>
+              <div class="socialMedia content"><div class='social-media-display'>
+                  <ul class='links' data-bind="template: {name:'socialMediaLinks', foreach: socialMedia.link_list }" style='clear:both;'></ul>
+                  <ul class='buttons' data-bind='html: socialMedia.mediaListHtml'></ul>
+                </div>
+              </div>
+            </div>
+            <div id='footer-text'>
+              <div data-component='text' data-name='copyright' data-text-type='body'>Copyright 2012 Company Name</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <script id='background-image-editor' type='text/x-jquery-tmpl'>
+      <div class='title small clickable center' data-bind='mouseclick: onClickHandler'>Background</div>
+      <div class='background-form'>
+        <form accept-charset="UTF-8" action="/s/assets" class="image-form" enctype="multipart/form-data" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="xBhgGNW/ggdFAHFIKs5Tz1inmC554/+qdrOoF5W/jQg=" /></div>
+          <input id="asset_image_size" name="asset[image_size]" type="hidden" value="background" />
+          <input id="asset_thumb_size" name="asset[thumb_size]" type="hidden" value="128x128#" />
+          <input id="asset_page_id" name="asset[page_id]" type="hidden" value="16444" />
+          <img data-bind='attr: { src: url}' src='/assets/icons/transparent.png' style='display:none'>
+          <ul class='thumbs' style='clear:both;'>
+            <li data-bind='mouseenter: previewImage, mouseleave: recover, mouseclick: selectImage' data-image-index='0' style='background:url(http://uploads.striking.ly/page/images/backgrounds/bg1-thumb.jpg);background-size:cover;'></li>
+            <li data-bind='mouseenter: previewImage, mouseleave: recover, mouseclick: selectImage' data-image-index='1' style='background:url(http://uploads.striking.ly/page/images/backgrounds/bg5-thumb.jpg);background-size:cover;'></li>
+            <li data-bind='mouseenter: previewImage, mouseleave: recover, mouseclick: selectImage' data-image-index='2' style='background:url(http://uploads.striking.ly/page/images/backgrounds/bg3-thumb.jpg);background-size:cover;'></li>
+            <li data-bind='mouseenter: previewImage, mouseleave: recover, mouseclick: selectImage' data-image-index='3' style='background:url(http://uploads.striking.ly/page/images/backgrounds/bg4-thumb.jpg);background-size:cover;'></li>
+          </ul>
+          <select data-bind='value: style'>
+            <option value='stretch'>Stretch</option>
+            <option value='center'>Center</option>
+            <option value='tile'>Tile</option>
+            <option value='fit'>Fit to Screen</option>
+          </select>
+          <select data-bind="options: textStyles, optionsText: 'displayName', optionsValue: 'className', value: selectedClassName"></select>
+          <div class='clearfix mb'>
+            <a class='edit-btn block noborder dark yellow' data-bind='mouseclick: upload'>Upload</a>
+          </div>
+          <div class='clearfix mb'>
+            <a class='edit-btn block noborder dark yellow' data-bind='mouseclick: addFilter'>Effects</a>
+          </div>
+          <div class='clearfix mb'>
+            <a class='edit-btn block gray noborder dark' data-bind='mouseclick: remove'>Remove</a>
+          </div>
+          <div class='clearfix'>
+            <a class='edit-btn block green done-button noborder' data-bind='mouseclick: onDoneHandler, visible: !window.edit_page.isLoading()'>Save</a>
+            <a class='edit-btn block gray done-button noborder' data-bind='visible: window.edit_page.isLoading()'>Loading...</a>
+          </div>
+        </form>
+      </div>
+    </script>
+    <script id='socialMediaLinks' type='text/x-jquery-tmpl'>
+      <li data-bind='visible: show_link(), template: { name: type(), data: $item.data }'></li>
+    </script>
+    <script id='Facebook' type='text/x-jquery-tmpl'>
+      <a data-bind='attr: {href: link_url}' target='_blank'>
+        <img src='assets/icons/facebook-006df763e767e6198c6e922e7d560056.png'>
+      </a>
+    </script>
+    <script id='SinaWeibo' type='text/x-jquery-tmpl'>
+      <a data-bind='attr: {href: link_url}' target='_blank'>
+        <img src='assets/icons/weibo-b705d88459da23225ace09ba2f789e45.png'>
+      </a>
+    </script>
+    <script id='Renren' type='text/x-jquery-tmpl'>
+      <a data-bind='attr: {href: link_url}' target='_blank'>
+        <img src='assets/icons/renren-a30469695c7f6d63135454cbcbf96df8.png'>
+      </a>
+    </script>
+    <script id='Twitter' type='text/x-jquery-tmpl'>
+      <a data-bind='attr: {href: link_url}' target='_blank'>
+        <img src='assets/icons/twitter-287881e23131de8062be8c2da861dec0.png'>
+      </a>
+    </script>
+    <script id='GPlus' type='text/x-jquery-tmpl'>
+      <a data-bind='attr: {href: link_url}' target='_blank'>
+        <img src='assets/icons/gplus-3e1280ac0334cf0254794201449e9c4a.png'>
+      </a>
+    </script>
+    <script id='socialMediaEditorForButtonsTemplate' type='text/x-jquery-tmpl'>
+      <li class='social-media-item'>
+      <input data-bind='checked: show_button' type='checkbox'>
+      <img class='thumb' data-bind='attr: { src: imageUrl }'>
+      <label data-bind='text: getSubtitle() '></label>
+      <input data-bind='value: share_text, visible: type()=="Twitter"' size='50'>
+      </li>
+    </script>
+    <script id='socialMediaEditorForLinksTemplate' type='text/x-jquery-tmpl'>
+      <li class='social-media-item'>
+      <img class='thumb' data-bind='attr: { src: imageUrl }'>
+      <label>Link Url</label>
+      <input data-bind='value: link_url' size='50'>
+      </li>
+    </script>
+    <script id='lightboxImageTemplate' type='text/x-jquery-tmpl'>
+      <div class='thumb' data-bind='mouseenter : mouseenterHandler, mouseleave: mouseleaveHandler, mouseclick: clickGalleryEditorHandler, sortableItem:$data'>
+        <div class='edit-overlay' data-bind="visible: isState('overlay')" style='display:none'>
+          <span class='edit-button'>Edit</span>
+        </div>
+        <a class='item' data-bind='attr: { href: url }'>
+          <img data-bind='attr: { src: thumb_url, alt: caption, title: caption, "data-description": description }'>
+        </a>
+      </div>
+    </script>
+    <script id='lightboxImageTemplateShow' type='text/x-jquery-tmpl'>
+      <div class='thumb'>
+        <a class='item' data-bind='attr: { href: url }'>
+          <img data-bind='attr: { src: thumb_url, alt: caption, title: caption, "data-description": description }'>
+        </a>
+      </div>
+    </script>
+
+    <script id='textEditor' type='text/x-underscore-tmpl'>
+      <div class='edit-overlay' data-bind="visible: {{=name}}.isState('overlay')">
+        <span class='edit-button'>
+          EDIT
+        </span>
+      </div>
+      <div class='editor' data-bind="visible: {{=name}}.isState('editor')">
+        <textArea class='user-input' data-bind='htmlValue: {{=name}}.value'>
+          {{=content}}
+        </textArea>
+        {{= window.partial('textEditorButtons', {'name': name, 'textType': textType, 'useFont': useFont}) }}
+      </div>
+      {{= window.partial('textContent', {'name': name, 'textType': textType, 'content': content, 'useFont' : useFont}) }}
+    </script>
+    <script id='textContent-partial' type='text/x-underscore-tmpl'>
+      {{ if (useFont) {  }}
+        <div class='content content2' data-bind="visible: !{{=name}}.isState('editor'), htmlValue: {{=name}}.value, style: (window.edit_page.data.{{=textType}}() != '') ? {fontFamily: window.edit_page.data.{{=textType}} } : {fontFamily: 'inherit' }">
+          {{=content}}
+        </div>
+        {{ } else { }}
+        <div class='content content2' data-bind="visible: !{{=name}}.isState('editor'), htmlValue: {{=name}}.value">
+          {{=content}}
+        </div>
+        {{ } }}
+    </script>
+    <script id='textEditorButtons-partial' type='text/x-underscore-tmpl'>
+      <div class='edit-buttons'>
+        <a class='edit-btn green' data-bind='mouseclick: {{=name}}.doneClickHandler' type='button'>Save</a>
+        <a class='edit-btn gray' data-bind='visible: {{=useFont}}, mouseclick: {{=name}}.changeFontHandler' text-type='{{=textType}}' type='button'>Fonts</a>
+        <a class='edit-btn gray' data-bind='mouseclick: {{=name}}.deleteHandler' type='button'>Empty</a>
+        <a class='edit-btn gray' data-bind='mouseclick: {{=name}}.clickCancelEditorHandler' type='button'>Cancel</a>
+      </div>
+    </script>
+    <script id='editorButtons-partial' type='text/x-underscore-tmpl'>
+      <div class='edit-buttons'>
+        <a class='edit-btn gray' data-bind='visible: window.edit_page.isLoading()' type='button'>Loading...</a>
+        <a class='edit-btn green' data-bind='mouseclick: {{=name}}.doneClickHandler, visible: !window.edit_page.isLoading()' type='button'>Save</a>
+        <a class='edit-btn gray' data-bind='mouseclick: {{=name}}.clickCancelEditorHandler' type='button'>Cancel</a>
+      </div>
+    </script>
+    <script id='imageEditor' type='text/x-underscore-tmpl'>
+      <div class='edit-overlay' data-bind="visible: {{=name}}.isState('overlay')">
+        <span class='edit-button'>
+          EDIT
+        </span>
+      </div>
+      <div class='editor' data-bind="fadeVisibleAndHide: {{=name}}.isState('editor')">
+        <div class='image-editor component-editor'>
+          <form accept-charset="UTF-8" action="/s/assets" class="image-form" enctype="multipart/form-data" method="post"><div style="margin:0;padding:0;display:inline"><input name="utf8" type="hidden" value="&#x2713;" /><input name="authenticity_token" type="hidden" value="xBhgGNW/ggdFAHFIKs5Tz1inmC554/+qdrOoF5W/jQg=" /></div>
+            <div class='fluidrow'>
+              <div class='fluidcol p50'>
+                <div class='image-editor-image' data-bind="visible: {{=name}}.url() != '', mouseclick: {{=name}}.upload">
+                  <img data-bind='attr: { src: {{=name}}.url, alt: {{=name}}.caption }' src='assets/icons/transparent.png'>
+                </div>
+              </div>
+              <div class='fluidcol p50'>
+                <div class='clearfix'>
+                  <a class='edit-btn small noborder float' data-bind='mouseclick: {{=name}}.upload'>Upload</a>
+                  <a class='edit-btn small noborder float' data-bind='mouseclick: {{=name}}.addFilter'>Effects</a>
+                  <a class='edit-btn small noborder gray float' data-bind='mouseclick: {{=name}}.remove'>Remove</a>
+                </div>
+                <div class='input'>
+                  {{ if (useUrl) {  }}
+                    <div class='clearfix'>
+                      <a class='link-icon' data-bind='mouseclick: {{=name}}.openLinkInput, visible: !{{=name}}.showLinkInput()'><i class='icon-external-link'></i>Add Link
+                      </a>
+                      <div class='link-input' data-bind='visible: {{=name}}.showLinkInput()'>
+                        <label class='float' data-bind="visible: {{=name}}.link_url() == '' ">Link URL</label>
+                        <input class="link_url" data-bind="value: {{=name}}.link_url , valueUpdate: &#x27;afterkeydown&#x27; " id="asset_link_url" name="asset[link_url]" size="30" type="text" />
+                        <input class='float' data-bind='checked: {{=name}}.new_target' name='new_target' type='checkbox'>
+                        <div class='hint small float' style='width:70px; margin-left:6px; margin-bottom:3px;'>New window</div>
+                      </div>
+                    </div>
+                    {{ } }}
+                  <div class='clearfix'>
+                    <a class='link-icon' data-bind='mouseclick: {{=name}}.openDescriptionInput, visible: !{{=name}}.showDescriptionInput()'><i class='icon-quote-left'></i>Add Description
+                    </a>
+                    <div class='link-input' data-bind='visible: {{=name}}.showDescriptionInput()'>
+                      <label class='float' data-bind="visible: {{=name}}.caption() == '' ">Description</label>
+                      <input data-bind="value: {{=name}}.caption , valueUpdate: &#x27;afterkeydown&#x27;, enterKeyPress: {{=name}}.goToLinkUrlField" id="asset_caption" name="asset[caption]" size="30" type="text" />
+                    </div>
+                  </div>
+                </div>
+                <input id="asset_image_size" name="asset[image_size]" type="hidden" value="{{=imageSize}}" />
+                <input id="asset_thumb_size" name="asset[thumb_size]" type="hidden" value="{{=thumbSize}}" />
+                <input data-bind="value: window.edit_page.page_id" id="asset_page_id" name="asset[page_id]" type="hidden" />
+              </div>
+            </div>
+            <span class='cancleImg'></span>
+          </form>
+        </div>
+        {{= window.partial('editorButtons', {'name': name}) }}
+      </div>
+      {{= window.partial('imageContent', {'name': name, 'url': url, 'caption': caption, 'useUrl': useUrl}) }}
+    </script>
+    <script id='imageContent-partial' type='text/x-underscore-tmpl'>
+      <div class='content content2' data-bind="fadeVisibleAndHide: !{{=name}}.isState('editor')">
+        {{ if (useUrl) {  }}
+          <a data-bind='attr: {href: {{=name}}.link(), target: {{=name}}.target() }'>
+            <img alt="{{=caption}}" data-bind="attr: { src: {{=name}}.url, alt: {{=name}}.caption }" src="assets/icons/transparent.png" />
+          </a>
+          {{ } else { }}
+          <img alt="{{=caption}}" data-bind="attr: { src: {{=name}}.url, alt: {{=name}}.caption }" src="assets/icons/transparent.png" />
+          {{ } }}
+      </div>
+    </script>
+    <script id='htmlEditor' type='text/x-underscore-tmpl'>
+      <div class='edit-overlay' data-bind="visible: {{=name}}.isState('overlay')">
+        <span class='edit-button'>
+          EDIT
+        </span>
+      </div>
+      <div class='editor component-editor' data-bind="visible: {{=name}}.isState('editor')">
+        <div class='hint'>
+          You can embed a Google Calendar, Google Map, Google Form and etc. by pasting HTML into the box.
+        </div>
+        <div class='instructions'>
+          Tutorials:
+          <a class='instruction' href='http://support.google.com/calendar/bin/answer.py?hl=en&amp;answer=41207' target='_blank'>Google Calendar</a>
+          <a class='instruction' href='http://support.google.com/maps/bin/answer.py?hl=en&amp;answer=72644' target='_blank'>Google Map</a>
+          <a class='instruction' href='http://www.youtube.com/watch?v=MoAakCsfdjk' target='_blank'>Google Form</a>
+        </div>
+        <textArea class='user-input monospace' data-bind='value: {{=name}}.htmlValue'></textArea>
+        {{= window.partial('editorButtons', {'name': name}) }}
+      </div>
+      {{= window.partial('htmlContent', {'name': name}) }}
+    </script>
+    <script id='htmlContent-partial' type='text/x-underscore-tmpl'>
+      <div class='content content2' data-bind='html: {{=name}}.htmlValue'></div>
+    </script>
+
+    <div class='navbar-drawer hidden'>
+      <ul id='nav-drawer-list'>
+        <span data-bind-page="template: {name:'strikinglyNavbarTouchItemTemplate', foreach: slides}"></span>
+        <span data-bind-page="template: {name:'strikinglyNavbarTouchLinkTemplate', foreach: submenu.list}"></span>
+        <li class='logo' data-bind-page='visible: showStrikinglyLogo' id='strikingly-footer-logo'>
+        <a class='logo' href='https://www.striking.ly/?ref=logo&amp;permalink=site13404-1361245793&amp;m=1' target='_blank'>
+          <div class='msg'>Powered By</div>
+          <img alt='Strikingly' src='assets/logo-small-2-0d0660c8e7205e54045d6e0ab3724eb7.png'>
+        </a>
+        </li>
+      </ul>
+    </div>
+    <div class='navbar-drawer-bar hidden'>
+      <a href='javascript:void(0);' onclick='Bobcat.TH.toggleDrawer(); return false;'></a>
+    </div>
+    <script id='strikinglyNavbarTouchItemTemplate' type='text/x-jquery-tmpl'>
+      <li data-bind='visible: components.slideSettings.show_nav'>
+      <a data-bind='text:components.slideSettings.name, css: {selected: isSelected()}, attr: { href: hashHref() }, mouseclick: Bobcat.TH.toggleDrawer '></a>
+      </li>
+    </script>
+    <script id='strikinglyNavbarTouchLinkTemplate' type='text/x-jquery-tmpl'>
+      <li>
+      <a data-bind='text:components.link.text, attr: { href: components.link.link_url(), target: components.link.target() }'></a>
+      </li>
+    </script>
+
+    <div id='fb-root'></div>
+    <script type='text/javascript'>
+      //<![CDATA[
+    (function() {
+
+     if (window.top !== window && window.parent.frames.length > 0) {
+     window.mixpanel.track("Page - Iframe Detected");
+     alert("Framing is not allowed with free account. Redirecting to Strikingly.com. Please contact support@striking.ly if you have any questions.");
+     window.top.location = window.location;
+     }
+
+     }).call(this);
+
+//]]>
 </script>
-</head>
+<script type='text/javascript'>
+  data = {
+    "type": "PageData",
+    "theme": "bright",
+    "horizontal": false,
+    "showNav": true,
+    "navFont": "",
+    "titleFont": "",
+    "logoFont": "",
+    "bodyFont": "Arial",
+    "headingFont": "Brandon",
+    "fixedSocialMedia": false,
+    "showButtons": true,
+    "slides": [
+/*        {
+            "type": "Slide",
+            "template_id": null,
+            "template_name": "bright_people",
+            "components": {
+                "slideSettings": {
+                    "type": "SlideSettings",
+                    "name": "Games",
+                    "show_nav": true
+                },
+                "title": {
+                    "type": "RichText",
+                    "value": "<div>GAMES</div>",
+                    "text_type": "heading"
+                },
+                "subtitle": {
+                    "type": "RichText",
+                    "value": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit",
+                    "text_type": "body"
+                },
+                "teamMembers": {
+                    "type": "Repeatable",
+                    "list": [
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/kof_snap.jpg",
+                                    "image_type": "44x28#",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "",
+                                    "new_target": null
+                                },
+                                "name": {
+                                    "type": "RichText",
+                                    "value": "<div>Jonathan (Yoni) Ofir</div>",
+                                    "text_type": "heading"
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "Cofounder &amp; CEO",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "<div>A short biography or description here.</div>",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/kof_unbeatable_snap.jpg",
+                                    "image_type": "440x288#",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "",
+                                    "new_target": null
+                                },
+                                "name": {
+                                    "type": "RichText",
+                                    "value": "<div>Ben Biron</div>",
+                                    "text_type": "heading"
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "Chief Coffee Officer",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "<div>Co-Founder</div>",
+                                    "text_type": "body"
+                                }
+                            }
+                        }
+                    ],
+                    "components": {
+                        "image": {
+                            "type": "Image",
+                            "thumb_url": "",
+                            "url": "/assets/themes/onyx/person.png",
+                            "image_type": "medium",
+                            "caption": "",
+                            "description": "",
+                            "link_url": "",
+                            "new_target": null
+                        },
+                        "name": {
+                            "type": "RichText",
+                            "value": "John Smith",
+                            "text_type": "heading"
+                        },
+                        "title": {
+                            "type": "RichText",
+                            "value": "CEO &amp; Cofounder",
+                            "text_type": "heading"
+                        },
+                        "description": {
+                            "type": "RichText",
+                            "value": "A short biography or description here.",
+                            "text_type": "body"
+                        }
+                    }
+                }
+            }
+        },*/
+        {
+            "type": "Slide",
+            "template_id": null,
+            "template_name": "bright_features",
+            "components": {
+                "slideSettings": {
+                    "type": "SlideSettings",
+                    "name": "Games",
+                    "show_nav": true
+                },
+                "title": {
+                    "type": "RichText",
+                    "value": "Title Text",
+                    "text_type": "heading"
+                },
+                "subtitle": {
+                    "type": "RichText",
+                    "value": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit",
+                    "text_type": "body"
+                },
+                "features": {
+                    "type": "Repeatable",
+                    "list": [
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/kof_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/kof.swf",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "拳皇wing1.8",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "拳皇wing1.8火爆登场!加入新角色《侍魂》主角-霸王丸，成为第二名使用刀剑的角色，除了霸王丸的降临之外，里八神的改进也是一个大亮点，平衡性好了,里八神的百合折、玉决、八咫鸟都改良好了，表隆的空中波动不能发出的BUG也修好了，阿修罗闪空的残像已修复，库拉的空中钻石射击不能发出的BUG也修好。拳皇wing系列一直以来都是flash格斗游戏巅峰之作，简易操作性、强劲打击感、爽快连续技、原创必杀技。",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/kof_unbeatable_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/kof_unbeatable.swf",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "拳皇wing1.8无敌版",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "拳皇wing1.8无敌版，血量无限，能量无限！！拳皇wing1.8中加入新角色《侍魂》主角-霸王丸，成为第二名使用刀剑的角色。拳皇wing系列一直以来都是flash格斗游戏巅峰之作，简易操作性、强劲打击感、爽快连续技、原创必杀技。",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/hundouluo2013_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/hundouluo2013.swf",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "魂斗罗2013",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "魂斗罗2013无敌版，生命数无限，关卡全开。魂斗罗2013版，全新内容。散弹枪，喷火器，雷电枪，火箭筒。打BOSS更加轻松，BOSS战激动人心，喜欢魂斗罗系列的朋友都来玩哦！",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/kof_guoguan_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/hundouluo2013.swf",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "拳皇大战之饿狼来袭无敌版",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "无限生命，尽情游戏！拳皇人气角色特瑞·伯格登场，强力技能绝对冲击，此版本只是在原有版本基础上加入了新角色，更丰富的游戏要素还在制作中，下个版将是一个全新的游戏，包括上下移动、技能学习等，敬请期待！",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/dicewar_snap.png",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/dice.swf",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "Dicewar",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "经典益智游戏，一开始先选择几个玩家玩？玩家是紫色骰子，要把所有的地都占领就获胜，没有领地就输出了。轮到玩家的时候，首先选择一块自己的地，然后选对手的地攻击。用两块地的骰子掷骰子的结果判断胜负，平手的话攻击方算输出。赢的话留下一个骰子，剩下的骰子前进到得到的那块地。",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/spira-defense_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/spira-defense/spira-defense.html",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "旋转塔防Spira Defense",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "一款经典的超级塔防游戏，点击中心的小圈进行建造防御来消灭周围的方块",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/lianliankan_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/lianliankan.swf",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "宠物连连看",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "经典游戏，在有限的时间内消掉出现的所有图案即可过关。",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/chain_reaction_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/chain_reaction/GameChainReaction.html",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "连锁反应Chain Reaction",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "一堆小球在乱飞，通过鼠标可以在任意位置放置一个大圈，当小球碰到大圈后，就会膨胀，这样逐渐的形成一个反应链。每一关会给固定数目的小球，当目标个数个小球参与反应后，即可通过该关，没过的话可以重试。每个球膨胀后，在一定时间后会消失，所以第一个球的位置很重要！",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/breakIO_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/breakIO/index.html",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "打方块",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "此消彼长，最后剩下单一颜色色的球算你赢，打打看。",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/salary_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/salary.swf",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "加薪啦",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "加薪啦，看看自己今年加薪多少吧。",
+                                    "text_type": "body"
+                                }
+                            }
+                        },
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/game/hearthurt_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "127.0.0.1/static/game/hearthurt/index.html",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "眼疾手快",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "躲避x的进攻，不要碰到任何移动的x，到后面x会越来越多，挑战你的极限，看能撑到多久。",
+                                    "text_type": "body"
+                                }
+                            }
+                        }
+                    ],
+                    "components": {
+                        "image": {
+                            "type": "Image",
+                            "thumb_url": "",
+                            "url": "/static/game/phone.png",
+                            "image_type": "medium",
+                            "caption": "",
+                            "description": "",
+                            "link_url": "",
+                            "new_target": null
+                        },
+                        "title": {
+                            "type": "RichText",
+                            "value": "Heading",
+                            "text_type": "heading"
+                        },
+                        "description": {
+                            "type": "RichText",
+                            "value": "A body paragraph.",
+                            "text_type": "body"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Slide",
+            "template_id": null,
+            "template_name": "bright_contact_form",
+            "components": {
+                "slideSettings": {
+                    "type": "SlideSettings",
+                    "name": "Contact",
+                    "show_nav": true
+                },
+                "title": {
+                    "type": "RichText",
+                    "value": "<div>CONTACT US</div>",
+                    "text_type": "heading"
+                },
+                "subtitle": {
+                    "type": "RichText",
+                    "value": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit",
+                    "text_type": "body"
+                },
+                "email": {
+                    "type": "EmailForm",
+                    "hideMessageBox": null,
+                    "recipient": "",
+                    "name_label": "Name",
+                    "email_label": "Email",
+                    "message_label": "Message"
+                }
+            }
+        }
+    ],
+    "new_page": false,
+    "showFooter": true,
+    "theme_id": null,
+    "menu": {
+        "type": "Menu",
+        "logo": null,
+        "components": {
+            "logo": {
+                "type": "Image",
+                "thumb_url": "",
+                "url": "/assets/themes/bright/linux_penguin.jpg",
+                "image_type": "small",
+                "caption": "",
+                "description": "",
+                "link_url": "",
+                "new_target": null
+            },
+            "title": {
+                "type": "RichText",
+                "value": "Title Text",
+                "text_type": "title"
+            },
+            "subtitle": {
+                "type": "RichText",
+                "value": "Title Text",
+                "text_type": "heading"
+            }
+        }
+    },
+    "footer": {
+        "type": "Footer",
+        "socialMedia": {
+            "type": "SocialMediaList",
+            "link_list": [
+                {
+                    "type": "Facebook",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "app_id": "247794892017801",
+                    "show_button": null
+                },
+                {
+                    "type": "Twitter",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "show_button": null
+                },
+                {
+                    "type": "Renren",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "show_button": null
+                },
+                {
+                    "type": "SinaWeibo",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "show_button": null
+                },
+                {
+                    "type": "GPlus",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "show_button": null
+                }
+            ],
+            "button_list": [
+                {
+                    "type": "Facebook",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "app_id": "247794892017801",
+                    "show_button": true
+                },
+                {
+                    "type": "Twitter",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "show_button": true
+                },
+                {
+                    "type": "Renren",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "show_button": false
+                },
+                {
+                    "type": "SinaWeibo",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "show_button": false
+                },
+                {
+                    "type": "GPlus",
+                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "link_url": "",
+                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "show_button": true
+                }
+            ]
+        },
+        "copyright": {
+            "type": "RichText",
+            "value": "Copyright 2013 jfo's planet"
+        }
+    },
+    "showStrikinglyLogo": false,
+    "submenu": {
+        "type": "SubMenu",
+        "list": [],
+        "components": {
+            "link": {
+                "type": "Button",
+                "url": "http://www.wordpress.com",
+                "text": "Blog",
+                "new_target": true
+            }
+        }
+    },
+    "showNavigationButtons": false
+}
+</script>
+<script type='text/javascript'>
+  //<![CDATA[
+(function() {
 
+ $(function() {
+   var slide_navigator, social_media_config;
+   social_media_config = new Bobcat.SocialMediaConfig({
+url: "http://www.strikingly.com/site13404-1361245793",
+fb_app_id: '247794892017801',
+title: "jfo's Site",
+image: "http://www.strikingly.com/assets/fb_images/original/missing.png",
+image_path: "//www.strikingly.com/assets/icons",
+description: null
+});
+   window.social_media_config = social_media_config;
+   slide_navigator = new Bobcat.Navigator();
+   window.slide_navigator = slide_navigator;
+   window.page_tranformers = new Bobcat.PageTransformer($('body'), false);
+   window.page_tranformers.transform();
+   window.edit_page = new Bobcat.ShowPage(data);
+   slide_navigator.init();
+   window.edit_page.init();
+   return $('input[name=authenticity_token]').val($('meta[name=csrf-token]').attr('content'));
+   });
 
-<body style="margin:0px;padding:0px;width:100%;height:100%;overflow:hidden;">
-<canvas id="c"></canvas>
-<audio id="music" autoplay="true" src="/sound/twins.mp3"></audio>
-</body>
+}).call(this);
+
+//]]>
+</script><script type="text/javascript">if (!NREUMQ.f) { NREUMQ.f=function() {
+NREUMQ.push(["load",new Date().getTime()]);
+var e=document.createElement("script");
+e.type="text/javascript";
+e.src=(("http:"===document.location.protocol)?"http:":"https:") + "//" +
+  "d1ros97qkrwjf5.cloudfront.net/42/eum/rum.js";
+document.body.appendChild(e);
+if(NREUMQ.a)NREUMQ.a();
+};
+NREUMQ.a=window.onload;window.onload=NREUMQ.f;
+};
+NREUMQ.push(["nrfj","beacon-3.newrelic.com","a6f3b4ef5c","1457598","cVgMFUdbVQkBFB5HVlVSEU5GXFYS",0,287,new Date().getTime(),"","","","",""]);</script></body>
+
+<!-- Mirrored from www.strikingly.com/site13404-1361245793 by HTTrack Website Copier/3.x [XR&CO'2010], Tue, 19 Feb 2013 04:00:39 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=utf-8" /><!-- /Added by HTTrack -->
 </html>
