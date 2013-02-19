@@ -11403,7 +11403,8 @@ function() {
       t.test(e) || n.test(e)
     },
     addProtocol: function(e) {
-      return $.trim(e).length === 0 ? e = "javascript:void(0);": this.isEmail(e) ? e = "mailto:" + e: this.hasProtocol(e) || (e = "http://" + e),
+      // by jfo, do *not* add 'http://' if has no protocol
+      return $.trim(e).length === 0 ? e = "javascript:void(0);": this.isEmail(e) ? e = "mailto:" + e: this.hasProtocol(e) || (e = /*"http://" + window.location.host +*/ e),
       e
     }
   },
@@ -12036,7 +12037,7 @@ function() {
     }
     return n(r, t),
     r.prototype.getSubtitle = function() {
-      return "人人喜欢"
+      return "浜轰汉鍠滄"
     },
     r.prototype.getTemplate = function() {
       var e, t;
@@ -12064,7 +12065,7 @@ function() {
     }
     return n(r, t),
     r.prototype.getSubtitle = function() {
-      return "新浪微博"
+      return "鏂版氮寰崥"
     },
     r.prototype.getTemplate = function() {
       var e, t, n, r, i;
@@ -12074,7 +12075,7 @@ function() {
         url: this.url(),
         type: "2",
         count: "1",
-        title: "看看这个眩出版！@SimplyStriking",
+        title: "鐪嬬湅杩欎釜鐪╁嚭鐗堬紒@SimplyStriking",
         pic: window.social_media_config.get("image"),
         rnd: (new Date).valueOf()
       },
