@@ -59,11 +59,11 @@
     <meta content="AmMOXhXM3juArpf41egdio4zNIty7FzPkAqnTtfQMoQ=" name="csrf-token" />
 	
 	<style>
-	  .game_icon {
-		width: 78px;
-		height: 78px;
-		margin: 5px;
-	  }
+    .game_icon {
+        width: 78px;
+        height: 78px;
+        margin: 5px;
+    }
 	</style>
   </head>
   <body class='show' id='pages' spellcheck='false'><script src="assets/pages_show-6f2bde04eedc158959ce874e5913f9c6.js" type="text/javascript"></script><script src="assets/themes/bright/main-394ab46dcdbb6fa62366b5dfe325c618.js" type="text/javascript"></script>
@@ -162,6 +162,10 @@
         <a class='section-anchor' data-scroll-name='#1'></a>
         <div class='wide gray'>
           <div class='container'>
+            <div class='sixteen columns'>
+              <h1 class='title'><div data-component='text' data-name='title' data-text-type='heading'></div></h1>
+              <div class='p'><div data-component='text' data-name='subtitle' data-text-type='body'></div></div>
+            </div>
             <div class='row'>
               <div class='sixteen columns'>
               </div>
@@ -188,6 +192,38 @@
 
         <li class='slide'>
         <a class='section-anchor' data-scroll-name='#2'></a>
+        <div class='wide'>
+          <div class='container'>
+            <div class='sixteen columns'>
+              <h1 class='title'><div data-component='text' data-name='title' data-text-type='heading'></div></h1>
+              <div class='p'><div data-component='text' data-name='subtitle' data-text-type='body'></div></div>
+            </div>
+            <div class='row'>
+              <div class='sixteen columns'>
+              </div>
+              <div class='features'><div class="features content repeatable-component" data-bind="template: {
+                  foreach: features.list, 
+                  name: &#x27;client_box&#x27;
+                  }, sortableRepeatable: features.list"></div></div>
+            </div>
+          </div>
+        </div>
+        <script data-component='repeatable_item_template' id='client_box' type='text/x-jquery-tmpl'>
+          <div class='eight columns repeatable feature' data-bind='sortableItem: $data, mouseenter: mouseenterHandler, mouseleave: mouseleaveHandler'>
+
+            <div class='feature-box image game_icon' data-component='image' data-name='components.image' data-use-url='true'>
+              <img src='assets/icons/transparent.png'>
+            </div>
+            <div class='feature-box'>
+              <h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3>
+              <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
+            </div>
+          </div>
+        </script>
+        </li>
+
+        <li class='slide'>
+        <a class='section-anchor' data-scroll-name='#3'></a>
         <div class='wide gray'>
           <div class='container'>
             <div class='sixteen columns'>
@@ -662,12 +698,12 @@
                 },
                 "title": {
                     "type": "RichText",
-                    "value": "Title Text",
+                    "value": "Games",
                     "text_type": "heading"
                 },
                 "subtitle": {
                     "type": "RichText",
-                    "value": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit",
+                    "value": "<br/>",
                     "text_type": "body"
                 },
                 "features": {
@@ -977,6 +1013,80 @@
         {
             "type": "Slide",
             "template_id": null,
+            "template_name": "bright_features",
+            "components": {
+                "slideSettings": {
+                    "type": "SlideSettings",
+                    "name": "Other",
+                    "show_nav": true
+                },
+                "title": {
+                    "type": "RichText",
+                    "value": "Other",
+                    "text_type": "heading"
+                },
+                "subtitle": {
+                    "type": "RichText",
+                    "value": "<br/>",
+                    "text_type": "body"
+                },
+                "features": {
+                    "type": "Repeatable",
+                    "list": [
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "image": {
+                                    "type": "Image",
+                                    "thumb_url": "",
+                                    "url": "/static/other/GoogleSearchUrlFilter_snap.jpg",
+                                    "image_type": "medium",
+                                    "caption": "",
+                                    "description": "",
+                                    "link_url": "/static/other/GoogleSearchUrlFilter.crx",
+                                    "new_target": 1
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "去除谷歌搜索结果重定向Google Search Result URL Filter",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "Chrome插件v1.0<br/>去除搜索结果链接地址中的Google跳转，直接进入目标页面。搜索结果链接地址在进入目标页面之前，会先跳转至Google自己的统计网站，然而在国内Google往往被墙，导致搜索出的结果就在眼前却打不开页面。本插件的作用就是彻底移除Google加入的统计链接跳转，点击直接进入目标页面。",
+                                    "text_type": "body"
+                                }
+                            }
+                        }
+                    ],
+                    "components": {
+                        "image": {
+                            "type": "Image",
+                            "thumb_url": "",
+                            "url": "/static/game/phone.png",
+                            "image_type": "medium",
+                            "caption": "",
+                            "description": "",
+                            "link_url": "",
+                            "new_target": null
+                        },
+                        "title": {
+                            "type": "RichText",
+                            "value": "Heading",
+                            "text_type": "heading"
+                        },
+                        "description": {
+                            "type": "RichText",
+                            "value": "A body paragraph.",
+                            "text_type": "body"
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "type": "Slide",
+            "template_id": null,
             "template_name": "bright_contact_form",
             "components": {
                 "slideSettings": {
@@ -991,7 +1101,7 @@
                 },
                 "subtitle": {
                     "type": "RichText",
-                    "value": "Lorem ipsum dolor sit amet, consectetuer adipiscing elit",
+                    "value": "For questions and inquiries, please email <a href='mailto:jfojfo@gmail.com'>me</a>",
                     "text_type": "body"
                 },
                 "email": {
@@ -1049,9 +1159,9 @@
                 },
                 {
                     "type": "Twitter",
-                    "url": "http://www.strikingly.com/site13404-1361245793",
+                    "url": "http://jfojfo.github.com",
                     "link_url": "",
-                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                    "share_text": "Here is jfo's planet, follow me on twitter @jfojfo",
                     "show_button": null
                 },
                 {
@@ -1087,6 +1197,13 @@
                 },
                 {
                     "type": "Twitter",
+                    "url": "http://jfojfo.github.com",
+                    "link_url": "",
+                    "share_text": "Here is jfo's planet, follow me on twitter @jfojfo",
+                    "show_button": true
+                },
+                {
+                    "type": "GPlus",
                     "url": "http://www.strikingly.com/site13404-1361245793",
                     "link_url": "",
                     "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
@@ -1097,17 +1214,10 @@
                     "url": "http://www.strikingly.com/site13404-1361245793",
                     "link_url": "",
                     "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
-                    "show_button": false
+                    "show_button": true
                 },
                 {
                     "type": "SinaWeibo",
-                    "url": "http://www.strikingly.com/site13404-1361245793",
-                    "link_url": "",
-                    "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
-                    "show_button": false
-                },
-                {
-                    "type": "GPlus",
                     "url": "http://www.strikingly.com/site13404-1361245793",
                     "link_url": "",
                     "share_text": "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
@@ -1143,11 +1253,11 @@
  $(function() {
    var slide_navigator, social_media_config;
    social_media_config = new Bobcat.SocialMediaConfig({
-url: "http://www.strikingly.com/site13404-1361245793",
+url: "http://jfojfo.github.com",
 fb_app_id: '247794892017801',
 title: "jfo's Site",
-image: "http://www.strikingly.com/assets/fb_images/original/missing.png",
-image_path: "//www.strikingly.com/assets/icons",
+image: "http://jfojfo.github.com/assets/themes/bright/linux_penguin.jpg",
+image_path: "/assets/icons",
 description: null
 });
    window.social_media_config = social_media_config;

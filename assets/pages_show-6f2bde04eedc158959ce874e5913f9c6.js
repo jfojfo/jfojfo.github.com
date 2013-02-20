@@ -12049,7 +12049,7 @@ function() {
         image: window.social_media_config.get("image")
       };
       for (t in e) this.p.push(t + "=" + encodeURIComponent(e[t] || ""));
-      return '<div class="col renren-counter"><iframe scrolling="no" frameborder="0" allowtransparency="true" src="https://www.connect.renren.com/like/v2?' + this.p.join("&") + '" style="width:130px;height:24px;"></iframe></div>'
+      return '<div class="col renren-counter"><iframe scrolling="no" frameborder="0" allowtransparency="true" src="http://www.connect.renren.com/like/v2?' + this.p.join("&") + '" style="width:130px;height:24px;"></iframe></div>'
     },
     r.prototype.runScript = function() {},
     r.prototype.reRender = function() {},
@@ -12069,19 +12069,19 @@ function() {
     },
     r.prototype.getTemplate = function() {
       var e, t, n, r, i;
-      i = 90,
+      i = 72,
       r = 24,
       t = {
         url: this.url(),
-        type: "2",
+        type: "3",
         count: "1",
-        title: "看看这个眩出版！@SimplyStriking",
+        title: "看看这个吧！@jfojfo",
         pic: window.social_media_config.get("image"),
         rnd: (new Date).valueOf()
       },
       n = [];
       for (e in t) n.push(e + "=" + encodeURIComponent(t[e] || ""));
-      return '<div class="col sinaweibo-counter"><iframe allowTransparency="true" frameborder="0" scrolling="no" src="https://hits.sinajs.cn/A1/weiboshare.html?' + n.join("&") + '" width="' + i + '" height="' + r + '"></iframe></div>'
+      return '<div class="col sinaweibo-counter"><iframe allowTransparency="true" frameborder="0" scrolling="no" src="http://hits.sinajs.cn/A1/weiboshare.html?' + n.join("&") + '" width="' + i + '" height="' + r + '"></iframe></div>'
     },
     r.prototype.runScript = function() {},
     r.prototype.reRender = function() {},
