@@ -160,38 +160,50 @@
 
         <li class='slide'>
         <a class='section-anchor' data-scroll-name='#1'></a>
-        <div class='wide gray'>
+        <div class='wide'>
           <div class='container'>
-            <div class='sixteen columns'>
-              <h1 class='title'><div data-component='text' data-name='title' data-text-type='heading'></div></h1>
-              <div class='p'><div data-component='text' data-name='subtitle' data-text-type='body'></div></div>
+            <div class='row'>
+              <div class='sixteen columns clearfix'>
+                <h1 class='title'><div data-component='text' data-name='title' data-text-type='heading'>Title Text</div></h1>
+                <div class='p'><div data-component='text' data-name='subtitle' data-text-type='body'>Lorem ipsum dolor sit amet, consectetuer adipiscing elit</div></div>
+              </div>
             </div>
             <div class='row'>
-              <div class='sixteen columns'>
-              </div>
               <div class='features'><div class="features content repeatable-component" data-bind="template: {
                   foreach: features.list, 
-                  name: &#x27;client_box&#x27;
+                  name: &#x27;feature_box_big&#x27;
                   }, sortableRepeatable: features.list"></div></div>
             </div>
           </div>
         </div>
-        <script data-component='repeatable_item_template' id='client_box' type='text/x-jquery-tmpl'>
-          <div class='eight columns repeatable feature' data-bind='sortableItem: $data, mouseenter: mouseenterHandler, mouseleave: mouseleaveHandler'>
+        <script data-component='repeatable_item_template' id='feature_box_big' type='text/x-jquery-tmpl'>
+          <div class='row big repeatable' data-bind='sortableItem: $data, mouseenter: mouseenterHandler, mouseleave: mouseleaveHandler'>
 
-            <div class='feature-box image game_icon' data-component='image' data-name='components.image' data-use-url='true'>
-              <img src='assets/icons/transparent.png'>
-            </div>
-            <div class='feature-box'>
+            <div class='six columns' data-bind='visible: !isEven()'>
               <h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3>
               <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
+            </div>
+            <div class='six columns' data-bind='visible: isEven()'>
+              <h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3>
+              <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
+            </div>
+            <div class='ten columns'>
+              <div class="components.media content"><div class='content'>
+                  <div class='video-content' data-bind='visible: components.media.showVideo()'>
+                    <div class='player' data-bind='html: components.media.video.html'></div>
+                  </div>
+                  <div class='image-content' data-bind='visible: components.media.showImage()' data-component='image' data-name='components.media.image' data-use-url='true'>
+                    <img alt="Transparent" data-bind="attr: { src: components.media.image.url, alt: components.media.image.caption }" src="assets/icons/transparent-646dc08a9b2d44aa74bf29cd18f5e9a5.png" />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </script>
         </li>
 
         <li class='slide'>
-        <a class='section-anchor' data-scroll-name='#2'></a>
+        <a class='section-anchor' data-scroll-name='#1'></a>
         <div class='wide'>
           <div class='container'>
             <div class='sixteen columns'>
@@ -223,8 +235,40 @@
         </li>
 
         <li class='slide'>
-        <a class='section-anchor' data-scroll-name='#3'></a>
-        <div class='wide gray'>
+        <a class='section-anchor' data-scroll-name='#1'></a>
+        <div class='wide'>
+          <div class='container'>
+            <div class='sixteen columns'>
+              <h1 class='title'><div data-component='text' data-name='title' data-text-type='heading'></div></h1>
+              <div class='p'><div data-component='text' data-name='subtitle' data-text-type='body'></div></div>
+            </div>
+            <div class='row'>
+              <div class='sixteen columns'>
+              </div>
+              <div class='features'><div class="features content repeatable-component" data-bind="template: {
+                  foreach: features.list, 
+                  name: &#x27;client_box&#x27;
+                  }, sortableRepeatable: features.list"></div></div>
+            </div>
+          </div>
+        </div>
+        <script data-component='repeatable_item_template' id='client_box' type='text/x-jquery-tmpl'>
+          <div class='eight columns repeatable feature' data-bind='sortableItem: $data, mouseenter: mouseenterHandler, mouseleave: mouseleaveHandler'>
+
+            <div class='feature-box image game_icon' data-component='image' data-name='components.image' data-use-url='true'>
+              <img src='assets/icons/transparent.png'>
+            </div>
+            <div class='feature-box'>
+              <h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3>
+              <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
+            </div>
+          </div>
+        </script>
+        </li>
+
+        <li class='slide'>
+        <a class='section-anchor' data-scroll-name='#1'></a>
+        <div class='wide'>
           <div class='container'>
             <div class='sixteen columns'>
               <h1 class='title'><div data-component='text' data-name='title' data-text-type='heading'> CONTACT US </div></h1>
@@ -686,6 +730,100 @@
                 }
             }
         },*/
+        {
+            "type": "Slide",
+            "template_id": null,
+            "template_name": "bright_features_big",
+            "components": {
+                "slideSettings": {
+                    "type": "SlideSettings",
+                    "name": "Projects",
+                    "show_nav": true
+                },
+                "title": {
+                    "type": "RichText",
+                    "value": "Projects",
+                    "text_type": "heading"
+                },
+                "subtitle": {
+                    "type": "RichText",
+                    "value": "",
+                    "text_type": "body"
+                },
+                "features": {
+                    "type": "Repeatable",
+                    "list": [
+                        {
+                            "type": "RepeatableItem",
+                            "components": {
+                                "media": {
+                                    "type": "Media",
+                                    "video": {
+                                        "type": "Video",
+                                        "html": "<iframe src=\"http://player.vimeo.com/video/12236680?title=1&byline=1&portrait=1\" width=\"700\" height=\"394\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>",
+                                        "url": "http://vimeo.com/12236680",
+                                        "maxwidth": 700
+                                    },
+                                    "image": {
+                                        "type": "Image",
+                                        "thumb_url": "",
+                                        "url": "/static/project/project_favorite_snap.jpg",
+                                        "image_type": "large",
+                                        "caption": "",
+                                        "description": "",
+                                        "link_url": "http://pickbox.github.com",
+                                        "new_target": true
+                                    },
+                                    "current": "image"
+                                },
+                                "title": {
+                                    "type": "RichText",
+                                    "value": "★★★★☆<br/>网页收藏夹 PickBox - pick as you wish",
+                                    "text_type": "heading"
+                                },
+                                "description": {
+                                    "type": "RichText",
+                                    "value": "个人网页收藏夹，帮助您管理网址，不论在何处使用哪台设备，只要打开pickbox即可访问你收藏已久的网址，可快速添加、删除、分组，支持云端同步、导入导出网址列表。<br/>Drop it in and pick up anywhere as you wish.",
+                                    "text_type": "body"
+                                }
+                            }
+                        }
+                    ],
+                    "components": {
+                        "media": {
+                            "type": "Media",
+                            "video": {
+                                "type": "Video",
+                                "html": "<iframe src=\"http://player.vimeo.com/video/12236680?title=1&byline=1&portrait=1\" width=\"700\" height=\"394\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>",
+                                "url": "http://vimeo.com/12236680",
+                                "maxwidth": 700
+                            },
+                            "image": {
+                                "type": "Image",
+                                "thumb_url": "",
+                                "url": "/assets/themes/bright/land.jpg",
+                                "image_type": "large",
+                                "caption": "",
+                                "description": "",
+                                "link_url": "",
+                                "new_target": null
+                            },
+                            "current": "image"
+                        },
+                        "title": {
+                            "type": "RichText",
+                            "value": "o Heading",
+                            "text_type": "heading"
+                        },
+                        "description": {
+                            "type": "RichText",
+                            "value": "A body paragraph.",
+                            "text_type": "body"
+                        }
+                    }
+                }
+            }
+        },
         {
             "type": "Slide",
             "template_id": null,
@@ -1274,7 +1412,17 @@ description: null
 }).call(this);
 
 //]]>
-</script><script type="text/javascript">if (!NREUMQ.f) { NREUMQ.f=function() {
+</script>
+<script type="text/javascript">
+$(".wide:even").addClass("gray");
+var i = 0;
+$(".section-anchor").each(function(){
+  ++i;
+  $(this).attr("data-scroll-name", '#' + i);
+});
+</script>
+
+<script type="text/javascript">if (!NREUMQ.f) { NREUMQ.f=function() {
 NREUMQ.push(["load",new Date().getTime()]);
 var e=document.createElement("script");
 e.type="text/javascript";
