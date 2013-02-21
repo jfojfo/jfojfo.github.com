@@ -179,12 +179,8 @@
         <script data-component='repeatable_item_template' id='feature_box_big' type='text/x-jquery-tmpl'>
           <div class='row big repeatable' data-bind='sortableItem: $data, mouseenter: mouseenterHandler, mouseleave: mouseleaveHandler'>
 
-            <div class='six columns' data-bind='visible: !isEven()'>
-              <h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3>
-              <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
-            </div>
             <div class='six columns' data-bind='visible: isEven()'>
-              <h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3>
+              <a data-bind="attr: { href: components.media.image.link_url, target: components.media.image.new_target}"><h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3></a>
               <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
             </div>
             <div class='ten columns'>
@@ -197,6 +193,10 @@
                   </div>
                 </div>
               </div>
+            </div>
+            <div class='six columns' data-bind='visible: !isEven()'>
+              <a data-bind="attr: { href: components.media.image.link_url, target: components.media.image.new_target}"><h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3></a>
+              <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
             </div>
           </div>
         </script>
@@ -772,7 +772,7 @@
                                         "caption": "",
                                         "description": "",
                                         "link_url": "http://pickbox.github.com",
-                                        "new_target": true
+                                        "new_target": '_blank'
                                     },
                                     "current": "image"
                                 },
