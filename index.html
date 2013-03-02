@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Bootstrap 101 Template</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="content-type" content="text/html;charset=utf-8" />
+    <link href='favicon.ico' rel='shortcut icon' type='image/x-icon'>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <style>
+        .game_icon {
+            width: 78px;
+            height: 78px;
+            margin: 5px;
+        }
+        .bg {
+            background-color: #f5f5f5;
+        }
+        .navbar-inner {
+            -webkit-border-radius: 0;
+            -moz-border-radius: 0;
+            border-radius: 0;
+        }
+    </style>
+    <!-- <link href="css/bootstrap-responsive.css" rel="stylesheet"> -->
+  </head>
+
+  <body style="padding: 60px;">
+
+    <div data-template-header>
+      <div class="navbar navbar-fixed-top">
+        <div class="navbar-inner">
+          <div class="container">
+            <a class="brand" data-component="text" data-name="title" href="#"></a>
+            <ul class="nav" data-component="repeatable" data-name="list" data-template="header-list-item">
+            </ul>
+            <ul class="nav pull-right">
+              <li>
+                <a href="#3">Link3</a>
+              </li>
+            </ul>
+            <script data-component='repeatable_item_template' id='header-list-item' type='text/x-jquery-tmpl'>
+              <li data-bind="click: onActive"
+                <% if (first()) { %>
+                  class="active"
+                <% } %>
+              >
+                <a href="#<%= id %>" data-toggle="pill"><%= name %></a>
+              </li>
+            </script>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="row-fluid">
+        <div class="span2 bg img-rounded" style="max-width: 340px; padding: 8px 0;">
+          <ul class="nav nav-list">
+            <li class="active">
+              <a href="#" data-toggle="pill"><i class="icon-home"></i> Home</a>
+            </li>
+            <li>
+              <a href="#" data-toggle="pill"><i class="icon-book"></i> Library</a>
+            </li>
+            <li>
+              <a href="#" data-toggle="pill"><i class="icon-pencil"></i> Applications</a>
+            </li>
+            <li>
+              <a href="#" data-toggle="pill"><i class="i"></i> Misc</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="span10 bg img-rounded">
+          <div data-template-id="home" data-bind="visible: first()">
+          </div>
+          <div data-template-id="projects" data-bind="visible: first()">
+
+            <div class='row-fluid'>
+              <div class='span12'>
+                <h1 class='title'>
+                <div data-component='text' data-name='title' data-text-type='heading'>
+                </div></h1>
+                <div class='p'>
+                  <div data-component='text' data-name='subtitle' data-text-type='body'>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class='row-fluid'>
+              <div class='features span12'>
+                <div data-component="repeatable" data-name="features.list" data-template="feature_box_big"></div>
+              </div>
+            </div>
+            <script data-component='repeatable_item_template' id='feature_box_big' type='text/x-jquery-tmpl'>
+              <div class='span6 row-fluid'>
+                <h3 class='span12'><div data-component='text' data-name='title' data-text-type='heading'>
+                  Title Text
+                </div></h3>
+                <div class='span12' data-component='text' data-name='description' data-text-type='body'>
+                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit
+                </div>
+              </div>
+              <img class="span6" style="margin:0px;" href="<%= components.media.image.link_url %>" src="<%= components.media.image.url %>" />
+            </script>
+
+            <!--div class='row-fluid'>
+              <div class='features'>
+                <div data-component="repeatable" data-bind="template: {
+                foreach: features.list,
+                name: &#x27;feature_box_big&#x27;
+                }, sortableRepeatable: features.list"></div>
+              </div>
+            </div>
+            <script data-component='repeatable_item_template' id='feature_box_big2' type='text/x-jquery-tmpl'>
+              <div class='row big repeatable' data-bind='sortableItem: $data, mouseenter: mouseenterHandler, mouseleave: mouseleaveHandler'>
+    
+                <div class='six columns' data-bind='visible: isEven()'>
+                  <a data-bind="attr: { href: components.media.image.link_url, target: components.media.image.new_target}"><h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3></a>
+                  <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
+                </div>
+                <div class='ten columns'>
+                  <div class="components.media content"><div class='content'>
+                      <div class='video-content' data-bind='visible: components.media.showVideo()'>
+                        <div class='player' data-bind='html: components.media.video.html'></div>
+                      </div>
+                      <div class='image-content' data-bind='visible: components.media.showImage()' data-component='image' data-name='components.media.image' data-use-url='true'>
+                        <img alt="Transparent" data-bind="attr: { src: components.media.image.url, alt: components.media.image.caption }" src="assets/icons/transparent-646dc08a9b2d44aa74bf29cd18f5e9a5.png" />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class='six columns' data-bind='visible: !isEven()'>
+                  <a data-bind="attr: { href: components.media.image.link_url, target: components.media.image.new_target}"><h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3></a>
+                  <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
+                </div>
+              </div>
+            </script-->
+
+          </div>
+
+          <div data-template-id="games" data-bind="visible: first()">
+            <div class='row-fluid'>
+              <div class='span12'>
+                <h1>
+                <div data-component='text' data-name='title' data-text-type='heading'>
+                </div></h1>
+                <div>
+                  <div data-component='text' data-name='subtitle' data-text-type='body'>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class='row-fluid'>
+              <div class='span12'>
+                <div data-component="repeatable" data-name="features.list" data-template="feature_box_big"></div>
+              </div>
+            </div>
+            <script data-component='repeatable_item_template' id='feature_box_big' type='text/x-jquery-tmpl'>
+              <div class='span5'>
+                <div class='row-fluid'>
+                  <div class="span3">
+                    <img class="img-rounded game_icon" href="<%= components.image.link_url %>" src="<%= components.image.url %>" />
+                  </div>
+                  <div class='span9'>
+                    <div class='row-fluid'>
+                      <h3 class='span12'><div data-component='text' data-name='title' data-text-type='heading'>
+                      </div></h3>
+                      <div class='span12' data-component='text' data-name='description' data-text-type='body'>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </script>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+    <script type='text/javascript'>
+        var data = {
+            "type" : "PageData",
+            "theme" : "bright",
+            "horizontal" : false,
+            "showNav" : true,
+            "navFont" : "",
+            "titleFont" : "",
+            "logoFont" : "",
+            "bodyFont" : "Arial",
+            "headingFont" : "Brandon",
+            "fixedSocialMedia" : false,
+            "showButtons" : true,
+            "slides" : [
+            {
+                "type" : "Slide",
+                "template_id" : "home",
+                "components" : {
+                    "slideSettings" : {
+                        "type" : "SlideSettings",
+                        "name" : "Home",
+                        "show_nav" : true
+                    }
+                }
+            },
+            {
+                "type" : "Slide",
+                "template_id" : "projects",
+                "template_name" : "bright_features_big",
+                "components" : {
+                    "slideSettings" : {
+                        "type" : "SlideSettings",
+                        "name" : "Projects",
+                        "show_nav" : true
+                    },
+                    "title" : {
+                        "type" : "RichText",
+                        "value" : "项目",
+                        "text_type" : "heading"
+                    },
+                    "subtitle" : {
+                        "type" : "RichText",
+                        "value" : "这个页面收集了我创建的一些项目，此页面会不断更新或变化，敬请留意。",
+                        "text_type" : "body"
+                    },
+                    "features" : {
+                        "type" : "Repeatable",
+                        "list" : [{
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "media" : {
+                                    "type" : "Media",
+                                    "video" : {
+                                        "type" : "Video",
+                                        "html" : "<iframe src=\"http://player.vimeo.com/video/12236680?title=1&byline=1&portrait=1\" width=\"700\" height=\"394\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>",
+                                        "url" : "http://vimeo.com/12236680",
+                                        "maxwidth" : 700
+                                    },
+                                    "image" : {
+                                        "type" : "Image",
+                                        "thumb_url" : "",
+                                        "url" : "/static/project/project_favorite_snap.jpg",
+                                        "image_type" : "large",
+                                        "caption" : "",
+                                        "description" : "",
+                                        "link_url" : "http://pickbox.github.com",
+                                        "new_target" : '_blank'
+                                    },
+                                    "current" : "image"
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "★★★★☆<br/>网页收藏夹 PickBox - pick as you wish",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "个人网页收藏夹，帮助您管理网址，不论在何处使用哪台设备，只要打开pickbox即可访问你收藏已久的网址，可快速添加、删除、分组，支持云端同步、导入导出网址列表。<br/>Drop it in and pick up anywhere as you wish.",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }],
+                        "components" : {
+                            "media" : {
+                                "type" : "Media",
+                                "video" : {
+                                    "type" : "Video",
+                                    "html" : "<iframe src=\"http://player.vimeo.com/video/12236680?title=1&byline=1&portrait=1\" width=\"700\" height=\"394\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>",
+                                    "url" : "http://vimeo.com/12236680",
+                                    "maxwidth" : 700
+                                },
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/assets/themes/bright/land.jpg",
+                                    "image_type" : "large",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "",
+                                    "new_target" : null
+                                },
+                                "current" : "image"
+                            },
+                            "title" : {
+                                "type" : "RichText",
+                                "value" : "o Heading",
+                                "text_type" : "heading"
+                            },
+                            "description" : {
+                                "type" : "RichText",
+                                "value" : "A body paragraph.",
+                                "text_type" : "body"
+                            }
+                        }
+                    }
+                }
+            }, {
+                "type" : "Slide",
+                "template_id" : "games",
+                "template_name" : "bright_features",
+                "components" : {
+                    "slideSettings" : {
+                        "type" : "SlideSettings",
+                        "name" : "Games",
+                        "show_nav" : true
+                    },
+                    "title" : {
+                        "type" : "RichText",
+                        "value" : "小游戏",
+                        "text_type" : "heading"
+                    },
+                    "subtitle" : {
+                        "type" : "RichText",
+                        "value" : "休闲娱乐小游戏",
+                        "text_type" : "body"
+                    },
+                    "features" : {
+                        "type" : "Repeatable",
+                        "list" : [{
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/kof_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/kof.swf",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "拳皇wing1.8",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "拳皇wing1.8火爆登场!加入新角色《侍魂》主角-霸王丸，成为第二名使用刀剑的角色，除了霸王丸的降临之外，里八神的改进也是一个大亮点，平衡性好了,里八神的百合折、玉决、八咫鸟都改良好了，表隆的空中波动不能发出的BUG也修好了，阿修罗闪空的残像已修复，库拉的空中钻石射击不能发出的BUG也修好。拳皇wing系列一直以来都是flash格斗游戏巅峰之作，简易操作性、强劲打击感、爽快连续技、原创必杀技。",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/kof_unbeatable_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/kof_unbeatable.swf",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "拳皇wing1.8无敌版",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "拳皇wing1.8无敌版，血量无限，能量无限！！拳皇wing1.8中加入新角色《侍魂》主角-霸王丸，成为第二名使用刀剑的角色。拳皇wing系列一直以来都是flash格斗游戏巅峰之作，简易操作性、强劲打击感、爽快连续技、原创必杀技。",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/hundouluo2013_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/hundouluo2013.swf",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "魂斗罗2013",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "魂斗罗2013无敌版，生命数无限，关卡全开。魂斗罗2013版，全新内容。散弹枪，喷火器，雷电枪，火箭筒。打BOSS更加轻松，BOSS战激动人心，喜欢魂斗罗系列的朋友都来玩哦！",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/kof_guoguan_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/hundouluo2013.swf",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "拳皇大战之饿狼来袭无敌版",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "无限生命，尽情游戏！拳皇人气角色特瑞·伯格登场，强力技能绝对冲击，此版本只是在原有版本基础上加入了新角色，更丰富的游戏要素还在制作中，下个版将是一个全新的游戏，包括上下移动、技能学习等，敬请期待！",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/dicewar_snap.png",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/dice.swf",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "Dicewar",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "经典益智游戏，一开始先选择几个玩家玩？玩家是紫色骰子，要把所有的地都占领就获胜，没有领地就输出了。轮到玩家的时候，首先选择一块自己的地，然后选对手的地攻击。用两块地的骰子掷骰子的结果判断胜负，平手的话攻击方算输出。赢的话留下一个骰子，剩下的骰子前进到得到的那块地。",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/spira-defense_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/spira-defense/spira-defense.html",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "旋转塔防Spira Defense",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "一款经典的超级塔防游戏，点击中心的小圈进行建造防御来消灭周围的方块",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/lianliankan_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/lianliankan.swf",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "宠物连连看",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "经典游戏，在有限的时间内消掉出现的所有图案即可过关。",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/chain_reaction_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/chain_reaction/GameChainReaction.html",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "连锁反应Chain Reaction",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "一堆小球在乱飞，通过鼠标可以在任意位置放置一个大圈，当小球碰到大圈后，就会膨胀，这样逐渐的形成一个反应链。每一关会给固定数目的小球，当目标个数个小球参与反应后，即可通过该关，没过的话可以重试。每个球膨胀后，在一定时间后会消失，所以第一个球的位置很重要！",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/breakIO_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/breakIO/index.html",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "打方块",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "此消彼长，最后剩下单一颜色色的球算你赢，打打看。",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/salary_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/salary.swf",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "加薪啦",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "加薪啦，看看自己今年加薪多少吧。<br/><br/><br/><br/>",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }, {
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/game/hearthurt_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/game/hearthurt/index.html",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "眼疾手快",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "躲避x的进攻，不要碰到任何移动的x，到后面x会越来越多，挑战你的极限，看能撑到多久。",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }],
+                        "components" : {
+                            "image" : {
+                                "type" : "Image",
+                                "thumb_url" : "",
+                                "url" : "/static/game/phone.png",
+                                "image_type" : "medium",
+                                "caption" : "",
+                                "description" : "",
+                                "link_url" : "",
+                                "new_target" : null
+                            },
+                            "title" : {
+                                "type" : "RichText",
+                                "value" : "Heading",
+                                "text_type" : "heading"
+                            },
+                            "description" : {
+                                "type" : "RichText",
+                                "value" : "A body paragraph.",
+                                "text_type" : "body"
+                            }
+                        }
+                    }
+                }
+            }, {
+                "type" : "Slide",
+                "template_id" : null,
+                "template_name" : "bright_features",
+                "components" : {
+                    "slideSettings" : {
+                        "type" : "SlideSettings",
+                        "name" : "Other",
+                        "show_nav" : true
+                    },
+                    "title" : {
+                        "type" : "RichText",
+                        "value" : "Other",
+                        "text_type" : "heading"
+                    },
+                    "subtitle" : {
+                        "type" : "RichText",
+                        "value" : "<br/>",
+                        "text_type" : "body"
+                    },
+                    "features" : {
+                        "type" : "Repeatable",
+                        "list" : [{
+                            "type" : "RepeatableItem",
+                            "components" : {
+                                "image" : {
+                                    "type" : "Image",
+                                    "thumb_url" : "",
+                                    "url" : "/static/other/GoogleSearchUrlFilter_snap.jpg",
+                                    "image_type" : "medium",
+                                    "caption" : "",
+                                    "description" : "",
+                                    "link_url" : "/static/other/GoogleSearchUrlFilter.crx",
+                                    "new_target" : 1
+                                },
+                                "title" : {
+                                    "type" : "RichText",
+                                    "value" : "去除谷歌搜索结果重定向Google Search Result URL Filter",
+                                    "text_type" : "heading"
+                                },
+                                "description" : {
+                                    "type" : "RichText",
+                                    "value" : "Chrome插件v1.0<br/>去除搜索结果链接地址中的Google跳转，直接进入目标页面。搜索结果链接地址在进入目标页面之前，会先跳转至Google自己的统计网站，然而在国内Google往往被墙，导致搜索出的结果就在眼前却打不开页面。本插件的作用就是彻底移除Google加入的统计链接跳转，点击直接进入目标页面。",
+                                    "text_type" : "body"
+                                }
+                            }
+                        }],
+                        "components" : {
+                            "image" : {
+                                "type" : "Image",
+                                "thumb_url" : "",
+                                "url" : "/static/game/phone.png",
+                                "image_type" : "medium",
+                                "caption" : "",
+                                "description" : "",
+                                "link_url" : "",
+                                "new_target" : null
+                            },
+                            "title" : {
+                                "type" : "RichText",
+                                "value" : "Heading",
+                                "text_type" : "heading"
+                            },
+                            "description" : {
+                                "type" : "RichText",
+                                "value" : "A body paragraph.",
+                                "text_type" : "body"
+                            }
+                        }
+                    }
+                }
+            }, {
+                "type" : "Slide",
+                "template_id" : null,
+                "template_name" : "bright_contact_form",
+                "components" : {
+                    "slideSettings" : {
+                        "type" : "SlideSettings",
+                        "name" : "Contact",
+                        "show_nav" : true
+                    },
+                    "title" : {
+                        "type" : "RichText",
+                        "value" : "<div>CONTACT US</div>",
+                        "text_type" : "heading"
+                    },
+                    "subtitle" : {
+                        "type" : "RichText",
+                        "value" : "For questions and inquiries, please email <a href='mailto:jfojfo@gmail.com'>me</a>",
+                        "text_type" : "body"
+                    },
+                    "email" : {
+                        "type" : "EmailForm",
+                        "hideMessageBox" : null,
+                        "recipient" : "",
+                        "name_label" : "Name",
+                        "email_label" : "Email",
+                        "message_label" : "Message"
+                    }
+                }
+            }],
+            "new_page" : false,
+            "showFooter" : true,
+            "theme_id" : null,
+            "menu" : {
+                "type" : "Menu",
+                "logo" : null,
+                "components" : {
+                    "list" : [],
+                    "logo" : {
+                        "type" : "Image",
+                        "thumb_url" : "",
+                        "url" : "/assets/themes/bright/linux_penguin.jpg",
+                        "image_type" : "small",
+                        "caption" : "",
+                        "description" : "",
+                        "link_url" : "",
+                        "new_target" : null
+                    },
+                    "title" : {
+                        "type" : "RichText",
+                        "value" : "jfo's planet",
+                        "text_type" : "title"
+                    },
+                    "subtitle" : {
+                        "type" : "RichText",
+                        "value" : "Title Text",
+                        "text_type" : "heading"
+                    }
+                }
+            },
+            "footer" : {
+                "type" : "Footer",
+                "socialMedia" : {
+                    "type" : "SocialMediaList",
+                    "link_list" : [{
+                        "type" : "Facebook",
+                        "url" : "http://www.strikingly.com/site13404-1361245793",
+                        "link_url" : "",
+                        "share_text" : "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                        "app_id" : "247794892017801",
+                        "show_button" : null
+                    }, {
+                        "type" : "Twitter",
+                        "url" : "http://jfojfo.github.com",
+                        "link_url" : "",
+                        "share_text" : "Here is jfo's planet, follow me on twitter @jfojfo",
+                        "show_button" : null
+                    }, {
+                        "type" : "Renren",
+                        "url" : "http://www.strikingly.com/site13404-1361245793",
+                        "link_url" : "",
+                        "share_text" : "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                        "show_button" : null
+                    }, {
+                        "type" : "SinaWeibo",
+                        "url" : "http://www.strikingly.com/site13404-1361245793",
+                        "link_url" : "",
+                        "share_text" : "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                        "show_button" : null
+                    }, {
+                        "type" : "GPlus",
+                        "url" : "http://www.strikingly.com/site13404-1361245793",
+                        "link_url" : "",
+                        "share_text" : "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                        "show_button" : null
+                    }],
+                    "button_list" : [{
+                        "type" : "Facebook",
+                        "url" : "http://www.strikingly.com/site13404-1361245793",
+                        "link_url" : "",
+                        "share_text" : "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                        "app_id" : "247794892017801",
+                        "show_button" : true
+                    }, {
+                        "type" : "Twitter",
+                        "url" : "http://jfojfo.github.com",
+                        "link_url" : "",
+                        "share_text" : "Here is jfo's planet, follow me on twitter @jfojfo",
+                        "show_button" : true
+                    }, {
+                        "type" : "GPlus",
+                        "url" : "http://www.strikingly.com/site13404-1361245793",
+                        "link_url" : "",
+                        "share_text" : "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                        "show_button" : true
+                    }, {
+                        "type" : "Renren",
+                        "url" : "http://www.strikingly.com/site13404-1361245793",
+                        "link_url" : "",
+                        "share_text" : "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                        "show_button" : true
+                    }, {
+                        "type" : "SinaWeibo",
+                        "url" : "http://www.strikingly.com/site13404-1361245793",
+                        "link_url" : "",
+                        "share_text" : "Spotted an one pager on Striking.ly, Check it out @SimplyStriking",
+                        "show_button" : true
+                    }]
+                },
+                "copyright" : {
+                    "type" : "RichText",
+                    "value" : "Copyright 2013 jfo's planet"
+                }
+            },
+            "showStrikinglyLogo" : false,
+            "submenu" : {
+                "type" : "SubMenu",
+                "list" : [],
+                "components" : {
+                    "link" : {
+                        "type" : "Button",
+                        "url" : "http://www.wordpress.com",
+                        "text" : "Blog",
+                        "new_target" : true
+                    }
+                }
+            },
+            "showNavigationButtons" : false
+        }
+    </script>
+
+    <script src="js/jquery-1.7.1.min.js"></script>
+    <script src="js/underscore.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.json-2.3.min.js"></script>
+    <script src="js/knockout-2.2.1.js"></script>
+    <script src="js/tmpl.js"></script>
+    <script type='text/javascript'>
+      function onActive(e) {
+        $('[data-template-id]').hide();
+        $('#'+e.id).show();
+      }
+    </script>
+    <script type='text/javascript'>
+      if (!TMPL) {
+        var e=document.createElement("script");
+        e.type="text/javascript";
+        e.src="tmpl.js" + "?v=" + new Date().getTime();
+        document.body.appendChild(e);
+      }
+
+      /*
+            ko.bindingHandlers.click = {
+                init : function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+                    var value = ko.utils.unwrapObservable(valueAccessor());
+                    $(element).on('click', value);
+                }
+            };
+      */ 
+      var transformer = new TMPL.PageTransformer($('body'));
+      transformer.transform();
+      transformer.showPage(data);
+    </script>
+  </body>
+</html>
