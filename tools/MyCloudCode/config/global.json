@@ -1,0 +1,14 @@
+{
+    "applications": {
+        "_default": {
+            "link": "pickbox"
+        }, 
+        "pickbox": {
+            "applicationId": "Hku4WXToAqKzCQ9ALyIVi9yJMY2x3TJ7wb0XK8zB", 
+            "masterKey": "v9p5iB0SzzV3o7y5VQ9pT1gmG76ma3ONuIatDMce"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.1"
+    }
+}

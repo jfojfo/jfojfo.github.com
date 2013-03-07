@@ -7,15 +7,13 @@
     <link href='favicon.ico' rel='shortcut icon' type='image/x-icon'>
 
     <!-- Bootstrap -->
-    <link href="css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="libs/css/bootstrap.min.css" rel="stylesheet" media="screen">
+    <link href="custom/css/jfo.css" rel="stylesheet" media="screen">
     <style>
         .game_icon {
             width: 78px;
             height: 78px;
             margin: 5px;
-        }
-        .bg {
-            background-color: #f5f5f5;
         }
         .navbar-inner {
             -webkit-border-radius: 0;
@@ -26,27 +24,23 @@
     <!-- <link href="css/bootstrap-responsive.css" rel="stylesheet"> -->
   </head>
 
-  <body style="padding: 60px;">
+  <body>
 
-    <div data-template-header>
+    <div>
       <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container">
-            <a class="brand" data-component="text" data-name="title" href="#"></a>
-            <ul class="nav" data-component="repeatable" data-name="list" data-template="header-list-item">
+            <a class="brand" href="#" data-bind="text: menu.components.title.value"></a>
+            <ul class="nav" data-bind="template: {name: 'header-list-item', foreach: slides }">
             </ul>
             <ul class="nav pull-right">
               <li>
                 <a href="#3">Link3</a>
               </li>
             </ul>
-            <script data-component='repeatable_item_template' id='header-list-item' type='text/x-jquery-tmpl'>
-              <li data-bind="click: onActive"
-                <% if (first()) { %>
-                  class="active"
-                <% } %>
-              >
-                <a href="#<%= id %>" data-toggle="pill"><%= name %></a>
+            <script id='header-list-item' type='text/x-jquery-tmpl'>
+              <li data-bind="click: onActive, css: { 'active': $index() == 0 }">
+                <a data-toggle="pill" data-bind="attr: { href: '#'+template_id }, text: components.slideSettings.name"></a>
               </li>
             </script>
           </div>
@@ -56,7 +50,7 @@
 
     <div class="container">
       <div class="row-fluid">
-        <div class="span2 bg img-rounded" style="max-width: 340px; padding: 8px 0;">
+        <div class="span2 img-rounded content-bg" style="max-width: 340px; padding: 8px 0;">
           <ul class="nav nav-list">
             <li class="active">
               <a href="#" data-toggle="pill"><i class="icon-home"></i> Home</a>
@@ -73,105 +67,95 @@
           </ul>
         </div>
 
-        <div class="span10 bg img-rounded">
-          <div data-template-id="home" data-bind="visible: first()">
+        <div id="slides" class="span10 img-rounded content-bg">
+          <div data-bind="visible: true, with: slides[0], attr: { id: slides[0].template_id }">
+            <div data-bind="allowBindings: false">
+              <div id="posts" data-bind="template: { name: 'post_template', foreach: $data }"></div>
+              <div id="pagination" data-bind="template: { name: 'pagination_template', data: $data }"></div>
+            </div>
           </div>
-          <div data-template-id="projects" data-bind="visible: first()">
+          <script id='post_template' type='text/x-jquery-tmpl'>
+            <div class="post">
+
+              <ul class="date">
+                <li class="month" data-bind="text: post_month">二</li>
+                <li class="day" data-bind="text: post_day">24</li>
+              </ul>
+
+              <ul class="title">
+                <li class="topic">
+                  <a data-bind="text: post_title, attr: { href: post_link }">title</a>
+                </li>
+                <li class="postmeta">
+                  Post by <span data-bind="text: post_author">jfo</span> at <span data-bind="text: post_year">2011</span> . Category: <a data-bind="text: post_category, attr: { href: post_category_link }">android</a>.  <span data-bind="text: post_views">40</span> Views. <a data-bind="attr: {href: comment_link}"><span data-bind="text: comment_count">2</span> Comments </a>
+                </li>
+              </ul>
+
+              <div class="clear"></div>
+              <div class="entry" data-bind="html: post_content">xxx...</div>
+            </div>
+          </script>
+          <script id='pagination_template' type='text/x-jquery-tmpl'>
+            <div id="pagination" class="pagination pagination-right">
+              <ul>
+                <li class="disabled"><a>Page <span data-bind="text: page">2</span> of <span data-bind="text: total">60</span></a></li>
+                <li data-bind="css: { 'disabled': page == 1 }"><a href="#" onclick="showPrevPage();return false;">&larr; Prev</a></li>
+                <% _.each(page_array, function(p){ %>
+                  <li data-bind="css: { 'active': page == p }, attr: { 'data-page': p}"><a href="#" data-bind="text: p" onclick="showPage(<%=p%>);return false;">1984</a></li>
+                <% }) %>
+                <li data-bind="css: { 'disabled': page == total }"><a href="#" onclick="showNextPage();return false;">Next &rarr;</a></li>
+              </ul>
+            </div>          
+          </script>
+
+
+          <div data-bind="visible: false, with: slides[1], attr: { id: slides[1].template_id } ">
 
             <div class='row-fluid'>
               <div class='span12'>
-                <h1 class='title'>
-                <div data-component='text' data-name='title' data-text-type='heading'>
-                </div></h1>
-                <div class='p'>
-                  <div data-component='text' data-name='subtitle' data-text-type='body'>
-                  </div>
-                </div>
+                <h1 class='title' data-bind="text: components.title.value"></h1>
+                <div class='p' data-bind="text: components.subtitle.value"></div>
               </div>
             </div>
 
             <div class='row-fluid'>
               <div class='features span12'>
-                <div data-component="repeatable" data-name="features.list" data-template="feature_box_big"></div>
+                <div data-bind="template: { name: 'feature_box_big', foreach: components.features.list}"></div>
               </div>
             </div>
-            <script data-component='repeatable_item_template' id='feature_box_big' type='text/x-jquery-tmpl'>
+            <script id='feature_box_big' type='text/x-jquery-tmpl'>
               <div class='span6 row-fluid'>
-                <h3 class='span12'><div data-component='text' data-name='title' data-text-type='heading'>
-                  Title Text
-                </div></h3>
-                <div class='span12' data-component='text' data-name='description' data-text-type='body'>
-                  Lorem ipsum dolor sit amet, consectetuer adipiscing elit
+                <h3 class='span12' data-bind="text: components.title.value"></h3>
+                <div class='span12' data-bind="text: components.description.value">
                 </div>
               </div>
-              <img class="span6" style="margin:0px;" href="<%= components.media.image.link_url %>" src="<%= components.media.image.url %>" />
+              <img class="span6" data-bind="attr: { href: components.media.image.link_url, src: components.media.image.url}" />
             </script>
-
-            <!--div class='row-fluid'>
-              <div class='features'>
-                <div data-component="repeatable" data-bind="template: {
-                foreach: features.list,
-                name: &#x27;feature_box_big&#x27;
-                }, sortableRepeatable: features.list"></div>
-              </div>
-            </div>
-            <script data-component='repeatable_item_template' id='feature_box_big2' type='text/x-jquery-tmpl'>
-              <div class='row big repeatable' data-bind='sortableItem: $data, mouseenter: mouseenterHandler, mouseleave: mouseleaveHandler'>
-    
-                <div class='six columns' data-bind='visible: isEven()'>
-                  <a data-bind="attr: { href: components.media.image.link_url, target: components.media.image.new_target}"><h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3></a>
-                  <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
-                </div>
-                <div class='ten columns'>
-                  <div class="components.media content"><div class='content'>
-                      <div class='video-content' data-bind='visible: components.media.showVideo()'>
-                        <div class='player' data-bind='html: components.media.video.html'></div>
-                      </div>
-                      <div class='image-content' data-bind='visible: components.media.showImage()' data-component='image' data-name='components.media.image' data-use-url='true'>
-                        <img alt="Transparent" data-bind="attr: { src: components.media.image.url, alt: components.media.image.caption }" src="assets/icons/transparent-646dc08a9b2d44aa74bf29cd18f5e9a5.png" />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div class='six columns' data-bind='visible: !isEven()'>
-                  <a data-bind="attr: { href: components.media.image.link_url, target: components.media.image.new_target}"><h3 class='title' data-component='text' data-name='components.title' data-text-type='heading' data-use-font='true'></h3></a>
-                  <div class='p' data-component='text' data-name='components.description' data-use-font='true'></div>
-                </div>
-              </div>
-            </script-->
-
           </div>
 
-          <div data-template-id="games" data-bind="visible: first()">
+          <div data-bind="visible: false, with: slides[2], attr: { id: slides[2].template_id }">
             <div class='row-fluid'>
               <div class='span12'>
-                <h1>
-                <div data-component='text' data-name='title' data-text-type='heading'>
-                </div></h1>
-                <div>
-                  <div data-component='text' data-name='subtitle' data-text-type='body'>
-                  </div>
-                </div>
+                <h1 data-bind='text: components.title.value'></h1>
+                <div data-bind='text: components.subtitle.value'></div>
               </div>
             </div>
 
             <div class='row-fluid'>
               <div class='span12'>
-                <div data-component="repeatable" data-name="features.list" data-template="feature_box_big"></div>
+                <div data-bind="template: { name: 'feature_box_big2', foreach: components.features.list }"></div>
               </div>
             </div>
-            <script data-component='repeatable_item_template' id='feature_box_big' type='text/x-jquery-tmpl'>
+            <script id='feature_box_big2' type='text/x-jquery-tmpl'>
               <div class='span5'>
                 <div class='row-fluid'>
                   <div class="span3">
-                    <img class="img-rounded game_icon" href="<%= components.image.link_url %>" src="<%= components.image.url %>" />
+                    <img class="img-rounded game_icon" data-bind="attr: { href: components.image.link_url, src: components.image.url }" />
                   </div>
                   <div class='span9'>
                     <div class='row-fluid'>
-                      <h3 class='span12'><div data-component='text' data-name='title' data-text-type='heading'>
-                      </div></h3>
-                      <div class='span12' data-component='text' data-name='description' data-text-type='body'>
-                      </div>
+                      <h3 class='span12' data-bind="text: components.title.value"></h3>
+                      <div class='span12' data-bind="text: components.description.value"></div>
                     </div>
                   </div>
                 </div>
@@ -832,26 +816,21 @@
         }
     </script>
 
-    <script src="js/jquery-1.7.1.min.js"></script>
-    <script src="js/underscore.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/jquery.json-2.3.min.js"></script>
-    <script src="js/knockout-2.2.1.js"></script>
-    <script src="js/tmpl.js"></script>
+    <script src="libs/js/jquery-1.7.1.min.js"></script>
+    <script src="libs/js/underscore.js"></script>
+    <script src="libs/js/bootstrap.min.js"></script>
+    <script src="libs/js/jquery.json-2.3.min.js"></script>
+    <script src="libs/js/knockout-2.2.1.js"></script>
+    <script src="libs/js/backbone-min-0.9.10.js"></script>
+    <script src="libs/js/parse-1.2.1.min.js"></script>
+    <script src="custom/js/jfo.js"></script>
     <script type='text/javascript'>
       function onActive(e) {
-        $('[data-template-id]').hide();
-        $('#'+e.id).show();
+        $('#slides').children().hide();
+        $('#'+e.template_id).show();
       }
     </script>
     <script type='text/javascript'>
-      if (!TMPL) {
-        var e=document.createElement("script");
-        e.type="text/javascript";
-        e.src="tmpl.js" + "?v=" + new Date().getTime();
-        document.body.appendChild(e);
-      }
-
       /*
             ko.bindingHandlers.click = {
                 init : function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
@@ -860,9 +839,35 @@
                 }
             };
       */ 
-      var transformer = new TMPL.PageTransformer($('body'));
-      transformer.transform();
-      transformer.showPage(data);
+      ko.underscoreTemplateEngine = function () { }
+      ko.underscoreTemplateEngine.prototype = ko.utils.extend(new ko.templateEngine(), {
+          renderTemplateSource: function (templateSource, bindingContext, options) {
+              // Precompile and cache the templates for efficiency
+              var precompiled = templateSource['data']('precompiled');
+              if (!precompiled) {
+                  precompiled = _.template("<% with($data) { %> " + templateSource.text() + " <% } %>");
+                  templateSource['data']('precompiled', precompiled);
+              }
+              // Run the template and parse its output into an array of DOM elements
+              var renderedMarkup = precompiled(bindingContext).replace(/\s+/g, " ");
+              return ko.utils.parseHtmlFragment(renderedMarkup);
+          },
+          createJavaScriptEvaluatorBlock: function(script) {
+              return "<%= " + script + " %>";
+          }
+      });
+      ko.setTemplateEngine(new ko.underscoreTemplateEngine());
+        
+      ko.bindingHandlers.allowBindings = {
+          init: function(elem, valueAccessor) {
+              // Let bindings proceed as normal *only if* my value is false
+              var shouldAllowBindings = ko.utils.unwrapObservable(valueAccessor());
+              return { controlsDescendantBindings: !shouldAllowBindings };
+          }
+      };
+      
+      ko.applyBindings(data);
+      initPagination();
     </script>
   </body>
 </html>
