@@ -3,8 +3,8 @@ var log = function() {
     if (DEBUG)
         console.log.apply(console, arguments);
 };
-var errorHandler = function(r) {
-    log(r);
+var errorHandler = function() {
+    log.apply(this, arguments);
 };
 
 (function(scope) {
@@ -12,8 +12,10 @@ var errorHandler = function(r) {
     var JavascriptKey = "7D4goPL0RxMJft4XQdF9VGBJ1K1yYUx5xWTkHFgt";
     Parse.initialize(ApplicationID, JavascriptKey);
 
-    var POSTS_PER_PAGE = 3;
+    var POSTS_PER_PAGE = 10;
     var PAGES_COUNT = 8;
+    var COUNT_RECENT_POSTS = 15;
+    var COUNT_RECENT_COMMENTS = 15;
     var MONTHS = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
     var Posts = Parse.Object.extend('Posts');
     var Terms = Parse.Object.extend('Terms');
@@ -22,59 +24,86 @@ var errorHandler = function(r) {
     var Comments = Parse.Object.extend('Comments');
 
     var mPage = 1, mTotalPages = 1;
-
-    function totalPosts() {
+    
+    function wrapParseDeferred(func, obj) {
         var defer = $.Deferred();
-        var query = new Parse.Query(Posts);
-        query.descending("ID");
-        query.count({
-            success : function(r) {
-                defer.resolve(r);
+        var args = [];
+        for (var i = 2; i < arguments.length; i++)
+            args.push(arguments[i]);
+        args.push({
+            success: function() {
+                defer.resolve.apply(defer, arguments);
             },
-            error : function(r) {
-                log(r);
-                defer.reject(r);
+            error: function() {
+                defer.reject.apply(defer, arguments);
             }
         });
+        func.apply(obj, args);
         return defer.promise();
+    }
+
+    function queryAll(query, show_log) {
+        var i = 0;
+        var list = [];
+        function r(cb) {
+            query.skip(i);
+            query.limit(20);
+            wrapParseDeferred(query.find, query).done(function(results){
+                if (results.length == 0) {
+                    if (cb.success) {
+                        cb.success.call(this, list);
+                    }
+                    return;
+                }
+                $.each(results, function(){
+                    if (show_log)
+                        log($.toJSON(this));
+                    list.push(this);
+                });
+                i += results.length;
+                r(cb);
+            }).fail(function(){
+                if (cb.error) {
+                    var args = Array.prototype.slice.call(arguments, 0, arguments.length);
+                    args.unshift(list);
+                    cb.error.apply(this, args);
+                }
+            });
+        }
+        return wrapParseDeferred(r, this);
+    }
+
+    function totalPosts() {
+        var query = new Parse.Query(Posts);
+        query.descending("ID");
+        return wrapParseDeferred(query.count, query);
     }
 
     // page starts from 1...
     function getPage(page) {
-        var defer = $.Deferred();
         page = page - 1 < 0 ? 0 : page - 1;
         var query = new Parse.Query(Posts);
-        query.descending("ID");
+        query.include("post_author");
+        query.descending("post_date");
         query.skip(page * POSTS_PER_PAGE);
         query.limit(POSTS_PER_PAGE);
-        query.find({
-            success : function(r) {
-                defer.resolve(r);
-            },
-            error : function(r) {
-                log(r);
-                defer.reject(r);
-            }
-        });
-        return defer.promise();
+        return wrapParseDeferred(query.find, query);
     }
 
     function toPostBindData(list) {
         var arr = [];
         $.each(list, function() {
             var post = {};
-            var id = this.get('ID');
             var date = new Date(this.get('post_date'));
-            post.ID = id;
+            post.id = this.id;
             post.post_year = date.getFullYear();
             post.post_month = MONTHS[date.getMonth()];
             post.post_day = date.getDate();
             post.post_title = this.get('post_title');
-            post.post_author = this.get('post_author');
-            post.post_link = this.get('post_guid');
-            post.post_author = this.get('post_author');
+            post.post_author = this.get('post_author').get('username');
             post.comment_count = this.get('comment_count');
             post.post_content = this.get('post_content');
+            post.post_link = "#post/" + post.id;
 
             post.post_category = 'category';
             //this.get('post_category');
@@ -155,16 +184,105 @@ var errorHandler = function(r) {
         log("showPost:" + id);
     }
 
-    // query.include(["post.author"]);
-
+    function getRecentPosts() {
+        var query = new Parse.Query(Posts);
+        query.descending("post_date");
+        query.limit(COUNT_RECENT_POSTS);
+        return wrapParseDeferred(query.find, query);
+    }
+    
+    function getCategories() {
+        var query = new Parse.Query(Terms);
+        query.ascending("name");
+        return wrapParseDeferred(query.find, query);
+    }
+    
+    function getArchive(){
+        return wrapParseDeferred(Parse.Cloud.run, this, 'getArchiveDateList', {});
+    }
+    
+    function getRecentComments() {
+        var query = new Parse.Query(Comments);
+        query.include('post');
+        query.descending("comment_date");
+        query.limit(COUNT_RECENT_COMMENTS);
+        return wrapParseDeferred(query.find, query);
+    }
+    
+    function initSidebar() {
+        getRecentPosts().done(function(recent_posts){
+            var posts = [];
+            for (var i = 0; i < recent_posts.length; i++) {
+                var post = recent_posts[i];
+                posts.push({
+                    text : post.get('post_title'),
+                    link : '#post/' + post.id
+                }); 
+            }
+            ko.applyBindings({
+                title: "Recent Posts",
+                list: posts
+            }, $("#sidebar_posts").get(0));
+        });
+        getCategories().done(function(categories){
+            var cat_list = [];
+            for (var i = 0; i < categories.length; i++) {
+                var cat = categories[i];
+                cat_list.push({
+                    text : cat.get('name'),
+                    count : cat.get('count'),
+                    link : '#tag/' + cat.get('term_id')
+                });
+            }
+            ko.applyBindings({
+                title: "Categories",
+                list: cat_list
+            }, $("#sidebar_categories").get(0));
+        });
+        getArchive().done(function(archives){
+            var archive_list = [];
+            for (var i = 0; i < archives.length; i++) {
+                var ar = archives[i];
+                archive_list.push({
+                    text : ar.text,
+                    link : '#archive/' + ar.text,
+                    count : ar.count
+                });
+            }
+            ko.applyBindings({
+                title: "Archive",
+                list: archive_list
+            }, $("#sidebar_archives").get(0));
+        });
+        getRecentComments().done(function(recent_comments){
+            var comment_list = [];
+            for (var i = 0; i < recent_comments.length; i++) {
+                var comment = recent_comments[i];
+                var post = comment.get('post');
+                var id = post ? post.id : 0;
+                comment_list.push({
+                    comment_author: comment.get('comment_author'),
+                    comment_author_url: comment.get('comment_author_url'),
+                    comment_content: comment.get('comment_content'),
+                    post_id: id
+                });
+            }
+            ko.applyBindings({
+                title: "Recent Comments",
+                list: comment_list
+            }, $("#sidebar_comments").get(0));
+        });
+    }
 
     var AppRouter = Backbone.Router.extend({
         routes: {
             "page/:id": "showPage",
-            "posts/:id": "showPost",
+            "post/:id": "showPost",
             "*actions": "defaultRoute"
         },
-        showPage: showPage,
+        showPage: function(page){
+            showPage(parseInt(page));
+        },
         showPost: showPost,
         defaultRoute: function( actions ){
             log("defaultRoute->", actions);
@@ -177,8 +295,10 @@ var errorHandler = function(r) {
         initPagination: initPagination,
         showPage: showPage,
         showNextPage: showNextPage,
-        showPrevPage: showPrevPage
+        showPrevPage: showPrevPage,
+        initSidebar: initSidebar
     });
+    
 })(this);
 
 (function() {
@@ -373,7 +493,6 @@ var errorHandler = function(r) {
             });
         });
     };
-
 
     function getPost(post_id) {
         var defer = $.Deferred();
@@ -635,7 +754,7 @@ var errorHandler = function(r) {
         });
     };
 
-//checkACL();
+
 })();
 
 var testPostData = {
@@ -652,4 +771,3 @@ var testPostData = {
     comment_count : 7,
     post_content : "<p>显然用Activity来做是不行的，因为新Activity启动的时候会把原来的Activity pause掉怎么做呢，可以参考系统电量提示窗口或statusbar那样在service中启动窗口</p>"
 };
-

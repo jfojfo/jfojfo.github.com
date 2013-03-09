@@ -48,26 +48,57 @@
       </div>
     </div>
 
-    <div class="container">
+    <div class="content">
+      <div class="container">
+        <div id="headflash" class="headflash">
+          <embed pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" src="custom/img/panda.swf" width="100%" height="100%" id="headflash_f" name="headflash_f" bgcolor="#000" quality="high" allowscriptaccess="false" wmode="transparent" allowfullscreen="false">
+        </div>
+      </div>
+      <div class="container">
       <div class="row-fluid">
-        <div class="span2 img-rounded content-bg" style="max-width: 340px; padding: 8px 0;">
-          <ul class="nav nav-list">
-            <li class="active">
-              <a href="#" data-toggle="pill"><i class="icon-home"></i> Home</a>
-            </li>
-            <li>
-              <a href="#" data-toggle="pill"><i class="icon-book"></i> Library</a>
-            </li>
-            <li>
-              <a href="#" data-toggle="pill"><i class="icon-pencil"></i> Applications</a>
-            </li>
-            <li>
-              <a href="#" data-toggle="pill"><i class="i"></i> Misc</a>
-            </li>
-          </ul>
+        <div id="sidebar" class="span3 img-rounded content-bg" data-bind="allowBindings: false">
+          <div id="sidebar_posts" data-bind="template: { name: 'sidebar_template', data: $data}"></div>
+          <div id="sidebar_categories" data-bind="template: { name: 'sidebar_category_template', data: $data}"></div>
+          <div id="sidebar_comments" data-bind="template: { name: 'sidebar_comment_template', data: $data}"></div>
+          <div id="sidebar_archives" data-bind="template: { name: 'sidebar_category_template', data: $data}"></div>
+          <script id='sidebar_template' type='text/x-jquery-tmpl'>
+            <ul class="nav nav-list">
+              <li><h4 data-bind="text: title">Recent</h4></li>
+              <li class="divider"></li>
+              <% _.each(list, function(d){ %>
+                <li><a data-bind="attr: { href: d.link }"><i class="icon-post-item"></i><span data-bind="text: d.text"></span></a></li>
+              <% }) %>
+            </ul>
+          </script>
+          <script id='sidebar_category_template' type='text/x-jquery-tmpl'>
+            <ul class="nav nav-list">
+              <li><h4 data-bind="text: title">Recent</h4></li>
+              <li class="divider"></li>
+              <% _.each(list, function(d){ %>
+                <li><a style="overflow: hidden;" data-bind="attr: { href: d.link }">
+                  <i class="icon-post-item"></i>
+                  <span data-bind="text: d.text"></span>
+                  <span class="badge pull-right" data-bind="text: d.count">1</span></a>
+                </li>
+              <% }) %>
+            </ul>
+          </script>
+          <script id='sidebar_comment_template' type='text/x-jquery-tmpl'>
+            <ul class="nav nav-list">
+              <li><h4 data-bind="text: title">Recent</h4></li>
+              <li class="divider"></li>
+              <% _.each(list, function(d){ %>
+                <li><span>
+                  <i class="icon-post-item"></i>
+                  <a data-bind="text: d.comment_author, attr: { href: d.comment_author_url }"></a>:
+                  <a data-bind="text: d.comment_content, attr: { href: '#post/' + d.post_id }"></a></span>
+                </li>
+              <% }) %>
+            </ul>
+          </script>
         </div>
 
-        <div id="slides" class="span10 img-rounded content-bg">
+        <div id="slides" class="span9 img-rounded content-bg">
           <div data-bind="visible: true, with: slides[0], attr: { id: slides[0].template_id }">
             <div data-bind="allowBindings: false">
               <div id="posts" data-bind="template: { name: 'post_template', foreach: $data }"></div>
@@ -91,7 +122,7 @@
                 </li>
               </ul>
 
-              <div class="clear"></div>
+              <div class="clearfix"></div>
               <div class="entry" data-bind="html: post_content">xxx...</div>
             </div>
           </script>
@@ -101,7 +132,7 @@
                 <li class="disabled"><a>Page <span data-bind="text: page">2</span> of <span data-bind="text: total">60</span></a></li>
                 <li data-bind="css: { 'disabled': page == 1 }"><a href="#" onclick="showPrevPage();return false;">&larr; Prev</a></li>
                 <% _.each(page_array, function(p){ %>
-                  <li data-bind="css: { 'active': page == p }, attr: { 'data-page': p}"><a href="#" data-bind="text: p" onclick="showPage(<%=p%>);return false;">1984</a></li>
+                  <li data-bind="css: { 'active': page == p }, attr: { 'data-page': p }"><a href="#" data-bind="text: p, attr:{href:'#page/'+p}">1984</a></li>
                 <% }) %>
                 <li data-bind="css: { 'disabled': page == total }"><a href="#" onclick="showNextPage();return false;">Next &rarr;</a></li>
               </ul>
@@ -125,7 +156,7 @@
             </div>
             <script id='feature_box_big' type='text/x-jquery-tmpl'>
               <div class='span6 row-fluid'>
-                <h3 class='span12' data-bind="text: components.title.value"></h3>
+                <h3 class='span12' data-bind="html: components.title.value"></h3>
                 <div class='span12' data-bind="text: components.description.value">
                 </div>
               </div>
@@ -164,6 +195,7 @@
           </div>
           
         </div>
+      </div>
       </div>
     </div>
 
@@ -867,6 +899,7 @@
       };
       
       ko.applyBindings(data);
+      initSidebar();
       initPagination();
     </script>
   </body>

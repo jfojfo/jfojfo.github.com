@@ -1,16 +1,20 @@
 body {
     background-color: #f5f5f5;
-    padding: 60px;
+    padding-top: 41px;
     text-shadow: 1px 1px 3px rgba(50, 50, 50, 0.15);
 }
 
+.content {
+    background: url("../img/bambook.jpg") no-repeat;
+    background-position: center top;
+}
 .content-bg {
     background-color: #FFF;
 }
-
-.clear {
-    clear: both;
+.headflash {
+    height: 286px;
 }
+
 ul.date {
     background: url("../img/databg.95880f4bf6f1.gif") no-repeat;
     width: 48px;
@@ -60,4 +64,18 @@ li.postmeta {
 }
 .entry {
     margin: 10px 0px 10px 0px;
+}
+
+#sidebar {
+    padding: 8px 0;
+}
+.icon-post-item {
+    background: url("../img/arrow.164958930265.gif") no-repeat;
+}
+.icon-post-title {
+    background: url("../img/h2_arrow.8aa89d61ce02.gif") no-repeat;
+}
+
+#slides {
+    padding: 20px;
 }

@@ -1,7 +1,11 @@
 {
     "applications": {
+        "Blog": {
+            "applicationId": "eiv32sFkByLILfAUSLW5H1d7rAlK4WvCaU8to5uI", 
+            "masterKey": "DPluMaBdAHnOo1Z5xGrda0lN52Emp7Gpvb1WDHfO"
+        }, 
         "_default": {
-            "link": "pickbox"
+            "link": "Blog"
         }, 
         "pickbox": {
             "applicationId": "Hku4WXToAqKzCQ9ALyIVi9yJMY2x3TJ7wb0XK8zB", 
