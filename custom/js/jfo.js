@@ -27,6 +27,10 @@ var errorHandler = function() {
     var mFuncGetQuery;
     var TYPE_QUERY_PAGE = 1, TYPE_QUERY_COUNT = 2;
     
+    scope.wrapParseDeferred = wrapParseDeferred;
+    scope.login = login;
+    scope.queryAll = queryAll;
+    
     function wrapParseDeferred(func, obj) {
         var defer = $.Deferred();
         var args = [];
@@ -38,12 +42,19 @@ var errorHandler = function() {
             },
             error: function() {
                 defer.reject.apply(defer, arguments);
+            },
+            progress: function() {
+                defer.notify.apply(defer, arguments);
             }
         });
         func.apply(obj, args);
         return defer.promise();
     }
 
+    function login() {
+        return wrapParseDeferred(Parse.User.logIn, this, 'jfo', '123456');
+    }
+    
     function queryAll(query, show_log) {
         var i = 0;
         var list = [];
@@ -57,6 +68,8 @@ var errorHandler = function() {
                     }
                     return;
                 }
+                if (cb.progress)
+                    cb.progress.call(this, results);
                 $.each(results, function(){
                     if (show_log)
                         log($.toJSON(this));
@@ -140,7 +153,7 @@ var errorHandler = function() {
             //this.get('post_category_link');
             post.comment_link = 'comment_link';
             //this.get('comment_link');
-            post.post_views = 13;
+            post.post_views = this.get('post_views');;
             //this.get('post_views');
             log(post, this);
             arr.push(post);
@@ -196,7 +209,6 @@ var errorHandler = function() {
             return;
         log("show page:", page);
         getPage(page).done(function(r) {
-            log(r);
             var data = toPostBindData(r);
             ko.applyBindings(data, $("#posts").get(0));
             mPage = page;
@@ -375,20 +387,6 @@ var errorHandler = function() {
     var TermTaxonomy = Parse.Object.extend('TermTaxonomy');
     var Comments = Parse.Object.extend('Comments');
     
-    function login() {
-        var defer = $.Deferred();
-        Parse.User.logIn("jfo", "123456", {
-            success: function(user) {
-                defer.resolve(user);
-            },
-            error: function(user, error) {
-                log(error);
-                defer.reject(user, error);
-            }
-        });
-        return defer.promise();
-    }
-    
     var updatePublicACL = function() {
         var start = "";
         var i = 0;
@@ -560,6 +558,19 @@ var errorHandler = function() {
             });
         });
     };
+    function updatePostViews() {
+        login().done(function(){
+            var query = new Parse.Query(Posts);
+            query.descending('post_date');
+            queryAll(query).progress(function(list){
+                $.each(list, function(){
+                    log("id:" + this.get("ID"), this);
+                    this.set('post_views', 0);
+                    this.save();
+                });
+            });
+        });
+    }
 
     function getPost(post_id) {
         var defer = $.Deferred();
@@ -741,6 +752,7 @@ var errorHandler = function() {
     var updateComments = function() {
         var start = 0;
         var i = 0;
+        var postCommentMap = {};
         function r() {
             var query = new Parse.Query(Comments);
             query.ascending("comment_ID");
@@ -750,6 +762,13 @@ var errorHandler = function() {
                 success : function(results) {
                     log(results.length);
                     if (results.length == 0) {
+                        _.each(postCommentMap, function(v, k, list){
+                            var query = new Parse.Query(Posts);
+                            wrapParseDeferred(query.get, query, k).done(function(post){
+                                post.set('comment_count', v);
+                                post.save();
+                            });
+                        });
                         return;
                     }
                     $.each(results, function() {
@@ -760,6 +779,9 @@ var errorHandler = function() {
                                 return;
                             comment.set("post", post);
                             comment.save();
+                            if (!postCommentMap[post.id])
+                                postCommentMap[post.id] = 0;
+                            postCommentMap[post.id]++;
                         });
                         var parent_comment_id = this.get("comment_parent");
                         if (parent_comment_id > 0) {
