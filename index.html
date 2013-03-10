@@ -30,7 +30,7 @@
       <div class="navbar navbar-fixed-top">
         <div class="navbar-inner">
           <div class="container">
-            <a class="brand" href="#" data-bind="text: menu.components.title.value"></a>
+            <a class="brand" href="" data-bind="text: menu.components.title.value"></a>
             <ul class="nav" data-bind="template: {name: 'header-list-item', foreach: slides }">
             </ul>
             <ul class="nav pull-right">
@@ -56,10 +56,10 @@
       </div>
       <div class="container">
       <div class="row-fluid">
-        <div id="sidebar" class="span3 img-rounded content-bg" data-bind="allowBindings: false">
+        <div id="sidebar" class="span4 img-rounded content-bg" data-bind="allowBindings: false">
           <div id="sidebar_posts" data-bind="template: { name: 'sidebar_template', data: $data}"></div>
-          <div id="sidebar_categories" data-bind="template: { name: 'sidebar_category_template', data: $data}"></div>
           <div id="sidebar_comments" data-bind="template: { name: 'sidebar_comment_template', data: $data}"></div>
+          <div id="sidebar_categories" data-bind="template: { name: 'sidebar_category_template', data: $data}"></div>
           <div id="sidebar_archives" data-bind="template: { name: 'sidebar_category_template', data: $data}"></div>
           <script id='sidebar_template' type='text/x-jquery-tmpl'>
             <ul class="nav nav-list">
@@ -98,7 +98,7 @@
           </script>
         </div>
 
-        <div id="slides" class="span9 img-rounded content-bg">
+        <div id="slides" class="span8 img-rounded content-bg">
           <div data-bind="visible: true, with: slides[0], attr: { id: slides[0].template_id }">
             <div data-bind="allowBindings: false">
               <div id="posts" data-bind="template: { name: 'post_template', foreach: $data }"></div>
@@ -118,7 +118,13 @@
                   <a data-bind="text: post_title, attr: { href: post_link }">title</a>
                 </li>
                 <li class="postmeta">
-                  Post by <span data-bind="text: post_author">jfo</span> at <span data-bind="text: post_year">2011</span> . Category: <a data-bind="text: post_category, attr: { href: post_category_link }">android</a>.  <span data-bind="text: post_views">40</span> Views. <a data-bind="attr: {href: comment_link}"><span data-bind="text: comment_count">2</span> Comments </a>
+                  Post by <span data-bind="text: post_author">jfo</span> at 
+                  <span data-bind="text: post_year">2011</span>. Category:
+                  <% var last = _.last(post_category); _.each(post_category, function(category){ %>
+                    <a data-bind="text: category.name, attr: { href: '#tag/' + category.term_id }">android</a><span data-bind="text: last == category ? '.' : ','"></span>
+                  <% }) %>
+                  <span data-bind="text: post_views">40</span> Views.
+                  <a data-bind="attr: {href: comment_link}"><span data-bind="text: comment_count">2</span> Comments </a>
                 </li>
               </ul>
 
@@ -157,7 +163,7 @@
             <script id='feature_box_big' type='text/x-jquery-tmpl'>
               <div class='span6 row-fluid'>
                 <h3 class='span12' data-bind="html: components.title.value"></h3>
-                <div class='span12' data-bind="text: components.description.value">
+                <div class='span12' data-bind="html: components.description.value">
                 </div>
               </div>
               <img class="span6" data-bind="attr: { href: components.media.image.link_url, src: components.media.image.url}" />
@@ -899,8 +905,6 @@
       };
       
       ko.applyBindings(data);
-      initSidebar();
-      initPagination();
     </script>
   </body>
 </html>

@@ -24,6 +24,8 @@ var errorHandler = function() {
     var Comments = Parse.Object.extend('Comments');
 
     var mPage = 1, mTotalPages = 1;
+    var mFuncGetQuery;
+    var TYPE_QUERY_PAGE = 1, TYPE_QUERY_COUNT = 2;
     
     function wrapParseDeferred(func, obj) {
         var defer = $.Deferred();
@@ -74,20 +76,47 @@ var errorHandler = function() {
     }
 
     function totalPosts() {
-        var query = new Parse.Query(Posts);
-        query.descending("ID");
+        var query = mFuncGetQuery(TYPE_QUERY_COUNT);
         return wrapParseDeferred(query.count, query);
     }
 
     // page starts from 1...
     function getPage(page) {
-        page = page - 1 < 0 ? 0 : page - 1;
-        var query = new Parse.Query(Posts);
-        query.include("post_author");
-        query.descending("post_date");
-        query.skip(page * POSTS_PER_PAGE);
-        query.limit(POSTS_PER_PAGE);
-        return wrapParseDeferred(query.find, query);
+        function r(page, cb) {
+            page = page - 1 < 0 ? 0 : page - 1;
+            var query = mFuncGetQuery(TYPE_QUERY_PAGE);
+            query.include("post_author");
+            query.descending("post_date");
+            query.skip(page * POSTS_PER_PAGE);
+            query.limit(POSTS_PER_PAGE);
+            wrapParseDeferred(query.find, query).done(function(posts){
+                var query = new Parse.Query(TermRelationships);
+                query.include('term');
+                query.containedIn('post', posts);
+                wrapParseDeferred(query.find, query).done(function(relation_list){
+                    var map = {};
+                    $.each(relation_list, function(relation){
+                        relation = this;
+                        var post = relation.get('post');
+                        var term = relation.get('term');
+                        if (!map[post.id])
+                            map[post.id] = [];
+                        map[post.id].push({
+                            name: term.get('name'),
+                            term_id: term.get('term_id')
+                        });
+                    });
+                    $.each(posts, function(post){
+                        post = this;
+                        post.post_category = map[post.id];
+                    });
+                    if (cb.success) {
+                        cb.success.call(this, posts);
+                    }
+                }).fail(cb.error);
+            });
+        }
+        return wrapParseDeferred(r, this, page);
     }
 
     function toPostBindData(list) {
@@ -105,7 +134,7 @@ var errorHandler = function() {
             post.post_content = this.get('post_content');
             post.post_link = "#post/" + post.id;
 
-            post.post_category = 'category';
+            post.post_category = this.post_category;
             //this.get('post_category');
             post.post_category_link = 'post_category_link';
             //this.get('post_category_link');
@@ -141,11 +170,14 @@ var errorHandler = function() {
         return arr;
     }
 
-    function initPagination() {
+    function initPagination(funcGetQuery) {
+        mFuncGetQuery = funcGetQuery ? funcGetQuery : (function(){
+            return new Parse.Query('Posts');
+        });
         totalPosts().done(function(r){
             log("total posts:", r);
             mTotalPages = parseInt((r + POSTS_PER_PAGE - 1) / POSTS_PER_PAGE);
-            showPage(mPage);
+            showPage(1);
         });
     }
     
@@ -164,6 +196,7 @@ var errorHandler = function() {
             return;
         log("show page:", page);
         getPage(page).done(function(r) {
+            log(r);
             var data = toPostBindData(r);
             ko.applyBindings(data, $("#posts").get(0));
             mPage = page;
@@ -171,7 +204,7 @@ var errorHandler = function() {
             showPagination();
         });
     }
-    
+
     function showNextPage() {
         showPage(mPage + 1);
     }
@@ -182,6 +215,28 @@ var errorHandler = function() {
     
     function showPost(id) {
         log("showPost:" + id);
+    }
+
+    function initArchivePagination(date) {
+        initPagination(function(){
+            var query = new Parse.Query('Posts');
+            query.startsWith('post_date', date);
+            return query;
+        });
+    }
+
+    function initCategoryPagination(id) {
+        initPagination(function(type){
+            var query = new Parse.Query(TermRelationships);
+            query.equalTo('term_taxonomy_id', id);
+            if (type == TYPE_QUERY_COUNT) {
+                return query;
+            } else if (type == TYPE_QUERY_PAGE) {
+                var outerQuery = new Parse.Query(Posts);
+                outerQuery.matchesKeyInQuery("ID", "object_id", query);
+                return outerQuery;
+            }
+        });
     }
 
     function getRecentPosts() {
@@ -273,17 +328,29 @@ var errorHandler = function() {
             }, $("#sidebar_comments").get(0));
         });
     }
-
+    
     var AppRouter = Backbone.Router.extend({
         routes: {
             "page/:id": "showPage",
+            "tag/:id": "initCategoryPagination",
+            "archive/:date": "initArchivePagination",
             "post/:id": "showPost",
+            "": "showHome",
             "*actions": "defaultRoute"
+        },
+        showHome: function() {
+            log("===>showHome");
+            initSidebar();
+            initPagination();
         },
         showPage: function(page){
             showPage(parseInt(page));
         },
         showPost: showPost,
+        initCategoryPagination: function(id){
+            initCategoryPagination(parseInt(id));
+        },
+        initArchivePagination: initArchivePagination,
         defaultRoute: function( actions ){
             log("defaultRoute->", actions);
         }
