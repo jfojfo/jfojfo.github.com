@@ -154,4 +154,3 @@ Parse.Cloud.define("getArchiveDateList", function(request, response) {
         response.success.apply(response, arguments);
     });
 });
-

@@ -101,11 +101,11 @@
         <div id="slides" class="span8 img-rounded content-bg">
           <div data-bind="visible: true, with: slides[0], attr: { id: slides[0].template_id }">
             <div data-bind="allowBindings: false">
-              <div id="posts" data-bind="template: { name: 'post_template', foreach: $data }"></div>
+              <div id="posts" data-bind="template: { name: 'page_template', foreach: $data }"></div>
               <div id="pagination" data-bind="template: { name: 'pagination_template', data: $data }"></div>
             </div>
           </div>
-          <script id='post_template' type='text/x-jquery-tmpl'>
+          <script id='page_template' type='text/x-jquery-tmpl'>
             <div class="post">
 
               <ul class="date">
@@ -130,6 +130,8 @@
 
               <div class="clearfix"></div>
               <div class="entry" data-bind="html: post_content">xxx...</div>
+              <div class="clearfix"></div>
+              <div><a data-bind="attr: { href: post_link}">Read more...</a></div>
             </div>
           </script>
           <script id='pagination_template' type='text/x-jquery-tmpl'>

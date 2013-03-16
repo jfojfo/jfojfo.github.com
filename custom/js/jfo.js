@@ -144,7 +144,7 @@ var errorHandler = function() {
             post.post_title = this.get('post_title');
             post.post_author = this.get('post_author').get('username');
             post.comment_count = this.get('comment_count');
-            post.post_content = this.get('post_content');
+            post.post_content = this.get('post_excerpt');
             post.post_link = "#post/" + post.id;
 
             post.post_category = this.post_category;
@@ -566,8 +566,23 @@ var errorHandler = function() {
                 $.each(list, function(){
                     log("id:" + this.get("ID"), this);
                     this.set('post_views', 0);
-                    this.save();
                 });
+                Parse.Object.saveAll(list);
+            });
+        });
+    }
+    function updatePostExcerpt() {
+        login().done(function(){
+            var query = new Parse.Query(Posts);
+            query.descending('post_date');
+            queryAll(query).progress(function(list){
+                $.each(list, function(){
+                    log("id:" + this.get("ID"), this);
+                    var content = this.get('post_content');
+                    var excerpt = content.slice(0, 1000);
+                    this.set('post_excerpt', excerpt);
+                });
+                Parse.Object.saveAll(list);
             });
         });
     }
