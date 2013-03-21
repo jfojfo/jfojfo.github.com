@@ -132,33 +132,38 @@ var errorHandler = function() {
         return wrapParseDeferred(r, this, page);
     }
 
-    function toPostBindData(list) {
+    function toPageBindData(list) {
         var arr = [];
-        $.each(list, function() {
-            var post = {};
-            var date = new Date(this.get('post_date'));
-            post.id = this.id;
-            post.post_year = date.getFullYear();
-            post.post_month = MONTHS[date.getMonth()];
-            post.post_day = date.getDate();
-            post.post_title = this.get('post_title');
-            post.post_author = this.get('post_author').get('username');
-            post.comment_count = this.get('comment_count');
-            post.post_content = this.get('post_excerpt');
-            post.post_link = "#post/" + post.id;
-
-            post.post_category = this.post_category;
-            //this.get('post_category');
-            post.post_category_link = 'post_category_link';
-            //this.get('post_category_link');
-            post.comment_link = 'comment_link';
-            //this.get('comment_link');
-            post.post_views = this.get('post_views');;
-            //this.get('post_views');
-            log(post, this);
-            arr.push(post);
+        $.each(list, function(){
+            arr.push(toPostBindData(this));
         });
         return arr;
+    }
+    function toPostBindData(postObjFromParse) {
+        var obj = postObjFromParse;
+        var post = {};
+        var date = new Date(obj.get('post_date'));
+        post.id = obj.id;
+        post.post_year = date.getFullYear();
+        post.post_month = MONTHS[date.getMonth()];
+        post.post_day = date.getDate();
+        post.post_title = obj.get('post_title');
+        post.post_author = obj.get('post_author').get('username');
+        post.comment_count = obj.get('comment_count');
+        post.post_content = obj.get('post_excerpt');
+        post.post_link = "#post/" + post.id;
+
+        post.post_category = obj.post_category;
+        //this.get('post_category');
+        post.post_category_link = 'post_category_link';
+        //this.get('post_category_link');
+        post.comment_link = 'comment_link';
+        //this.get('comment_link');
+        post.post_views = obj.get('post_views');;
+        //this.get('post_views');
+        post.showReadMore = true;
+        log(post, obj);
+        return post;
     }
 
     function genPageArray(page, total) {
@@ -185,7 +190,7 @@ var errorHandler = function() {
 
     function initPagination(funcGetQuery) {
         mFuncGetQuery = funcGetQuery ? funcGetQuery : (function(){
-            return new Parse.Query('Posts');
+            return new Parse.Query(Posts);
         });
         totalPosts().done(function(r){
             log("total posts:", r);
@@ -209,8 +214,10 @@ var errorHandler = function() {
             return;
         log("show page:", page);
         getPage(page).done(function(r) {
-            var data = toPostBindData(r);
+            var data = toPageBindData(r);
             ko.applyBindings(data, $("#posts").get(0));
+            $('#post_full').hide();
+            $('#page').show();
             mPage = page;
             scroll(0,0);
             showPagination();
@@ -227,6 +234,17 @@ var errorHandler = function() {
     
     function showPost(id) {
         log("showPost:" + id);
+        if (!id) return;
+        var query = new Parse.Query(Posts);
+        wrapParseDeferred(query.get, query, id).done(function(result){
+            var data = toPostBindData(result);
+            data.post_content = result.get('post_content');
+            data.showReadMore = false;
+            ko.applyBindings(data, $("#article").get(0));
+            $('#page').hide();
+            $('#post_full').show();
+            scroll(0,0);
+        });
     }
 
     function initArchivePagination(date) {
@@ -875,3 +893,5 @@ var testPostData = {
     comment_count : 7,
     post_content : "<p>显然用Activity来做是不行的，因为新Activity启动的时候会把原来的Activity pause掉怎么做呢，可以参考系统电量提示窗口或statusbar那样在service中启动窗口</p>"
 };
+document.createElement("script");
+document.body.appendChild(r);
