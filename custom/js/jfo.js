@@ -893,5 +893,3 @@ var testPostData = {
     comment_count : 7,
     post_content : "<p>显然用Activity来做是不行的，因为新Activity启动的时候会把原来的Activity pause掉怎么做呢，可以参考系统电量提示窗口或statusbar那样在service中启动窗口</p>"
 };
-document.createElement("script");
-document.body.appendChild(r);

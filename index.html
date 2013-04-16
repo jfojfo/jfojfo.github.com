@@ -157,8 +157,7 @@
 
 
           <div data-bind="visible: false, with: slides[1], attr: { id: slides[1].template_id } ">
-
-            <div class='row-fluid'>
+            <div class='row-fluid' style="margin-bottom: 30px;">
               <div class='span12'>
                 <h1 class='title' data-bind="text: components.title.value"></h1>
                 <div class='p' data-bind="text: components.subtitle.value"></div>
@@ -171,17 +170,33 @@
               </div>
             </div>
             <script id='feature_box_big' type='text/x-jquery-tmpl'>
-              <div class='span6 row-fluid'>
-                <h3 class='span12' data-bind="html: components.title.value"></h3>
-                <div class='span12' data-bind="html: components.description.value">
+              <div class="row-fluid" style="margin: 0 0 60px 0;" data-bind='css: { "even img-rounded": $index() % 2 == 1 }'>
+                <% if ( $index() % 2 == 1 ) { %>
+                <div class="span3">
+                  <a data-bind="attr: { href: components.media.image.link_url, target: '_blank' }">
+                    <img style="margin-top: 20px;" data-bind="attr: { src: components.media.image.url}" />
+                  </a>
                 </div>
+                <% } %>
+                <div class='span9'>
+                  <a class='row-fluid' data-bind="attr: { href: components.media.image.link_url, target: '_blank' }">
+                    <h3 class="span12" data-bind="html: components.title.value"></h3>
+                  </a>
+                  <div class='row-fluid' data-bind="html: components.description.value"></div>
+                </div>
+                <% if ( $index() % 2 == 0 ) { %>
+                <div class="span3">
+                  <a data-bind="attr: { href: components.media.image.link_url, target: '_blank' }">
+                    <img style="margin-top: 20px;" data-bind="attr: { src: components.media.image.url}" />
+                  </a>
+                </div>
+                <% } %>
               </div>
-              <img class="span6" data-bind="attr: { href: components.media.image.link_url, src: components.media.image.url}" />
             </script>
           </div>
 
           <div data-bind="visible: false, with: slides[2], attr: { id: slides[2].template_id }">
-            <div class='row-fluid'>
+            <div class='row-fluid' style="margin-bottom: 30px;">
               <div class='span12'>
                 <h1 data-bind='text: components.title.value'></h1>
                 <div data-bind='text: components.subtitle.value'></div>
@@ -194,15 +209,21 @@
               </div>
             </div>
             <script id='feature_box_big2' type='text/x-jquery-tmpl'>
-              <div class='span5'>
+              <div class='span12' style="margin:0px;" data-bind='css: { "even img-rounded": $index() % 2 == 0 }'>
                 <div class='row-fluid'>
-                  <div class="span3">
-                    <img class="img-rounded game_icon" data-bind="attr: { href: components.image.link_url, src: components.image.url }" />
+                  <div class="span2" style="margin-top: 10px;">
+                    <a data-bind="attr: { href: components.image.link_url }">
+                      <img class="img-rounded game_icon" data-bind="attr: { src: components.image.url }" />
+                    </a>
                   </div>
-                  <div class='span9'>
+                  <div class='span10'>
                     <div class='row-fluid'>
-                      <h3 class='span12' data-bind="text: components.title.value"></h3>
-                      <div class='span12' data-bind="text: components.description.value"></div>
+                      <a data-bind="attr: { href: components.image.link_url }">
+                        <h3 class='span12' data-bind="text: components.title.value"></h3>
+                      </a>
+                    </div>
+                    <div class='row-fluid'>
+                      <div data-bind="html: components.description.value"></div>
                     </div>
                   </div>
                 </div>
@@ -257,7 +278,7 @@
                     },
                     "subtitle" : {
                         "type" : "RichText",
-                        "value" : "这个页面收集了我创建的一些项目，此页面会不断更新或变化，敬请留意。",
+                        "value" : "收集了我的一些项目，页面会不断更新，敬请留意。",
                         "text_type" : "body"
                     },
                     "features" : {
@@ -276,7 +297,7 @@
                                     "image" : {
                                         "type" : "Image",
                                         "thumb_url" : "",
-                                        "url" : "/static/project/project_favorite_snap.jpg",
+                                        "url" : "/static/project/project_favorite_small_snap.jpg",
                                         "image_type" : "large",
                                         "caption" : "",
                                         "description" : "",
@@ -296,6 +317,41 @@
                                     "text_type" : "body"
                                 }
                             }
+                        },
+                        {
+                          "type" : "RepeatableItem",
+                          "components" : {
+                            "media" : {
+                              "type" : "Media",
+                              "video" : {
+                                "type" : "Video",
+                                "html" : "<iframe src=\"http://player.vimeo.com/video/12236680?title=1&byline=1&portrait=1\" width=\"700\" height=\"394\" frameborder=\"0\" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>",
+                                "url" : "http://vimeo.com/12236680",
+                                "maxwidth" : 700
+                              },
+                              "image" : {
+                                "type" : "Image",
+                                "thumb_url" : "",
+                                "url" : "/static/other/GoogleSearchUrlFilter_snap.jpg",
+                                "image_type" : "medium",
+                                "caption" : "",
+                                "description" : "",
+                                "link_url" : "/static/other/GoogleSearchUrlFilter.crx",
+                                "new_target" : '_blank'
+                              },
+                              "current" : "image"
+                            },
+                            "title" : {
+                              "type" : "RichText",
+                              "value" : "去除谷歌搜索结果重定向Google Search Result URL Filter",
+                              "text_type" : "heading"
+                            },
+                            "description" : {
+                              "type" : "RichText",
+                              "value" : "Chrome插件v1.0<br/>去除搜索结果链接地址中的Google跳转，直接进入目标页面。搜索结果链接地址在进入目标页面之前，会先跳转至Google自己的统计网站，然而在国内Google往往被墙，导致搜索出的结果就在眼前却打不开页面。本插件的作用就是彻底移除Google加入的统计链接跳转，点击直接进入目标页面。",
+                              "text_type" : "body"
+                            }
+                          }
                         }],
                         "components" : {
                             "media" : {

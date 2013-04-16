@@ -83,3 +83,10 @@ li.postmeta {
 .post {
     margin-bottom: 60px;
 }
+
+.even {
+    background-color: rgb(235, 245, 255);
+}
+.none {
+    display: none;
+}
