@@ -142,7 +142,9 @@ var errorHandler = function() {
     function toPostBindData(postObjFromParse) {
         var obj = postObjFromParse;
         var post = {};
-        var date = new Date(obj.get('post_date'));
+        var dateStr = obj.get('post_date');
+        dateStr = dateStr.replace(new RegExp("-","gm"), "/");
+        var date = new Date(dateStr);
         post.id = obj.id;
         post.post_year = date.getFullYear();
         post.post_month = MONTHS[date.getMonth()];
