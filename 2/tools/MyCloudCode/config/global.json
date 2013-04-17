@@ -1,0 +1,18 @@
+{
+    "applications": {
+        "Blog": {
+            "applicationId": "eiv32sFkByLILfAUSLW5H1d7rAlK4WvCaU8to5uI", 
+            "masterKey": "DPluMaBdAHnOo1Z5xGrda0lN52Emp7Gpvb1WDHfO"
+        }, 
+        "_default": {
+            "link": "Blog"
+        }, 
+        "pickbox": {
+            "applicationId": "Hku4WXToAqKzCQ9ALyIVi9yJMY2x3TJ7wb0XK8zB", 
+            "masterKey": "v9p5iB0SzzV3o7y5VQ9pT1gmG76ma3ONuIatDMce"
+        }
+    }, 
+    "global": {
+        "parseVersion": "1.2.1"
+    }
+}
