@@ -1,4 +1,5 @@
 var DEBUG = true;
+var console = console || { log: function() {} };
 var log = function() {
     if (DEBUG)
         console.log.apply(console, arguments);
