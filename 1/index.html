@@ -95,8 +95,8 @@
           <div class='ten columns nav-column'>
             <div class='nav' data-bind-page='visible: showNav()'>
               <ul>
-                <span data-bind-page="template: {name:'navbarItemTemplate', foreach: slides}"></span>
                 <span data-bind-page="template: {name:'navbarLinkTemplate', foreach: submenu.list}"></span>
+                <span data-bind-page="template: {name:'navbarItemTemplate', foreach: slides}"></span>
               </ul>
             </div>
           </div>
@@ -730,6 +730,18 @@
                 }
             }
         },*/
+/*      {
+        "type": "Slide",
+        "template_id": null,
+        "template_name": "",
+        "components": {
+          "slideSettings": {
+            "type": "SlideSettings",
+            "name": "Blog",
+            "show_nav": true
+          }
+        }
+      },*/
         {
             "type": "Slide",
             "template_id": null,
@@ -1371,7 +1383,16 @@
     "showStrikinglyLogo": false,
     "submenu": {
         "type": "SubMenu",
-        "list": [],
+        "list": [{
+          "components": {
+            "link": {
+              "type": "Button",
+              "url": "/2",
+              "text": "Blog",
+              "new_target": false
+            }
+          }
+        }],
         "components": {
             "link": {
                 "type": "Button",
@@ -1420,6 +1441,11 @@ $(".section-anchor").each(function(){
   ++i;
   $(this).attr("data-scroll-name", '#' + i);
 });
+// put to $(...), called when ready() is called.
+//$(function(){
+//  var a = $(".navigator ul li a:first");
+//  $(".navigator ul li a:first").attr("href", "/2");
+//});
 </script>
 
 <script type="text/javascript">if (!NREUMQ.f) { NREUMQ.f=function() {

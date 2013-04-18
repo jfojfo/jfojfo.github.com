@@ -9,6 +9,16 @@
     <!-- Bootstrap -->
     <link href="libs/css/bootstrap.min.css" rel="stylesheet" media="screen">
     <link href="custom/css/jfo.css" rel="stylesheet" media="screen">
+
+    <script src="libs/js/jquery-1.7.1.min.js"></script>
+    <script src="libs/js/underscore.js"></script>
+    <script src="libs/js/bootstrap.min.js"></script>
+    <script src="libs/js/jquery.json-2.3.min.js"></script>
+    <script src="libs/js/knockout-2.2.1.js"></script>
+    <script src="libs/js/backbone-min-0.9.10.js"></script>
+    <script src="libs/js/parse-1.2.1.min.js"></script>
+    <script src="custom/js/jfo.js"></script>
+
     <style>
         .game_icon {
             width: 78px;
@@ -700,78 +710,7 @@
                 }
             }, {
                 "type" : "Slide",
-                "template_id" : null,
-                "template_name" : "bright_features",
-                "components" : {
-                    "slideSettings" : {
-                        "type" : "SlideSettings",
-                        "name" : "Other",
-                        "show_nav" : true
-                    },
-                    "title" : {
-                        "type" : "RichText",
-                        "value" : "Other",
-                        "text_type" : "heading"
-                    },
-                    "subtitle" : {
-                        "type" : "RichText",
-                        "value" : "<br/>",
-                        "text_type" : "body"
-                    },
-                    "features" : {
-                        "type" : "Repeatable",
-                        "list" : [{
-                            "type" : "RepeatableItem",
-                            "components" : {
-                                "image" : {
-                                    "type" : "Image",
-                                    "thumb_url" : "",
-                                    "url" : "static/other/GoogleSearchUrlFilter_snap.jpg",
-                                    "image_type" : "medium",
-                                    "caption" : "",
-                                    "description" : "",
-                                    "link_url" : "static/other/GoogleSearchUrlFilter.crx",
-                                    "new_target" : 1
-                                },
-                                "title" : {
-                                    "type" : "RichText",
-                                    "value" : "去除谷歌搜索结果重定向Google Search Result URL Filter",
-                                    "text_type" : "heading"
-                                },
-                                "description" : {
-                                    "type" : "RichText",
-                                    "value" : "Chrome插件v1.0<br/>去除搜索结果链接地址中的Google跳转，直接进入目标页面。搜索结果链接地址在进入目标页面之前，会先跳转至Google自己的统计网站，然而在国内Google往往被墙，导致搜索出的结果就在眼前却打不开页面。本插件的作用就是彻底移除Google加入的统计链接跳转，点击直接进入目标页面。",
-                                    "text_type" : "body"
-                                }
-                            }
-                        }],
-                        "components" : {
-                            "image" : {
-                                "type" : "Image",
-                                "thumb_url" : "",
-                                "url" : "static/game/phone.png",
-                                "image_type" : "medium",
-                                "caption" : "",
-                                "description" : "",
-                                "link_url" : "",
-                                "new_target" : null
-                            },
-                            "title" : {
-                                "type" : "RichText",
-                                "value" : "Heading",
-                                "text_type" : "heading"
-                            },
-                            "description" : {
-                                "type" : "RichText",
-                                "value" : "A body paragraph.",
-                                "text_type" : "body"
-                            }
-                        }
-                    }
-                }
-            }, {
-                "type" : "Slide",
-                "template_id" : null,
+                "template_id" : "contacts",
                 "template_name" : "bright_contact_form",
                 "components" : {
                     "slideSettings" : {
@@ -920,16 +859,12 @@
         }
     </script>
 
-    <script src="libs/js/jquery-1.7.1.min.js"></script>
-    <script src="libs/js/underscore.js"></script>
-    <script src="libs/js/bootstrap.min.js"></script>
-    <script src="libs/js/jquery.json-2.3.min.js"></script>
-    <script src="libs/js/knockout-2.2.1.js"></script>
-    <script src="libs/js/backbone-min-0.9.10.js"></script>
-    <script src="libs/js/parse-1.2.1.min.js"></script>
-    <script src="custom/js/jfo.js"></script>
     <script type='text/javascript'>
       function onActive(e) {
+        if (e.template_id == "contacts") {
+          window.location.href = "/1";
+          return;
+        }
         $('#slides').children().hide();
         $('#'+e.template_id).show();
       }
