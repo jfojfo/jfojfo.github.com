@@ -13,7 +13,7 @@ var errorHandler = function() {
     var JavascriptKey = "7D4goPL0RxMJft4XQdF9VGBJ1K1yYUx5xWTkHFgt";
     Parse.initialize(ApplicationID, JavascriptKey);
 
-    var POSTS_PER_PAGE = 10;
+    var POSTS_PER_PAGE = 2;
     var PAGES_COUNT = 8;
     var COUNT_RECENT_POSTS = 15;
     var COUNT_RECENT_COMMENTS = 15;
@@ -27,11 +27,12 @@ var errorHandler = function() {
     var mPage = 1, mTotalPages = 1;
     var mFuncGetQuery;
     var TYPE_QUERY_PAGE = 1, TYPE_QUERY_COUNT = 2;
-    
+    var API = new API_parse();
+
     scope.wrapParseDeferred = wrapParseDeferred;
     scope.login = login;
     scope.queryAll = queryAll;
-    
+
     function wrapParseDeferred(func, obj) {
         var defer = $.Deferred();
         var args = [];
@@ -52,10 +53,46 @@ var errorHandler = function() {
         return defer.promise();
     }
 
+    // for init data to Parse.com only
     function login() {
-        return wrapParseDeferred(Parse.User.logIn, this, 'jfo', '123456');
+        return wrapParseDeferred(Parse.User.logIn, this, "jfo", "123456");
     }
-    
+
+    function checkLogin() {
+        var currUser = Parse.User.current();
+        if (currUser) {
+            $("#logout").show();
+            $("#login").hide();
+        } else {
+            $("#logout").hide();
+            $("#login").show();
+        }
+    }
+
+    function API_parse() {
+        $.extend(API_parse.prototype, {
+            doLogin: function(name, passwd) {
+                wrapParseDeferred(Parse.User.logIn, this, name, passwd).done(function(r){
+                    $("#loginModal").modal("hide");
+                    $(".notifications").notify({message: "登陆成功", type: 'success'}).show();
+                    checkLogin();
+                }).fail(function(user, err){
+                        $("#loginModal").modal("hide");
+                        $(".notifications").notify({message: "登陆失败:" + err.code + ":" + err.message, type: 'error'}).show();
+                    });
+            },
+            doLogout: function() {
+                log("logout");
+                Parse.User.logOut();
+                $(".notifications").notify({message: "退出登录成功", type: 'success'}).show();
+                checkLogin();
+            }
+        });
+        function API() {}
+        API.prototype = API_parse.prototype;
+        return new API();
+    }
+
     function queryAll(query, show_log) {
         var i = 0;
         var list = [];
@@ -201,7 +238,7 @@ var errorHandler = function() {
             showPage(1);
         });
     }
-    
+
     function showPagination() {
         var arr = genPageArray(mPage, mTotalPages);
         log(mPage, mTotalPages, arr);
@@ -234,7 +271,7 @@ var errorHandler = function() {
     function showPrevPage() {
         showPage(mPage - 1);
     }
-    
+
     function showPost(id) {
         log("showPost:" + id);
         if (!id) return;
@@ -278,17 +315,17 @@ var errorHandler = function() {
         query.limit(COUNT_RECENT_POSTS);
         return wrapParseDeferred(query.find, query);
     }
-    
+
     function getCategories() {
         var query = new Parse.Query(Terms);
         query.ascending("name");
         return wrapParseDeferred(query.find, query);
     }
-    
+
     function getArchive(){
         return wrapParseDeferred(Parse.Cloud.run, this, 'getArchiveDateList', {});
     }
-    
+
     function getRecentComments() {
         var query = new Parse.Query(Comments);
         query.include('post');
@@ -296,7 +333,7 @@ var errorHandler = function() {
         query.limit(COUNT_RECENT_COMMENTS);
         return wrapParseDeferred(query.find, query);
     }
-    
+
     function initSidebar() {
         getRecentPosts().done(function(recent_posts){
             var posts = [];
@@ -305,7 +342,7 @@ var errorHandler = function() {
                 posts.push({
                     text : post.get('post_title'),
                     link : '#post/' + post.id
-                }); 
+                });
             }
             ko.applyBindings({
                 title: "Recent Posts",
@@ -361,7 +398,7 @@ var errorHandler = function() {
             }, $("#sidebar_comments").get(0));
         });
     }
-    
+
     var AppRouter = Backbone.Router.extend({
         routes: {
             "page/:id": "showPage",
@@ -396,7 +433,9 @@ var errorHandler = function() {
         showPage: showPage,
         showNextPage: showNextPage,
         showPrevPage: showPrevPage,
-        initSidebar: initSidebar
+        initSidebar: initSidebar,
+        checkLogin: checkLogin,
+        API: API
     });
     
 })(this);
