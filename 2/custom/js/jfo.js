@@ -1,3 +1,8 @@
+/**
+ * Ctrl+Q quick document
+ * Ctrl+O(F12) quick outline
+ *
+ */
 var DEBUG = true;
 var console = console || { log: function() {} };
 var log = function() {
@@ -21,7 +26,6 @@ var errorHandler = function() {
     var Posts = Parse.Object.extend('Posts');
     var Terms = Parse.Object.extend('Terms');
     var TermRelationships = Parse.Object.extend('TermRelationships');
-    var TermTaxonomy = Parse.Object.extend('TermTaxonomy');
     var Comments = Parse.Object.extend('Comments');
 
     var mPage = 1, mTotalPages = 1;
@@ -30,7 +34,6 @@ var errorHandler = function() {
     var API = new API_parse();
 
     scope.wrapParseDeferred = wrapParseDeferred;
-    scope.login = login;
     scope.queryAll = queryAll;
 
     function wrapParseDeferred(func, obj) {
@@ -53,12 +56,7 @@ var errorHandler = function() {
         return defer.promise();
     }
 
-    // for init data to Parse.com only
-    function login() {
-        return wrapParseDeferred(Parse.User.logIn, this, "jfo", "123456");
-    }
-
-    function checkLogin() {
+    function initLogin() {
         var currUser = Parse.User.current();
         if (currUser) {
             $("#logout").show();
@@ -69,28 +67,57 @@ var errorHandler = function() {
         }
     }
 
+    function checkLogin() {
+        var currUser = Parse.User.current();
+        if (!currUser) {
+            $(".notifications").notify({message: "操作前请先登录", type: "error"}).show();
+            return "";
+        }
+        return currUser.get("username");
+    }
+
+    function wrapAPI(prototype, ext) {
+        var f = {};
+        for (var p in ext) {
+            if (typeof(ext[p]) == "function" && p.indexOf("do") == 0) {
+                var fname = p[2].toLowerCase() + p.slice(3);
+                f[fname] = (function(fname, func){
+                    return function(){
+                        var args = Array.prototype.slice.call(arguments, 0, arguments.length);
+                        args.unshift(fname);
+                        log.apply(this, args);
+                        return func.apply(this, arguments);
+                    }
+                })(fname, ext[p]);
+            }
+        }
+        function API() {}
+        API.prototype = $.extend(prototype, ext, f);
+        return new API();
+    }
+
     function API_parse() {
-        $.extend(API_parse.prototype, {
+        return wrapAPI(API_parse.prototype, {
             doLogin: function(name, passwd) {
-                wrapParseDeferred(Parse.User.logIn, this, name, passwd).done(function(r){
-                    $("#loginModal").modal("hide");
-                    $(".notifications").notify({message: "登陆成功", type: 'success'}).show();
-                    checkLogin();
-                }).fail(function(user, err){
-                        $("#loginModal").modal("hide");
-                        $(".notifications").notify({message: "登陆失败:" + err.code + ":" + err.message, type: 'error'}).show();
-                    });
+                return wrapParseDeferred(Parse.User.logIn, this, name, passwd);
             },
             doLogout: function() {
-                log("logout");
                 Parse.User.logOut();
-                $(".notifications").notify({message: "退出登录成功", type: 'success'}).show();
-                checkLogin();
+            },
+            doDeletePost: function(id) {
+                var defer = $.Deferred();
+                var post = new Posts();
+                post.id = id;
+                wrapParseDeferred(post.destroy, post).done(function(obj){
+                    log("delete success");
+                    // TODO delete TermRelationshipt, decrease Term count & refresh post
+                    defer.resolve.apply(defer, arguments);
+                }).fail(function(obj, err){
+                        defer.reject.apply(defer, arguments);
+                    });
+                return defer.promise();
             }
         });
-        function API() {}
-        API.prototype = API_parse.prototype;
-        return new API();
     }
 
     function queryAll(query, show_log) {
@@ -202,6 +229,7 @@ var errorHandler = function() {
         post.post_views = obj.get('post_views');;
         //this.get('post_views');
         post.showReadMore = true;
+        post.username = Parse.User.current() ? Parse.User.current().get("username") : "";
         log(post, obj);
         return post;
     }
@@ -399,15 +427,68 @@ var errorHandler = function() {
         });
     }
 
+    var loginController = {
+        login: function() {
+            $().showDialog({
+                header: 'Login',
+                body: '<div>用户名：<input id="dlgLoginName" type="text"></div>' +
+                    '<div>密　码：<input id="dlgLoginPasswd" type="password"></div>'
+            }).confirm(function($dlg){
+                    var name = $("#dlgLoginName", $dlg).val();
+                    var passwd = $("#dlgLoginPasswd", $dlg).val();
+                    API.login(name, passwd).done(function(user){
+                        $dlg.modal("hide");
+                        $(".notifications").notify({message: user.get("username") + "登陆成功", type: 'success'}).show();
+                        initLogin();
+                        window.location.reload();
+                    }).fail(function(user, err){
+                            $dlg.modal("hide");
+                            $(".notifications").notify({message: "登陆失败:" + err.code + ":" + err.message, type: 'error'}).show();
+                        });
+                });
+        },
+        logout: function() {
+            API.logout();
+            $(".notifications").notify({message: "退出登录成功", type: 'success'}).show();
+            initLogin();
+            window.location.reload();
+        }
+    };
+
+    var postController = {
+        delPost: function(post) {
+            log("delPost:", post.id, post.post_title);
+            if (!checkLogin()) return;
+            // $.showDialog is wrong!
+            $().showDialog({
+                header: "删除",
+                body: "是否删除文章：《" + post.post_title + "》"
+            }).confirm(function($dlg){
+                    API.deletePost(post.id);
+                    $dlg.modal("hide");
+                });
+        },
+        editPost: function(post) {
+            log("editPost:", post.id, post.post_title);
+            if (!checkLogin()) return;
+        }
+    };
+
     var AppRouter = Backbone.Router.extend({
         routes: {
+            "": "showHome",
             "page/:id": "showPage",
             "tag/:id": "initCategoryPagination",
             "archive/:date": "initArchivePagination",
             "post/:id": "showPost",
-            "": "showHome",
+            "post/:id/edit": "editPost",
+            "post/:id/del": "deletePost",
             "*actions": "defaultRoute"
         },
+        initCategoryPagination: function(id){
+            initCategoryPagination(parseInt(id));
+        },
+        initArchivePagination: initArchivePagination,
         showHome: function() {
             log("===>showHome");
             initSidebar();
@@ -417,10 +498,12 @@ var errorHandler = function() {
             showPage(parseInt(page));
         },
         showPost: showPost,
-        initCategoryPagination: function(id){
-            initCategoryPagination(parseInt(id));
+        editPost: function(id){
+            API.editPost(id);
         },
-        initArchivePagination: initArchivePagination,
+        deletePost: function(id) {
+            API.deletePost(id);
+        },
         defaultRoute: function( actions ){
             log("defaultRoute->", actions);
         }
@@ -434,7 +517,9 @@ var errorHandler = function() {
         showNextPage: showNextPage,
         showPrevPage: showPrevPage,
         initSidebar: initSidebar,
-        checkLogin: checkLogin,
+        initLogin: initLogin,
+        postController: postController,
+        loginController: loginController,
         API: API
     });
     
@@ -446,7 +531,12 @@ var errorHandler = function() {
     var TermRelationships = Parse.Object.extend('TermRelationships');
     var TermTaxonomy = Parse.Object.extend('TermTaxonomy');
     var Comments = Parse.Object.extend('Comments');
-    
+
+    // for init data to Parse.com only
+    function login() {
+        return wrapParseDeferred(Parse.User.logIn, this, "jfo", "123456");
+    }
+
     var updatePublicACL = function() {
         var start = "";
         var i = 0;
@@ -918,7 +1008,42 @@ var errorHandler = function() {
         });
     };
 
-
+    function insertPost() {
+        function r(user) {
+            var post = new Posts();
+            post.set("ID", 3);
+            post.set("comment_count", 0);
+            post.set("comment_status", "open");
+            post.set("guid", "");
+            post.set("menu_order", 0);
+            post.set("ping_status", "open");
+            post.set("pinged", "");
+            post.set("post_author", user);
+            post.set("post_content", "test content for post...");
+            post.set("post_content_filtered", "");
+            post.set("post_date", "2013-03-03 05:58:27");
+            post.set("post_date_gmt", "2013-03-03 05:58:27");
+            post.set("post_excerpt", "test");
+            post.set("post_mime_type", "");
+            post.set("post_modified", "2013-03-03 05:58:27");
+            post.set("post_modified_gmt", "2013-03-03 05:58:27");
+            post.set("post_name", "title");
+            post.set("post_parent", 0);
+            post.set("post_password", "");
+            post.set("post_status", "publish");
+            post.set("post_title", "title");
+            post.set("post_type", "post");
+            post.set("post_views", 34);
+            post.set("to_ping", "");
+            wrapParseDeferred(post.save, post, null).done(function(post){
+                log("insertPost success", post);
+            }).fail(function(post, err){
+                    log("insertPost fail", err);
+                });
+        }
+        login().done(r);
+    }
+//    insertPost();
 })();
 
 var testPostData = {

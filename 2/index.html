@@ -19,6 +19,7 @@
     <script src="libs/js/backbone-min-0.9.10.js"></script>
     <script src="libs/js/parse-1.2.1.min.js"></script>
     <script src="custom/js/bootstrap-notify.js"></script>
+    <script src="custom/js/bootstrap-confirm.js"></script>
     <script src="custom/js/jfo.js"></script>
 
     <style>
@@ -47,10 +48,10 @@
             </ul>
             <ul class="nav pull-right">
               <li id="login">
-                <a href="#loginModal" data-toggle="modal">Login</a>
+                <a href="#" onclick="loginController.login()">Login</a>
               </li>
               <li id="logout">
-                <a href="#" onclick="API.doLogout()">Logout</a>
+                <a href="#" onclick="loginController.logout()">Logout</a>
               </li>
             </ul>
             <script id='header-list-item' type='text/x-jquery-tmpl'>
@@ -154,8 +155,10 @@
               <div class="clearfix"></div>
               <div class="entry" data-bind="html: post_content">xxx...</div>
               <div class="clearfix"></div>
-              <div data-bind="visible: showReadMore">
-                <span><a data-bind="attr: { href: post_link}">Read more...</a></span>
+              <div class="pull-right footer">
+                <a class="item" data-bind="visible: showReadMore, attr: { href: post_link}">阅读全文</a>
+                <a class="item" data-bind="visible: username, attr: { href: post_link + '/edit' }, click: postController.editPost">编辑</a>
+                <a class="item" data-bind="visible: username, attr: { href: post_link + '/del' }, click: postController.delPost">删除</a>
               </div>
             </div>
           </script>
@@ -254,20 +257,6 @@
     </div>
 
     <div class="notifications notipos"></div>
-    <div id="loginModal" class="modal hide fade" tabindex="-1" role="dialog">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h3>Login</h3>
-      </div>
-      <div class="modal-body">
-        <div>用户名：<input id="dlgLoginName" type="text"></div>
-        <div>密　码：<input id="dlgLoginPasswd" type="password"></div>
-      </div>
-      <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">关闭</button>
-        <button class="btn btn-primary" onclick="API.doLogin($('#dlgLoginName').val(),$('#dlgLoginPasswd').val());">登陆</button>
-      </div>
-    </div>
 
     <script type='text/javascript'>
         var data = {
@@ -891,7 +880,7 @@
         $('#slides').children().hide();
         $('#'+e.template_id).show();
       }
-      checkLogin();
+      initLogin();
     </script>
     <script type='text/javascript'>
       /*

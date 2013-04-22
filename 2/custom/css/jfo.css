@@ -83,7 +83,19 @@ li.postmeta {
 .post {
     margin-bottom: 60px;
 }
-
+.post > .footer {
+    margin-top: 20px;
+}
+.post > .footer > .item {
+    font-size: 0.9em;
+    text-decoration: none;
+    margin-left: 10px;
+    text-shadow: none;
+}
+.post > .footer > .item:hover {
+    color: #3cbce7;
+    transition: color .15s linear , background-color .3s linear;
+}
 .even {
     background-color: rgb(235, 245, 255);
 }
