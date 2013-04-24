@@ -65,6 +65,20 @@ var errorHandler = function() {
             $("#logout").hide();
             $("#login").show();
         }
+        initAdmin();
+    }
+
+    function initAdmin() {
+        var currUser = Parse.User.current();
+        if (currUser) {
+            $("#sidebar_admin").show();
+            ko.applyBindings({
+                title: "Admin",
+                list: [{text:"发布文章", link:""}]
+            }, $("#sidebar_admin").get(0));
+        } else {
+            $("#sidebar_admin").hide();
+        }
     }
 
     function checkLogin() {
@@ -456,6 +470,18 @@ var errorHandler = function() {
     };
 
     var postController = {
+        newPost: function() {
+            log("newPost");
+    //            var dlg = $().showDialog({
+//                header: "文章",
+//                body: '<iframe src="edit.html" frameborder="0" width="100%" height="500px;"></iframe>',
+//                css: {"width": "90%", "height": "900px", "left": "5%", "margin": "auto"}
+//            }).confirm(function($dlg){
+//                    $dlg.modal("hide");
+//                })
+//            var frame = $('<iframe id="edit_post" src="edit.html" frameborder="0" style="width:100%; height:900px; position:fixed; top:5px; z-index:2000;"></iframe>');
+//            $("body").append(frame);
+        },
         delPost: function(post) {
             log("delPost:", post.id, post.post_title);
             if (!checkLogin()) return;

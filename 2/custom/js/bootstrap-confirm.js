@@ -16,13 +16,17 @@
 
             var defaults = {
                 header: 'Please confirm',
-                body: 'Body contents'
+                body: 'Body contents',
+                css: ''
             };
 
             var options = $.extend(defaults, options);
             var dlg = $(html);
             $('#dlgHeader', dlg).html(options.header);
             $('#dlgBody', dlg).html(options.body);
+            if (options.css)
+                $(dlg).css(options.css);
+
             dlg.on('shown', function() {
                 dlg.find("button.btn-primary:first").focus();
             });

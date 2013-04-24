@@ -103,11 +103,19 @@ li.postmeta {
     display: none;
 }
 
-.notipos {
+.notipos_old {
     position: fixed;
     z-index: 9999;
     bottom: 0px;
     right: 0px;
     margin-right: 10px;
     margin-bottom: 10px;
+}
+.notipos {
+    position: fixed;
+    z-index: 9999;
+    width: 40%;
+    left: 30%;
+    bottom:100px;
+    margin: auto;
 }

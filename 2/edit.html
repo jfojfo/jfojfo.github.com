@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>jfo's planet</title>
+    <script type="text/javascript" src="http://127.0.0.1:86/libs/js/tinymce4/tinymce.min.js"></script>
+    <script type="text/javascript" src="http://127.0.0.1:86/libs/js/tinymce4/plugins/preview/plugin.js"></script>
+    <script type="text/javascript" src="custom/js/jfo.js"></script>
+    <script type="text/javascript">
+      tinymce.init({
+        selector: "textarea",
+        theme: "modern",
+        plugins: [
+          "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+          "searchreplace wordcount visualblocks visualchars code fullscreen",
+          "insertdatetime media nonbreaking save table contextmenu directionality",
+          "emoticons template paste syntaxhl"
+        ],
+        toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image",
+        toolbar2: "print media | forecolor backcolor emoticons | syntaxhl preview",
+        templates: [
+          {title: 'Test template 1', content: 'Test 1'},
+          {title: 'Test template 2', content: 'Test 2'}
+        ],
+        syntaxhl_tag : 'pre',
+        plugin_preview_width: "800",
+        content_css: ["http://127.0.0.1:86/libs/css/syntaxhighlighter2/shCore.css",
+          "http://127.0.0.1:86/libs/css/syntaxhighlighter2/shThemeDefault.css"],
+        content_js: ["http://127.0.0.1:86/libs/js/syntaxhighlighter2/shCore.js",
+          "http://127.0.0.1:86/libs/js/syntaxhighlighter2/shBrushJava.js",
+          "http://127.0.0.1:86/libs/js/syntaxhighlighter2/shBrushJScript.js"],
+        clipboardSwf: "http://127.0.0.1:86/libs/js/syntaxhighlighter2/clipboard.swf"
+      });
+    </script>
+  </head>
+  <body>
+    <!--<h1>文章</h1>-->
+    <div>
+      <select id="category" name="category">
+        <option selected value="DefaultCategory">DefaultCategory</option>
+      </select>
+      <input id="post_status" type="checkbox" checked>Private</input>
+      <button id="save">发布</button>
+      <button id="close" onclick="function(){$('edit_post').hide();}">关闭</button>
+    </div>
+    <div>
+      <textarea name="content" style="width:90%; height: 400px;">This is some content that will be editable with TinyMCE.</textarea>
+    </div>
+  </body>
+</html>
