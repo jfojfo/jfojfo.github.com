@@ -135,18 +135,19 @@
               <hr/>
               <div id="comments"></div>
             </div>
-            <div id="post_edit" style="display: none;" data-bind="allowBindings: false">
-              <h2>编辑文章</h2>
-              <div>
-                <select id="category" name="category">
-                  <option selected value="DefaultCategory">DefaultCategory</option>
-                </select>
-                <input id="post_status" type="checkbox" checked>Private</input>
-                <button id="save">发布</button>
-                <button id="close" onclick="function(){$('edit_post').hide();}">关闭</button>
-              </div>
-              <div>
-                <textarea name="content" style="width:90%; height: 400px;">This is some content that will be editable with TinyMCE.</textarea>
+            <div data-bind="allowBindings: false">
+              <div id="post_edit" style="display: none;">
+                <h2>编辑文章</h2>
+                <div>
+                  <select data-bind="options: category_list, optionsText: 'name', value: category_default"></select>
+                  <input type="checkbox" data-bind="checked: post_status == 'private'">仅自己可见</input>
+                  <button id="save" data-bind="click: postController.savePost">发布</button>
+                  <button id="draft">保存草稿</button>
+                  <button id="cancel">取消</button>
+                </div>
+                <div>
+                  <textarea name="content" style="width:90%; height: 400px;">This is some content that will be editable with TinyMCE.</textarea>
+                </div>
               </div>
             </div>
           </div>

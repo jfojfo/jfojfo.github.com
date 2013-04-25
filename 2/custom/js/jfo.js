@@ -18,6 +18,34 @@ var errorHandler = function() {
     var JavascriptKey = "7D4goPL0RxMJft4XQdF9VGBJ1K1yYUx5xWTkHFgt";
     Parse.initialize(ApplicationID, JavascriptKey);
 
+    var CODES_RES_URL_PREFIX = "http://127.0.0.1:86";
+    var TINYMCE_URL = CODES_RES_URL_PREFIX + "/libs/js/tinymce4/tinymce.min.js";
+    var TINYMCE_PREVIEW_PLUGIN_URL = CODES_RES_URL_PREFIX + "/libs/js/tinymce4/plugins/preview/plugin.js";
+    var TINYMCE_OPT = {
+        selector: "textarea",
+        theme: "modern",
+        plugins: [
+            "advlist autolink lists link image charmap print preview hr anchor pagebreak",
+            "searchreplace wordcount visualblocks visualchars code fullscreen",
+            "insertdatetime media nonbreaking save table contextmenu directionality",
+            "emoticons template paste syntaxhl"
+        ],
+        toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
+        toolbar2: "print media | forecolor backcolor emoticons | link image | syntaxhl preview",
+        templates: [
+            {title: 'Test template 1', content: 'Test 1'},
+            {title: 'Test template 2', content: 'Test 2'}
+        ],
+        syntaxhl_tag : 'pre',
+        plugin_preview_width: "800",
+        content_css: ["http://127.0.0.1:86/libs/css/syntaxhighlighter2/shCore.css",
+            "http://127.0.0.1:86/libs/css/syntaxhighlighter2/shThemeDefault.css"],
+        content_js: ["http://127.0.0.1:86/libs/js/syntaxhighlighter2/shCore.js",
+            "http://127.0.0.1:86/libs/js/syntaxhighlighter2/shBrushJava.js",
+            "http://127.0.0.1:86/libs/js/syntaxhighlighter2/shBrushJScript.js"],
+        clipboardSwf: "http://127.0.0.1:86/libs/js/syntaxhighlighter2/clipboard.swf"
+    };
+
     var POSTS_PER_PAGE = 2;
     var PAGES_COUNT = 8;
     var COUNT_RECENT_POSTS = 15;
@@ -32,9 +60,8 @@ var errorHandler = function() {
     var mFuncGetQuery;
     var TYPE_QUERY_PAGE = 1, TYPE_QUERY_COUNT = 2;
     var API = new API_parse();
+    var Cache = {};
 
-    scope.wrapParseDeferred = wrapParseDeferred;
-    scope.queryAll = queryAll;
 
     function wrapParseDeferred(func, obj) {
         var defer = $.Deferred();
@@ -361,7 +388,10 @@ var errorHandler = function() {
     function getCategories() {
         var query = new Parse.Query(Terms);
         query.ascending("name");
-        return wrapParseDeferred(query.find, query);
+        return wrapParseDeferred(query.find, query).done(function(terms){
+            log("cache terms...");
+            Cache.terms = terms;
+        });
     }
 
     function getArchive(){
@@ -469,6 +499,48 @@ var errorHandler = function() {
         }
     };
 
+    function loadTinymceDynamically() {
+        if (typeof(tinymce) == "undefined") {
+            log("loading tinymce...");
+            function removeScript(event){
+//                event.target.parentNode.removeChild(event.target);
+            }
+            function initTinymce(){
+                var script = document.createElement('script');
+                script.type = "text/javascript";
+                script.textContent = "(" + function(opt){
+                    if (!tinymce.dom.Event.domLoaded) {
+                        tinymce.dom.Event.domLoaded = true;
+                    }
+                    tinymce.init(opt);
+                } + ")(" + JSON.stringify(TINYMCE_OPT) + ");";
+                script.onload = removeScript;
+                (document.head || document.documentElement).appendChild(script);
+            }
+            function loadTinymceCore(callback) {
+                var tinymceScript = document.createElement('script');
+                tinymceScript.type = "text/javascript";
+                tinymceScript.src = TINYMCE_URL;
+                tinymceScript.onload = callback;
+                (document.head || document.documentElement).appendChild(tinymceScript);
+            }
+            function loadTinymcePreview(callback) {
+                var tinymcePreviewScript = document.createElement('script');
+                tinymcePreviewScript.type = "text/javascript";
+                tinymcePreviewScript.src = TINYMCE_PREVIEW_PLUGIN_URL;
+                tinymcePreviewScript.onload = callback;
+                (document.head || document.documentElement).appendChild(tinymcePreviewScript);
+            }
+            loadTinymceCore(function(event){
+                removeScript(event);
+                loadTinymcePreview(function(event){
+                    removeScript(event);
+                    initTinymce();
+                });
+            });
+        }
+    }
+
     var postController = {
         newPost: function() {
             log("newPost");
@@ -481,6 +553,30 @@ var errorHandler = function() {
 //                })
 //            var frame = $('<iframe id="edit_post" src="edit.html" frameborder="0" style="width:100%; height:900px; position:fixed; top:5px; z-index:2000;"></iframe>');
 //            $("body").append(frame);
+            loadTinymceDynamically();
+            $("#page").hide(), $("#post_full").hide(), $("#post_edit").show();
+            var cat_list = [];
+            var cat_default;
+            if (Cache.terms) {
+                for (var i = 0; i < Cache.terms.length; i++) {
+                    var term = Cache.terms[i];
+                    var name = term.get("name");
+                    var option = {name: name, term: term};
+                    cat_list.push(option);
+                    (name == "DefaultCategory") && (cat_default = option);
+                }
+            }
+            ko.applyBindings({
+                post_title: "",
+                post_content: "",
+                post_status: "publish",
+                post_type: "post",
+                category_list: cat_list,
+                category_default: cat_default
+            }, $("#post_edit").get(0));
+        },
+        savePost: function(post) {
+            log("todo... savePost()", this);
         },
         delPost: function(post) {
             log("delPost:", post.id, post.post_title);
@@ -548,7 +644,9 @@ var errorHandler = function() {
         loginController: loginController,
         API: API
     });
-    
+    scope.wrapParseDeferred = wrapParseDeferred;
+    scope.queryAll = queryAll;
+
 })(this);
 
 (function() {
