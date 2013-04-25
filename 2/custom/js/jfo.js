@@ -12,6 +12,36 @@ var log = function() {
 var errorHandler = function() {
     log.apply(this, arguments);
 };
+Date.prototype.format = function (format, isUTC) {
+    // (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423
+    // (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18
+    var thiz = this;
+    thiz.getFullYear = isUTC ? thiz.getUTCFullYear : thiz.getFullYear;
+    thiz.getMonth = isUTC ? thiz.getUTCMonth : thiz.getMonth;
+    thiz.getDate = isUTC ? thiz.getUTCDate : thiz.getDate;
+    thiz.getHours = isUTC ? thiz.getUTCHours : thiz.getHours;
+    thiz.getMinutes = isUTC ? thiz.getUTCMinutes : thiz.getMinutes;
+    thiz.getSeconds = isUTC ? thiz.getUTCSeconds : thiz.getSeconds;
+    thiz.getMilliseconds = isUTC ? thiz.getUTCMilliseconds : thiz.getMilliseconds;
+    var o = {
+        "M+": thiz.getMonth() + 1, //month
+        "d+": thiz.getDate(),    //day
+        "h+": thiz.getHours(),   //hour
+        "m+": thiz.getMinutes(), //minute
+        "s+": thiz.getSeconds(), //second
+        "q+": Math.floor((thiz.getMonth() + 3) / 3),  //quarter
+        "S": thiz.getMilliseconds() //millisecond
+    }
+    if (/(y+)/.test(format)) {
+        format = format.replace(RegExp.$1, (thiz.getFullYear() + "").substr(4 - RegExp.$1.length));
+    }
+    for (var k in o) {
+        if (new RegExp("(" + k + ")").test(format)) {
+            format = format.replace(RegExp.$1, RegExp.$1.length == 1 ? o[k] : ("00" + o[k]).substr(("" + o[k]).length));
+        }
+    }
+    return format;
+};
 
 (function(scope) {
     var ApplicationID = "eiv32sFkByLILfAUSLW5H1d7rAlK4WvCaU8to5uI";
@@ -46,12 +76,52 @@ var errorHandler = function() {
         clipboardSwf: "http://127.0.0.1:86/libs/js/syntaxhighlighter2/clipboard.swf"
     };
 
+    // todo... POSTS_PER_PAGE = 10
     var POSTS_PER_PAGE = 2;
     var PAGES_COUNT = 8;
     var COUNT_RECENT_POSTS = 15;
     var COUNT_RECENT_COMMENTS = 15;
     var MONTHS = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
-    var Posts = Parse.Object.extend('Posts');
+    var Posts = Parse.Object.extend('Posts', {
+        // Instance methods
+    }, {
+        // Class methods
+        create: function() {
+            var post = new Posts();
+            post.set("ID", 0);
+            post.set("comment_count", 0);
+            post.set("comment_status", "open");
+            post.set("guid", "");
+            post.set("menu_order", 0);
+            post.set("ping_status", "open");
+            post.set("pinged", "");
+            post.set("post_content", "");
+            post.set("post_content_filtered", "");
+            post.set("post_excerpt", "");
+            post.set("post_mime_type", "");
+            var currDate = new Date();
+            var sdate = currDate.format("yyyy-MM-dd hh:mm:ss");
+            var sdateUTC = currDate.format("yyyy-MM-dd hh:mm:ss", true);
+            post.set("post_modified", sdate);
+            post.set("post_modified_gmt", sdateUTC);
+            post.set("post_name", "");
+            post.set("post_parent", 0);
+            post.set("post_password", "");
+            post.set("post_status", "publish");
+            post.set("post_title", "");
+            post.set("post_type", "post");
+            post.set("post_views", 0);
+            post.set("to_ping", "");
+            var currUser = Parse.User.current();
+            if (currUser) {
+                post.set("post_author", currUser);
+                var postACL = new Parse.ACL(currUser);
+                postACL.setPublicReadAccess(true);
+                post.setACL(postACL);
+            }
+            return post;
+        }
+    });
     var Terms = Parse.Object.extend('Terms');
     var TermRelationships = Parse.Object.extend('TermRelationships');
     var Comments = Parse.Object.extend('Comments');
@@ -275,6 +345,26 @@ var errorHandler = function() {
         return post;
     }
 
+    function toPostParseObj(post) {
+        var obj = Posts.create();
+        obj.set("post_title", post.post_title());
+        obj.set("post_content", post.post_content());
+        obj.set("post_status", post.post_status());  // publish or private
+        obj.set("post_type", post.post_type());  // post or draft
+        obj.set("post_name", escape(post.post_title()));
+        obj.set("post_excerpt", post.post_content().slice(0, 1000));
+        if (!post.id) {
+            obj.set("post_date", obj.get("post_modified"));
+            obj.set("post_date_gmt", obj.get("post_modified_gmt"));
+        }
+        if (post.is_private()) {
+            var postACL = new Parse.ACL(Parse.User.current());
+            postACL.setPublicReadAccess(false);
+            obj.setACL(postACL);
+        }
+        return obj;
+    }
+
     function genPageArray(page, total) {
         var left = 1, right = total;
         if (total > PAGES_COUNT) {
@@ -374,6 +464,8 @@ var errorHandler = function() {
                 var outerQuery = new Parse.Query(Posts);
                 outerQuery.matchesKeyInQuery("ID", "object_id", query);
                 return outerQuery;
+                // todo...
+                // curl -k -X GET   -H "X-Parse-Application-Id: eiv32sFkByLILfAUSLW5H1d7rAlK4WvCaU8to5uI"   -H "X-Parse-REST-API-Key: AA9utK1pJgSzkjuhuOznyRscqaCXAWF3g7tIRhSJ"   -G   --data-urlencode 'where={"ID":{"$select":{"query":{"className":"TermRelationships","where":{"term_taxonomy_id":17}},"key":"object_id"}}}' --data-urlencode 'limit=1'  https://api.parse.com/1/classes/Posts
             }
         });
     }
@@ -566,17 +658,35 @@ var errorHandler = function() {
                     (name == "DefaultCategory") && (cat_default = option);
                 }
             }
-            ko.applyBindings({
-                post_title: "",
-                post_content: "",
-                post_status: "publish",
-                post_type: "post",
-                category_list: cat_list,
-                category_default: cat_default
-            }, $("#post_edit").get(0));
+            function postModel() {
+                this.is_private = ko.observable(false);
+                $.extend(this, {
+                    post_title: ko.observable(""),
+                    post_content: ko.observable(""),
+                    post_status: ko.computed(function(){
+                        return this.is_private() ? "private" : "publish";
+                    }, this),
+                    post_type: ko.observable("post"),
+                    category_list: cat_list,
+                    category_selected: ko.observable(cat_default)
+                });
+            }
+            ko.applyBindings(new postModel(), $("#post_edit").get(0));
         },
         savePost: function(post) {
-            log("todo... savePost()", this);
+            post.post_content(tinyMCE.get('post_editor').getContent());
+            var postForParse = toPostParseObj(post);
+            log(postForParse, post.category_selected());
+            if (!postForParse.id) {
+                postForParse.set("ID", new Date().getTime());
+                wrapParseDeferred(postForParse.save, postForParse, null).done(function(p){
+                    log("new post saved success.", p);
+                    $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
+                }).fail(function(p, err){
+                        log("new post fail.", err);
+                        $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
+                    });
+            }
         },
         delPost: function(post) {
             log("delPost:", post.id, post.post_title);
@@ -586,7 +696,11 @@ var errorHandler = function() {
                 header: "删除",
                 body: "是否删除文章：《" + post.post_title + "》"
             }).confirm(function($dlg){
-                    API.deletePost(post.id);
+                    API.deletePost(post.id).done(function(){
+                        $(".notifications").notify({message: "成功删除文章《" + post.post_title + "》"}).show();
+                    }).fail(function(arg, err){
+                            $(".notifications").notify({message: "删除文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
+                        });
                     $dlg.modal("hide");
                 });
         },
