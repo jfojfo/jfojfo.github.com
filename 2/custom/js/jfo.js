@@ -77,7 +77,7 @@ Date.prototype.format = function (format, isUTC) {
     };
 
     // todo... POSTS_PER_PAGE = 10
-    var POSTS_PER_PAGE = 2;
+    var POSTS_PER_PAGE = 10;
     var PAGES_COUNT = 8;
     var COUNT_RECENT_POSTS = 15;
     var COUNT_RECENT_COMMENTS = 15;
@@ -215,20 +215,20 @@ Date.prototype.format = function (format, isUTC) {
     }
 
     function API_parse() {
-        function toPostParseObj(postEditorModel) {
-            var obj = Posts.create();
-            obj.set("post_title", postEditorModel.post_title());
-            obj.set("post_content", postEditorModel.post_content());
-            obj.set("post_status", postEditorModel.post_status());  // publish or private
-            obj.set("post_type", postEditorModel.post_type());  // post or draft
-            obj.set("post_name", escape(postEditorModel.post_title()));
-            obj.set("post_excerpt", postEditorModel.post_content().slice(0, 1000));
-            if (!postEditorModel.id) {
+        function toPostParseObj(postModel) {
+            var obj = postModel.getTag() || Posts.create();
+            obj.set("post_title", postModel.post_title);
+            obj.set("post_content", postModel.post_content);
+            obj.set("post_status", postModel.post_status);  // publish or private
+            obj.set("post_type", postModel.post_type);  // post or draft
+            obj.set("post_name", postModel.post_name);
+            obj.set("post_excerpt", postModel.post_excerpt);
+            if (!postModel.id) {
                 obj.set("ID", new Date().getTime());
                 obj.set("post_date", obj.get("post_modified"));
                 obj.set("post_date_gmt", obj.get("post_modified_gmt"));
             }
-            if (postEditorModel.is_private()) {
+            if (postModel.post_status == "private") {
                 var postACL = new Parse.ACL(Parse.User.current());
                 postACL.setPublicReadAccess(false);
                 obj.setACL(postACL);
@@ -356,10 +356,12 @@ Date.prototype.format = function (format, isUTC) {
     function toPostBindData(postObjFromParse) {
         var obj = postObjFromParse;
         var post = new PostModel();
+        post.setTag(obj);
         var dateStr = obj.get('post_date');
         dateStr = dateStr.replace(new RegExp("-","gm"), "/");
         var date = new Date(dateStr);
         post.id = obj.id;
+        post.ID = obj.get("ID");
         post.post_year = date.getFullYear();
         post.post_month = MONTHS[date.getMonth()];
         post.post_day = date.getDate();
@@ -368,6 +370,7 @@ Date.prototype.format = function (format, isUTC) {
         post.comment_count = obj.get('comment_count');
         post.post_content = obj.get('post_excerpt');
         post.post_link = "#post/" + post.id;
+        post.post_status = obj.get('post_status');
 
         post.post_category = obj.post_category;
         //this.get('post_category');
@@ -433,8 +436,7 @@ Date.prototype.format = function (format, isUTC) {
         getPage(page).done(function(r) {
             var data = toPageBindData(r);
             ko.applyBindings(data, $("#posts").get(0));
-            $('#post_full').hide();
-            $('#page').show();
+            $('#post_full').hide(), $('#page').show(), $('#post_editor').hide();
             mPage = page;
             scroll(0,0);
             showPagination();
@@ -458,8 +460,7 @@ Date.prototype.format = function (format, isUTC) {
             data.post_content = result.get('post_content');
             data.showReadMore = false;
             ko.applyBindings(data, $("#article").get(0));
-            $('#page').hide();
-            $('#post_full').show();
+            $('#page').hide(), $('#post_full').show(), $('#post_editor').hide();
             scroll(0,0);
         });
     }
@@ -651,23 +652,64 @@ Date.prototype.format = function (format, isUTC) {
         }
     }
 
-    function PostEditorModel(cat_list, cat_default) {
-        cat_list = cat_list ? cat_list : [];
-        cat_default = cat_default ? cat_default : "";
-        this.is_private = ko.observable(false);
-        $.extend(this, {
-            post_title: ko.observable(""),
-            post_content: ko.observable(""),
-            post_status: ko.computed(function(){
-                return this.is_private() ? "private" : "publish";
-            }, this),
-            post_type: ko.observable("post"),
-            category_list: cat_list,
-            category_selected: ko.observable(cat_default)
+    function PostModel() {
+        $.extend(PostModel.prototype, {
+            setTag: function(obj) {
+                this._tag = obj;
+            },
+            getTag: function() {
+                return this._tag;
+            },
+            fillFromPostEditorModel: function(postEditorModel) {
+                if (postEditorModel.postModel && this != postEditorModel.postModel) {
+                    $.extend(this, postModel);
+                }
+                this.post_title = postEditorModel.post_title();
+                this.post_content = postEditorModel.post_content();
+                this.post_excerpt = this.post_content.slice(0, 1000);
+                this.post_status = postEditorModel.post_status();  // publish or private
+                this.post_type = postEditorModel.post_type();  // post or draft
+                // todo... escape is not correct ==> %u....
+                this.post_name = escape(this.post_title);
+            }
         });
     }
-    function PostModel() {
-        return {};
+
+    function PostEditorModel() {
+        $.extend(PostEditorModel.prototype, {
+            fillCategoryOptions: function(terms, selected) {
+                var cat_list = [];
+                var cat_default = "";
+                var defaultSelected = selected ? selected : "DefaultCategory";
+                if (terms) {
+                    for (var i = 0; i < terms.length; i++) {
+                        var term = terms[i];
+                        var name = term.get("name");
+                        var option = {name: name, term: term};
+                        cat_list.push(option);
+                        (name == defaultSelected) && (cat_default = option);
+                    }
+                }
+                this.category_list = cat_list;
+                this.category_selected = ko.observable(cat_default);
+                if (selected)
+                    this.orig_category = cat_default;
+            },
+            fillFromPostModel: function(postModel) {
+                this.post_title(postModel.post_title);
+                this.post_content(postModel.post_content);
+                this.is_private(postModel.post_status == "private");
+                this.postModel = postModel;
+            }
+        });
+
+        this.is_private = ko.observable(false);
+        this.post_title = ko.observable("");
+        this.post_content = ko.observable("");
+        this.post_type = ko.observable("post");
+        this.post_status = ko.computed(function(){
+            return this.is_private() ? "private" : "publish";
+        }, this);
     }
     function PostController() {
         $.extend(PostController.prototype, {
@@ -675,22 +717,19 @@ Date.prototype.format = function (format, isUTC) {
                 log("newPost");
                 loadTinymceDynamically();
                 $("#page").hide(), $("#post_full").hide(), $("#post_editor").show();
-                var cat_list = [];
-                var cat_default = "";
-                if (Cache.terms) {
-                    for (var i = 0; i < Cache.terms.length; i++) {
-                        var term = Cache.terms[i];
-                        var name = term.get("name");
-                        var option = {name: name, term: term};
-                        cat_list.push(option);
-                        (name == "DefaultCategory") && (cat_default = option);
-                    }
-                }
-                ko.applyBindings(new PostEditorModel(cat_list, cat_default), $("#post_editor").get(0));
+                var postEditorModel = new PostEditorModel();
+                postEditorModel.fillCategoryOptions(Cache.terms);
+                ko.applyBindings(postEditorModel, $("#post_editor").get(0));
             },
-            editPost: function(post) {
-                log("editPost:", post.id, post.post_title);
+            editPost: function(postModel) {
+                log("editPost:", postModel.id, postModel.post_title);
                 if (!checkLogin()) return;
+                loadTinymceDynamically();
+                $("#page").hide(), $("#post_full").hide(), $("#post_editor").show();
+                var postEditorModel = new PostEditorModel();
+                postEditorModel.fillCategoryOptions(Cache.terms, postModel.post_category[0].name);
+                postEditorModel.fillFromPostModel(postModel);
+                ko.applyBindings(postEditorModel, $("#post_editor").get(0));
             },
             savePost: function(postEditorModel) {
                 if (!checkLogin()) return;
@@ -699,8 +738,10 @@ Date.prototype.format = function (format, isUTC) {
                     $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
                 }
                 postEditorModel.post_content(tinyMCE.get('post_editor_content').getContent());
-                if (!postEditorModel.id) {
-                    API.savePost(postEditorModel).done(function(p){
+                var postModel = postEditorModel.postModel || new PostModel();
+                postModel.fillFromPostEditorModel(postEditorModel);
+                if (!postEditorModel.postModel) {
+                    API.savePost(postModel).done(function(p){
                         log("new post saved success.", p);
                         var term = postEditorModel.category_selected().term;
                         // insert new record into TermRelationships
@@ -717,6 +758,43 @@ Date.prototype.format = function (format, isUTC) {
                                 log("update term count success.", t);
                             });
                             $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
+                        }).fail(notifyFail);
+                    }).fail(notifyFail);
+                } else {
+                    API.savePost(postModel).done(function(p){
+                        log("post updated success.", p);
+                        var term = postEditorModel.category_selected().term;
+                        var origTerm = postEditorModel.orig_category.term;
+                        // update TermRelationships
+                        var query = new Parse.Query(TermRelationships);
+                        query.equalTo("post", p);
+                        wrapParseDeferred(query.find, query).done(function(results){
+                            $.each(results, function(){
+                                var r = this;
+                                wrapParseDeferred(r.destroy, r).done(function(obj){
+                                    log("-->delete a relationship:", obj);
+                                }).fail(notifyFail);
+                            });
+                        });
+                        var relationship = TermRelationships.create();
+                        relationship.set("object_id", p.get("ID"));
+                        relationship.set("term_id", term.get("term_id"));
+                        relationship.set("post", p);
+                        relationship.set("term", term);
+                        API.saveRelationship(relationship).done(function(r){
+                            log("new relationship saved success.", r);
+                            if (term != origTerm) {
+                                // update Terms count
+                                term.increment("count", 1);
+                                API.saveTerm(term).done(function(t){
+                                    log("update new term count success.", t.get("count"), t);
+                                });
+                                origTerm.increment("count", -1);
+                                API.saveTerm(origTerm).done(function(t){
+                                    log("update orig term count success.", t.get("count"), t);
+                                });
+                            }
+                            $(".notifications").notify({message: "成功更新文章《" + p.get("post_title") + "》"}).show();
                         }).fail(notifyFail);
                     }).fail(notifyFail);
                 }
