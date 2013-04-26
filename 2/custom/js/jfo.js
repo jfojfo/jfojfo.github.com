@@ -123,7 +123,14 @@ Date.prototype.format = function (format, isUTC) {
         }
     });
     var Terms = Parse.Object.extend('Terms');
-    var TermRelationships = Parse.Object.extend('TermRelationships');
+    var TermRelationships = Parse.Object.extend('TermRelationships', {}, {
+        create: function() {
+            var relationship = new TermRelationships();
+            relationship.set("object_id", 0);
+            relationship.set("term_order", 0);
+            return relationship;
+        }
+    });
     var Comments = Parse.Object.extend('Comments');
 
     var mPage = 1, mTotalPages = 1;
@@ -457,7 +464,7 @@ Date.prototype.format = function (format, isUTC) {
     function initCategoryPagination(id) {
         initPagination(function(type){
             var query = new Parse.Query(TermRelationships);
-            query.equalTo('term_taxonomy_id', id);
+            query.equalTo('term_id', id);
             if (type == TYPE_QUERY_COUNT) {
                 return query;
             } else if (type == TYPE_QUERY_PAGE) {
@@ -648,7 +655,7 @@ Date.prototype.format = function (format, isUTC) {
             loadTinymceDynamically();
             $("#page").hide(), $("#post_full").hide(), $("#post_edit").show();
             var cat_list = [];
-            var cat_default;
+            var cat_default = "";
             if (Cache.terms) {
                 for (var i = 0; i < Cache.terms.length; i++) {
                     var term = Cache.terms[i];
@@ -676,16 +683,31 @@ Date.prototype.format = function (format, isUTC) {
         savePost: function(post) {
             post.post_content(tinyMCE.get('post_editor').getContent());
             var postForParse = toPostParseObj(post);
-            log(postForParse, post.category_selected());
             if (!postForParse.id) {
                 postForParse.set("ID", new Date().getTime());
                 wrapParseDeferred(postForParse.save, postForParse, null).done(function(p){
                     log("new post saved success.", p);
-                    $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
-                }).fail(function(p, err){
-                        log("new post fail.", err);
-                        $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
-                    });
+                    var term = post.category_selected().term;
+                    // insert new record into TermRelationships
+                    var relationship = TermRelationships.create();
+                    relationship.set("object_id", p.get("ID"));
+                    relationship.set("term_id", term.get("term_id"));
+                    relationship.set("post", p);
+                    relationship.set("term", term);
+                    wrapParseDeferred(relationship.save, relationship, null).done(function(r){
+                        log("new relationship saved success.", r);
+                        // update Terms count
+                        term.increment("count", 1);
+                        wrapParseDeferred(term.save, term, null).done(function(t){
+                            log("update term count success.", t);
+                        });
+                        $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
+                    }).fail(notifyFail);
+                }).fail(notifyFail);
+            }
+            function notifyFail(arg, err) {
+                log("new post fail.", err);
+                $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
             }
         },
         delPost: function(post) {
@@ -1281,7 +1303,21 @@ Date.prototype.format = function (format, isUTC) {
         }
         login().done(r);
     }
-//    insertPost();
+
+    function renameTermTaxonomyId2TermId() {
+        login().done(function(){
+            var query = new Parse.Query(TermRelationships);
+            query.descending("object_id");
+            queryAll(query).progress(function(list){
+                $.each(list, function(){
+                    log("object_id:" + this.get("object_id"), this);
+                    this.set('term_id', this.get("term_taxonomy_id"));
+                });
+                Parse.Object.saveAll(list);
+            });
+        });
+    }
+
 })();
 
 var testPostData = {
