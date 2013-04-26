@@ -136,7 +136,7 @@
               <div id="comments"></div>
             </div>
             <div data-bind="allowBindings: false">
-              <div id="post_edit" style="display: none;">
+              <div id="post_editor" style="display: none;">
                 <h2>编辑文章</h2>
                 <div>
                   <select data-bind="options: category_list, optionsText: 'name', value: category_selected"></select>
@@ -149,7 +149,7 @@
                   标题<input data-bind="value: post_title, valueUpdate:'keyup'">
                 </div>
                 <div>
-                  <textarea id="post_editor" data-bind="value: post_content" style="width:90%; height: 400px;">This is some content that will be editable with TinyMCE.</textarea>
+                  <textarea id="post_editor_content" data-bind="value: post_content" style="width:90%; height: 400px;">This is some content that will be editable with TinyMCE.</textarea>
                 </div>
               </div>
             </div>

@@ -215,20 +215,20 @@ Date.prototype.format = function (format, isUTC) {
     }
 
     function API_parse() {
-        function toPostParseObj(post) {
+        function toPostParseObj(postEditorModel) {
             var obj = Posts.create();
-            obj.set("post_title", post.post_title());
-            obj.set("post_content", post.post_content());
-            obj.set("post_status", post.post_status());  // publish or private
-            obj.set("post_type", post.post_type());  // post or draft
-            obj.set("post_name", escape(post.post_title()));
-            obj.set("post_excerpt", post.post_content().slice(0, 1000));
-            if (!post.id) {
+            obj.set("post_title", postEditorModel.post_title());
+            obj.set("post_content", postEditorModel.post_content());
+            obj.set("post_status", postEditorModel.post_status());  // publish or private
+            obj.set("post_type", postEditorModel.post_type());  // post or draft
+            obj.set("post_name", escape(postEditorModel.post_title()));
+            obj.set("post_excerpt", postEditorModel.post_content().slice(0, 1000));
+            if (!postEditorModel.id) {
                 obj.set("ID", new Date().getTime());
                 obj.set("post_date", obj.get("post_modified"));
                 obj.set("post_date_gmt", obj.get("post_modified_gmt"));
             }
-            if (post.is_private()) {
+            if (postEditorModel.is_private()) {
                 var postACL = new Parse.ACL(Parse.User.current());
                 postACL.setPublicReadAccess(false);
                 obj.setACL(postACL);
@@ -355,7 +355,7 @@ Date.prototype.format = function (format, isUTC) {
     }
     function toPostBindData(postObjFromParse) {
         var obj = postObjFromParse;
-        var post = {};
+        var post = new PostModel();
         var dateStr = obj.get('post_date');
         dateStr = dateStr.replace(new RegExp("-","gm"), "/");
         var date = new Date(dateStr);
@@ -651,95 +651,94 @@ Date.prototype.format = function (format, isUTC) {
         }
     }
 
-    var postController = {
-        newPost: function() {
-            log("newPost");
-    //            var dlg = $().showDialog({
-//                header: "文章",
-//                body: '<iframe src="edit.html" frameborder="0" width="100%" height="500px;"></iframe>',
-//                css: {"width": "90%", "height": "900px", "left": "5%", "margin": "auto"}
-//            }).confirm(function($dlg){
-//                    $dlg.modal("hide");
-//                })
-//            var frame = $('<iframe id="edit_post" src="edit.html" frameborder="0" style="width:100%; height:900px; position:fixed; top:5px; z-index:2000;"></iframe>');
-//            $("body").append(frame);
-            loadTinymceDynamically();
-            $("#page").hide(), $("#post_full").hide(), $("#post_edit").show();
-            var cat_list = [];
-            var cat_default = "";
-            if (Cache.terms) {
-                for (var i = 0; i < Cache.terms.length; i++) {
-                    var term = Cache.terms[i];
-                    var name = term.get("name");
-                    var option = {name: name, term: term};
-                    cat_list.push(option);
-                    (name == "DefaultCategory") && (cat_default = option);
+    function PostEditorModel(cat_list, cat_default) {
+        cat_list = cat_list ? cat_list : [];
+        cat_default = cat_default ? cat_default : "";
+        this.is_private = ko.observable(false);
+        $.extend(this, {
+            post_title: ko.observable(""),
+            post_content: ko.observable(""),
+            post_status: ko.computed(function(){
+                return this.is_private() ? "private" : "publish";
+            }, this),
+            post_type: ko.observable("post"),
+            category_list: cat_list,
+            category_selected: ko.observable(cat_default)
+        });
+    }
+    function PostModel() {
+        return {};
+    }
+    function PostController() {
+        $.extend(PostController.prototype, {
+            newPost: function() {
+                log("newPost");
+                loadTinymceDynamically();
+                $("#page").hide(), $("#post_full").hide(), $("#post_editor").show();
+                var cat_list = [];
+                var cat_default = "";
+                if (Cache.terms) {
+                    for (var i = 0; i < Cache.terms.length; i++) {
+                        var term = Cache.terms[i];
+                        var name = term.get("name");
+                        var option = {name: name, term: term};
+                        cat_list.push(option);
+                        (name == "DefaultCategory") && (cat_default = option);
+                    }
                 }
-            }
-            function postModel() {
-                this.is_private = ko.observable(false);
-                $.extend(this, {
-                    post_title: ko.observable(""),
-                    post_content: ko.observable(""),
-                    post_status: ko.computed(function(){
-                        return this.is_private() ? "private" : "publish";
-                    }, this),
-                    post_type: ko.observable("post"),
-                    category_list: cat_list,
-                    category_selected: ko.observable(cat_default)
-                });
-            }
-            ko.applyBindings(new postModel(), $("#post_edit").get(0));
-        },
-        savePost: function(post) {
-            function notifyFail(arg, err) {
-                log("new post fail.", err);
-                $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
-            }
-            post.post_content(tinyMCE.get('post_editor').getContent());
-            if (!post.id) {
-                API.savePost(post).done(function(p){
-                    log("new post saved success.", p);
-                    var term = post.category_selected().term;
-                    // insert new record into TermRelationships
-                    var relationship = TermRelationships.create();
-                    relationship.set("object_id", p.get("ID"));
-                    relationship.set("term_id", term.get("term_id"));
-                    relationship.set("post", p);
-                    relationship.set("term", term);
-                    API.saveRelationship(relationship).done(function(r){
-                        log("new relationship saved success.", r);
-                        // update Terms count
-                        term.increment("count", 1);
-                        API.saveTerm(term).done(function(t){
-                            log("update term count success.", t);
-                        });
-                        $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
+                ko.applyBindings(new PostEditorModel(cat_list, cat_default), $("#post_editor").get(0));
+            },
+            editPost: function(post) {
+                log("editPost:", post.id, post.post_title);
+                if (!checkLogin()) return;
+            },
+            savePost: function(postEditorModel) {
+                if (!checkLogin()) return;
+                function notifyFail(arg, err) {
+                    log("new post fail.", err);
+                    $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
+                }
+                postEditorModel.post_content(tinyMCE.get('post_editor_content').getContent());
+                if (!postEditorModel.id) {
+                    API.savePost(postEditorModel).done(function(p){
+                        log("new post saved success.", p);
+                        var term = postEditorModel.category_selected().term;
+                        // insert new record into TermRelationships
+                        var relationship = TermRelationships.create();
+                        relationship.set("object_id", p.get("ID"));
+                        relationship.set("term_id", term.get("term_id"));
+                        relationship.set("post", p);
+                        relationship.set("term", term);
+                        API.saveRelationship(relationship).done(function(r){
+                            log("new relationship saved success.", r);
+                            // update Terms count
+                            term.increment("count", 1);
+                            API.saveTerm(term).done(function(t){
+                                log("update term count success.", t);
+                            });
+                            $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
+                        }).fail(notifyFail);
                     }).fail(notifyFail);
-                }).fail(notifyFail);
+                }
+            },
+            delPost: function(post) {
+                log("delPost:", post.id, post.post_title);
+                if (!checkLogin()) return;
+                // $.showDialog is wrong!
+                $().showDialog({
+                    header: "删除",
+                    body: "是否删除文章：《" + post.post_title + "》"
+                }).confirm(function($dlg){
+                        API.deletePost(post.id).done(function(){
+                            $(".notifications").notify({message: "成功删除文章《" + post.post_title + "》"}).show();
+                        }).fail(function(arg, err){
+                                $(".notifications").notify({message: "删除文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
+                            });
+                        $dlg.modal("hide");
+                    });
             }
-        },
-        delPost: function(post) {
-            log("delPost:", post.id, post.post_title);
-            if (!checkLogin()) return;
-            // $.showDialog is wrong!
-            $().showDialog({
-                header: "删除",
-                body: "是否删除文章：《" + post.post_title + "》"
-            }).confirm(function($dlg){
-                    API.deletePost(post.id).done(function(){
-                        $(".notifications").notify({message: "成功删除文章《" + post.post_title + "》"}).show();
-                    }).fail(function(arg, err){
-                            $(".notifications").notify({message: "删除文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
-                        });
-                    $dlg.modal("hide");
-                });
-        },
-        editPost: function(post) {
-            log("editPost:", post.id, post.post_title);
-            if (!checkLogin()) return;
-        }
-    };
+        });
+    }
 
     var AppRouter = Backbone.Router.extend({
         routes: {
@@ -785,7 +784,7 @@ Date.prototype.format = function (format, isUTC) {
         showPrevPage: showPrevPage,
         initSidebar: initSidebar,
         initLogin: initLogin,
-        postController: postController,
+        postController: new PostController(),
         loginController: loginController,
         API: API
     });
