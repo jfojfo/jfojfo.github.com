@@ -215,12 +215,43 @@ Date.prototype.format = function (format, isUTC) {
     }
 
     function API_parse() {
+        function toPostParseObj(post) {
+            var obj = Posts.create();
+            obj.set("post_title", post.post_title());
+            obj.set("post_content", post.post_content());
+            obj.set("post_status", post.post_status());  // publish or private
+            obj.set("post_type", post.post_type());  // post or draft
+            obj.set("post_name", escape(post.post_title()));
+            obj.set("post_excerpt", post.post_content().slice(0, 1000));
+            if (!post.id) {
+                obj.set("ID", new Date().getTime());
+                obj.set("post_date", obj.get("post_modified"));
+                obj.set("post_date_gmt", obj.get("post_modified_gmt"));
+            }
+            if (post.is_private()) {
+                var postACL = new Parse.ACL(Parse.User.current());
+                postACL.setPublicReadAccess(false);
+                obj.setACL(postACL);
+            }
+            return obj;
+        }
+
         return wrapAPI(API_parse.prototype, {
             doLogin: function(name, passwd) {
                 return wrapParseDeferred(Parse.User.logIn, this, name, passwd);
             },
             doLogout: function() {
                 Parse.User.logOut();
+            },
+            doSavePost: function(post) {
+                var postForParse = toPostParseObj(post);
+                return wrapParseDeferred(postForParse.save, postForParse, null);
+            },
+            doSaveRelationship: function(relationship) {
+                return wrapParseDeferred(relationship.save, relationship, null);
+            },
+            doSaveTerm: function(term) {
+                return wrapParseDeferred(term.save, term, null);
             },
             doDeletePost: function(id) {
                 var defer = $.Deferred();
@@ -350,26 +381,6 @@ Date.prototype.format = function (format, isUTC) {
         post.username = Parse.User.current() ? Parse.User.current().get("username") : "";
         log(post, obj);
         return post;
-    }
-
-    function toPostParseObj(post) {
-        var obj = Posts.create();
-        obj.set("post_title", post.post_title());
-        obj.set("post_content", post.post_content());
-        obj.set("post_status", post.post_status());  // publish or private
-        obj.set("post_type", post.post_type());  // post or draft
-        obj.set("post_name", escape(post.post_title()));
-        obj.set("post_excerpt", post.post_content().slice(0, 1000));
-        if (!post.id) {
-            obj.set("post_date", obj.get("post_modified"));
-            obj.set("post_date_gmt", obj.get("post_modified_gmt"));
-        }
-        if (post.is_private()) {
-            var postACL = new Parse.ACL(Parse.User.current());
-            postACL.setPublicReadAccess(false);
-            obj.setACL(postACL);
-        }
-        return obj;
     }
 
     function genPageArray(page, total) {
@@ -681,11 +692,13 @@ Date.prototype.format = function (format, isUTC) {
             ko.applyBindings(new postModel(), $("#post_edit").get(0));
         },
         savePost: function(post) {
+            function notifyFail(arg, err) {
+                log("new post fail.", err);
+                $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
+            }
             post.post_content(tinyMCE.get('post_editor').getContent());
-            var postForParse = toPostParseObj(post);
-            if (!postForParse.id) {
-                postForParse.set("ID", new Date().getTime());
-                wrapParseDeferred(postForParse.save, postForParse, null).done(function(p){
+            if (!post.id) {
+                API.savePost(post).done(function(p){
                     log("new post saved success.", p);
                     var term = post.category_selected().term;
                     // insert new record into TermRelationships
@@ -694,20 +707,16 @@ Date.prototype.format = function (format, isUTC) {
                     relationship.set("term_id", term.get("term_id"));
                     relationship.set("post", p);
                     relationship.set("term", term);
-                    wrapParseDeferred(relationship.save, relationship, null).done(function(r){
+                    API.saveRelationship(relationship).done(function(r){
                         log("new relationship saved success.", r);
                         // update Terms count
                         term.increment("count", 1);
-                        wrapParseDeferred(term.save, term, null).done(function(t){
+                        API.saveTerm(term).done(function(t){
                             log("update term count success.", t);
                         });
                         $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
                     }).fail(notifyFail);
                 }).fail(notifyFail);
-            }
-            function notifyFail(arg, err) {
-                log("new post fail.", err);
-                $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
             }
         },
         delPost: function(post) {
