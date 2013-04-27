@@ -254,17 +254,9 @@ Date.prototype.format = function (format, isUTC) {
                 return wrapParseDeferred(term.save, term, null);
             },
             doDeletePost: function(id) {
-                var defer = $.Deferred();
                 var post = new Posts();
                 post.id = id;
-                wrapParseDeferred(post.destroy, post).done(function(obj){
-                    log("delete success");
-                    // TODO delete TermRelationshipt, decrease Term count & refresh post
-                    defer.resolve.apply(defer, arguments);
-                }).fail(function(obj, err){
-                        defer.reject.apply(defer, arguments);
-                    });
-                return defer.promise();
+                return wrapParseDeferred(post.destroy, post);
             }
         });
     }
@@ -715,6 +707,7 @@ Date.prototype.format = function (format, isUTC) {
         $.extend(PostController.prototype, {
             newPost: function() {
                 log("newPost");
+                if (!checkLogin()) return;
                 loadTinymceDynamically();
                 $("#page").hide(), $("#post_full").hide(), $("#post_editor").show();
                 var postEditorModel = new PostEditorModel();
@@ -733,10 +726,6 @@ Date.prototype.format = function (format, isUTC) {
             },
             savePost: function(postEditorModel) {
                 if (!checkLogin()) return;
-                function notifyFail(arg, err) {
-                    log("new post fail.", err);
-                    $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
-                }
                 postEditorModel.post_content(tinyMCE.get('post_editor_content').getContent());
                 var postModel = postEditorModel.postModel || new PostModel();
                 postModel.fillFromPostEditorModel(postEditorModel);
@@ -798,22 +787,61 @@ Date.prototype.format = function (format, isUTC) {
                         }).fail(notifyFail);
                     }).fail(notifyFail);
                 }
+                function notifyFail(arg, err) {
+                    log("save post fail.", err);
+                    $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
+                }
             },
-            delPost: function(post) {
-                log("delPost:", post.id, post.post_title);
+            delPost: function(postModel) {
+                log("delPost:", postModel.id, postModel.post_title);
                 if (!checkLogin()) return;
                 // $.showDialog is wrong!
                 $().showDialog({
                     header: "删除",
-                    body: "是否删除文章：《" + post.post_title + "》"
+                    body: "是否删除文章：《" + postModel.post_title + "》"
                 }).confirm(function($dlg){
-                        API.deletePost(post.id).done(function(){
-                            $(".notifications").notify({message: "成功删除文章《" + post.post_title + "》"}).show();
-                        }).fail(function(arg, err){
-                                $(".notifications").notify({message: "删除文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
+                        API.deletePost(postModel.id).done(function(p){
+                            log("delete post success");
+                            var query = new Parse.Query(TermRelationships);
+                            query.equalTo("post", p);
+                            wrapParseDeferred(query.find, query).done(function(results){
+                                $.each(results, function(){
+                                    var r = this;
+                                    wrapParseDeferred(r.destroy, r).done(function(obj){
+                                        log("-->delete a relationship:", obj);
+                                    }).fail(notifyFail);
+                                });
                             });
+                            //
+                            var termName = postModel.post_category[0].name;
+                            var termId = postModel.post_category[0].term_id;
+                            var terms = Cache.terms;
+                            var termToModify;
+                            for (var i = 0; i < terms.length; i++) {
+                                var term = terms[i];
+                                var name = term.get("name");
+                                var id = term.get("term_id");
+                                if (name == termName && termId == id) {
+                                    termToModify = term;
+                                    break;
+                                }
+                            }
+                            if (termToModify) {
+                                termToModify.increment("count", -1);
+                                API.saveTerm(termToModify).done(function(t){
+                                    log("update term count success.", t.get("count"), t);
+                                }).fail(function(arg, err){
+                                        log("update term count fail:" + err.code + ":" + err.message);
+                                    });
+                            }
+                            $(".notifications").notify({message: "成功删除文章《" + postModel.post_title + "》"}).show();
+                        }).fail(notifyFail);
                         $dlg.modal("hide");
                     });
+                function notifyFail(arg, err) {
+                    log("delete post fail.", err);
+                    $(".notifications").notify({message: "删除文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
+                }
             }
         });
     }
@@ -1404,19 +1432,53 @@ Date.prototype.format = function (format, isUTC) {
         });
     }
 
-})();
+    function checkTermsCount() {
+        login().done(function(){
+            var count = {};
+            var query = new Parse.Query(TermRelationships);
+            query.descending("object_id");
+            //query.include("post");
+            queryAll(query).progress(function(list){
+                $.each(list, function(){
+                    log("object_id:" + this.get("object_id"), this);
+                    var term = this.get("term");
+                    var post = this.get("post");
+                    var termId = term.id;
+                    count[termId] || (count[termId] = 0);
+                    count[termId] += 1;
+                });
+            }).done(function(list){
+                    var oldCount = {};
+                    query = new Parse.Query(Terms);
+                    query.descending("term_id");
+                    queryAll(query).done(function(list){
+                        var termNameMap = {};
+                        $.each(list, function(){
+                            var termId = this.id;
+                            var name = this.get("name");
+                            oldCount[termId] = this.get("count");
+                            termNameMap[termId] = name;
+                        });
+                        var problemList = [];
+                        for (var termId in oldCount) {
+                            if (!count[termId] || count[termId] != oldCount[termId])
+                                problemList.push({termId:termId, oldCount:oldCount[termId], count:count[termId]});
+                        }
+                        for (var i = 0; i < problemList.length; i++) {
+                            var p = problemList[i];
+                            p.termName = termNameMap[p.termId];
+                        }
+                        log("===>count:", count);
+                        log("===>oldCount:", oldCount);
+                        log("===>problem list:", problemList);
+                        for (var i = 0; i < problemList.length; i++) {
+                            var p = JSON.stringify(problemList[i]);
+                            log(p);
+                        }
+                    });
+                });
 
-var testPostData = {
-    post_year : "2013",
-    post_month : "三",
-    post_day : "5",
-    post_title : "javascript继承",
-    post_link : "#",
-    post_author : "jfojfo",
-    post_category : "Webapp",
-    post_category_link : "#",
-    post_views : 123,
-    comment_link : "#",
-    comment_count : 7,
-    post_content : "<p>显然用Activity来做是不行的，因为新Activity启动的时候会把原来的Activity pause掉怎么做呢，可以参考系统电量提示窗口或statusbar那样在service中启动窗口</p>"
-};
+        });
+    }
+
+})();
