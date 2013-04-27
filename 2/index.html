@@ -177,6 +177,7 @@
                   <% }) %>
                   <span data-bind="text: post_views">40</span> Views.
                   <a data-bind="attr: {href: comment_link}"><span data-bind="text: comment_count">2</span> Comments </a>
+                  <span data-bind="visible: post_status == 'private'">Private</span>
                 </li>
               </ul>
 
