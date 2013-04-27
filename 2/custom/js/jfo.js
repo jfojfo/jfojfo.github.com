@@ -731,7 +731,7 @@ Date.prototype.format = function (format, isUTC) {
                 postModel.fillFromPostEditorModel(postEditorModel);
                 if (!postEditorModel.postModel) {
                     API.savePost(postModel).done(function(p){
-                        log("new post saved success.", p);
+                        log("--->new post saved success.", p);
                         var term = postEditorModel.category_selected().term;
                         // insert new record into TermRelationships
                         var relationship = TermRelationships.create();
@@ -740,11 +740,11 @@ Date.prototype.format = function (format, isUTC) {
                         relationship.set("post", p);
                         relationship.set("term", term);
                         API.saveRelationship(relationship).done(function(r){
-                            log("new relationship saved success.", r);
+                            log("--->new relationship saved success.", r);
                             // update Terms count
                             term.increment("count", 1);
                             API.saveTerm(term).done(function(t){
-                                log("update term count success.", t);
+                                log("--->update term count success.", t);
                             });
                             $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
                         }).fail(notifyFail);
@@ -761,30 +761,30 @@ Date.prototype.format = function (format, isUTC) {
                             $.each(results, function(){
                                 var r = this;
                                 wrapParseDeferred(r.destroy, r).done(function(obj){
-                                    log("-->delete a relationship:", obj);
+                                    log("--->delete a relationship:", obj);
                                 }).fail(notifyFail);
                             });
+                            var relationship = TermRelationships.create();
+                            relationship.set("object_id", p.get("ID"));
+                            relationship.set("term_id", term.get("term_id"));
+                            relationship.set("post", p);
+                            relationship.set("term", term);
+                            API.saveRelationship(relationship).done(function(r){
+                                log("--->new relationship saved success.", r);
+                                if (term != origTerm) {
+                                    // update Terms count
+                                    term.increment("count", 1);
+                                    API.saveTerm(term).done(function(t){
+                                        log("--->update new term count success.", t.get("count"), t);
+                                    });
+                                    origTerm.increment("count", -1);
+                                    API.saveTerm(origTerm).done(function(t){
+                                        log("--->update orig term count success.", t.get("count"), t);
+                                    });
+                                }
+                                $(".notifications").notify({message: "成功更新文章《" + p.get("post_title") + "》"}).show();
+                            }).fail(notifyFail);
                         });
-                        var relationship = TermRelationships.create();
-                        relationship.set("object_id", p.get("ID"));
-                        relationship.set("term_id", term.get("term_id"));
-                        relationship.set("post", p);
-                        relationship.set("term", term);
-                        API.saveRelationship(relationship).done(function(r){
-                            log("new relationship saved success.", r);
-                            if (term != origTerm) {
-                                // update Terms count
-                                term.increment("count", 1);
-                                API.saveTerm(term).done(function(t){
-                                    log("update new term count success.", t.get("count"), t);
-                                });
-                                origTerm.increment("count", -1);
-                                API.saveTerm(origTerm).done(function(t){
-                                    log("update orig term count success.", t.get("count"), t);
-                                });
-                            }
-                            $(".notifications").notify({message: "成功更新文章《" + p.get("post_title") + "》"}).show();
-                        }).fail(notifyFail);
                     }).fail(notifyFail);
                 }
                 function notifyFail(arg, err) {
