@@ -204,7 +204,7 @@ Date.prototype.format = function (format, isUTC) {
             $("#sidebar_admin").show();
             ko.applyBindings({
                 title: "Admin",
-                list: [{text:"发布文章", link:""}]
+                list: [{text:"发布文章", link:"#post/new"}]
             }, $("#sidebar_admin").get(0));
         } else {
             $("#sidebar_admin").hide();
@@ -818,6 +818,7 @@ Date.prototype.format = function (format, isUTC) {
                                 log("--->update term count success.", t.get("count"), t);
                             });
                             $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
+                            app_router.showHome();
                         }).fail(notifyFail);
                     }).fail(notifyFail);
                 } else {
@@ -855,6 +856,7 @@ Date.prototype.format = function (format, isUTC) {
                                     });
                                 });
                                 $(".notifications").notify({message: "成功更新文章《" + p.get("post_title") + "》"}).show();
+                                app_router.showHome();
                             }).fail(notifyFail);
                         });
                     }).fail(notifyFail);
@@ -897,6 +899,7 @@ Date.prototype.format = function (format, isUTC) {
                                             });
                                     });
                                     $(".notifications").notify({message: "成功删除文章《" + postModel.post_title + "》"}).show();
+                                    app_router.showHome();
                                 }).fail(notifyFail);
                             });
                         }).fail(notifyFail);
@@ -906,6 +909,9 @@ Date.prototype.format = function (format, isUTC) {
                     log("delete post fail.", err);
                     $(".notifications").notify({message: "删除文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
                 }
+            },
+            cancel: function() {
+                app_router.showHome();
             }
         });
     }
@@ -944,7 +950,7 @@ Date.prototype.format = function (format, isUTC) {
             log("defaultRoute->", actions);
         }
     });
-    var app_router = new AppRouter;
+    var app_router = new AppRouter();
     Backbone.history.start();
 
     $.extend(scope, {

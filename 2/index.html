@@ -144,7 +144,7 @@
                   <input type="checkbox" data-bind="checked: is_private">仅自己可见</input>
                   <button id="save" data-bind="click: postController.savePost">发布</button>
                   <button id="draft">保存草稿</button>
-                  <button id="cancel">取消</button>
+                  <button id="cancel" data-bind="click: postController.cancel">取消</button>
                 </div>
                 <div>
                   标题<input data-bind="value: post_title, valueUpdate:'keyup'">
