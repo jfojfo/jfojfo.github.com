@@ -12,6 +12,32 @@ var log = function() {
 var errorHandler = function() {
     log.apply(this, arguments);
 };
+/*
+function fn_extends(curr, base) {
+    function dummy() {}
+    dummy.prototype = base.prototype;
+    curr.prototype = new dummy();
+    curr.prototype.constructor = curr;
+    return curr;
+}
+function fn_extends(curr__, base__, fnName) {
+    // note: 'curr__.name == curr__' is not allowed!
+    var name = fnName ? fnName : curr__.name;
+    var s="(function(){function "+name+"(){}"+name+".prototype=base__.prototype;curr__.prototype=new "+name+"();curr__.prototype.constructor = curr__;return curr__;})()";
+    return eval(s);
+}
+ */
+function fn_extends(name, base) {
+    name || (name = "");
+    var s="(function(){var dummy=function "+name+"(){},curr=dummy;dummy.prototype=base.prototype;curr.prototype=new dummy();curr.prototype.constructor=curr;return curr;})()";
+    return eval(s);
+}
+function fn_extends_with_init(name, base) {
+    name || (name = "");
+    var s="(function(){var dummy=function "+name+"(){},curr=function "+name+"(){this.init.apply(this,arguments);};dummy.prototype=base.prototype;curr.prototype=new dummy();curr.prototype.constructor=curr;return curr;})()";
+    return eval(s);
+}
+
 Date.prototype.format = function (format, isUTC) {
     // (new Date()).Format("yyyy-MM-dd hh:mm:ss.S") ==> 2006-07-02 08:09:04.423
     // (new Date()).Format("yyyy-M-d h:m:s.S")      ==> 2006-7-2 8:9:4.18
@@ -83,9 +109,9 @@ Date.prototype.format = function (format, isUTC) {
     var COUNT_RECENT_COMMENTS = 15;
     var MONTHS = ["一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
     var Posts = Parse.Object.extend('Posts', {
-        // Instance methods
+        // Instance properties
     }, {
-        // Class methods
+        // Class properties
         create: function() {
             var post = new Posts();
             post.set("ID", 0);
@@ -319,15 +345,16 @@ Date.prototype.format = function (format, isUTC) {
                         var post = relation.get('post');
                         var term = relation.get('term');
                         if (!map[post.id])
-                            map[post.id] = [];
-                        map[post.id].push({
+                            map[post.id] = new CategoryListModel();
+                        map[post.id].push(new CategoryModel({
                             name: term.get('name'),
-                            term_id: term.get('term_id')
-                        });
+                            term_id: term.get('term_id'),
+                            term: term
+                        }));
                     });
                     $.each(posts, function(post){
                         post = this;
-                        post.post_category = map[post.id];
+                        post.postCategoryListModel = map[post.id];
                     });
                     if (cb.success) {
                         cb.success.call(this, posts);
@@ -364,14 +391,12 @@ Date.prototype.format = function (format, isUTC) {
         post.post_link = "#post/" + post.id;
         post.post_status = obj.get('post_status');
 
-        post.post_category = obj.post_category;
-        //this.get('post_category');
+        post.postCategoryListModel = obj.postCategoryListModel;
+        // todo...
         post.post_category_link = 'post_category_link';
-        //this.get('post_category_link');
         post.comment_link = 'comment_link';
         //this.get('comment_link');
         post.post_views = obj.get('post_views');;
-        //this.get('post_views');
         post.showReadMore = true;
         post.username = Parse.User.current() ? Parse.User.current().get("username") : "";
         log(post, obj);
@@ -644,65 +669,111 @@ Date.prototype.format = function (format, isUTC) {
         }
     }
 
-    function PostModel() {
-        $.extend(PostModel.prototype, {
-            setTag: function(obj) {
-                this._tag = obj;
-            },
-            getTag: function() {
-                return this._tag;
-            },
-            fillFromPostEditorModel: function(postEditorModel) {
-                if (postEditorModel.postModel && this != postEditorModel.postModel) {
-                    $.extend(this, postModel);
-                }
-                this.post_title = postEditorModel.post_title();
-                this.post_content = postEditorModel.post_content();
-                this.post_excerpt = this.post_content.slice(0, 1000);
-                this.post_status = postEditorModel.post_status();  // publish or private
-                this.post_type = postEditorModel.post_type();  // post or draft
-                // todo... escape is not correct ==> %u....
-                this.post_name = escape(this.post_title);
+    function MyObject(){}
+    MyObject.prototype.init = MyObject;
+    MyObject.extend = function(name, instanceProperties, classProperties){
+        instanceProperties || (instanceProperties = {});
+        classProperties || (classProperties = {});
+        var ChildClass = fn_extends_with_init(name, this);
+        $.extend(ChildClass.prototype, {
+            parent: this.prototype,
+            init: function(){
+                ChildClass.prototype.parent.init.apply(this, arguments);
             }
-        });
-    }
+        }, classProperties);
+        return $.extend(ChildClass, {extend: this.extend}, instanceProperties);
+    };
+    Array.extend = MyObject.extend;
+    Array.prototype.init = MyObject;
+    var MyCollection = Array.extend("MyCollection", {}, {});
 
-    function PostEditorModel() {
-        $.extend(PostEditorModel.prototype, {
-            fillCategoryOptions: function(terms, selected) {
-                var cat_list = [];
-                var cat_default = "";
-                var defaultSelected = selected ? selected : "DefaultCategory";
-                if (terms) {
-                    for (var i = 0; i < terms.length; i++) {
-                        var term = terms[i];
-                        var name = term.get("name");
-                        var option = {name: name, term: term};
-                        cat_list.push(option);
-                        (name == defaultSelected) && (cat_default = option);
-                    }
-                }
-                this.category_list = cat_list;
-                this.category_selected = ko.observable(cat_default);
-                if (selected)
-                    this.orig_category = cat_default;
-            },
-            fillFromPostModel: function(postModel) {
-                this.post_title(postModel.post_title);
-                this.post_content(postModel.post_content);
-                this.is_private(postModel.post_status == "private");
-                this.postModel = postModel;
+    var Model = MyObject.extend("Model", {}, {
+        setTag: function (obj) {
+            this._tag = obj;
+        },
+        getTag: function () {
+            return this._tag;
+        }
+    });
+
+    var PostModel = Model.extend("PostModel", {}, {
+        fillFromPostEditorModel: function (postEditorModel) {
+            if (postEditorModel.postModel && this != postEditorModel.postModel) {
+                $.extend(this, postModel);
             }
-        });
+            this.post_title = postEditorModel.post_title();
+            this.post_content = postEditorModel.post_content();
+            this.post_excerpt = this.post_content.slice(0, 1000);
+            this.post_status = postEditorModel.post_status();  // publish or private
+            this.post_type = postEditorModel.post_type();  // post or draft
+            // todo... escape is not correct ==> %u....
+            this.post_name = escape(this.post_title);
+        }
+    });
 
-        this.is_private = ko.observable(false);
-        this.post_title = ko.observable("");
-        this.post_content = ko.observable("");
-        this.post_type = ko.observable("post");
-        this.post_status = ko.computed(function(){
-            return this.is_private() ? "private" : "publish";
-        }, this);
-    }
+    var PostEditorModel = Model.extend("PostEditorModel", {}, {
+        init: function() {
+            this.is_private = ko.observable(false);
+            this.post_title = ko.observable("");
+            this.post_content = ko.observable("");
+            this.post_type = ko.observable("post");
+            this.post_status = ko.computed(function(){
+                return this.is_private() ? "private" : "publish";
+            }, this);
+        },
+        fillCategoryOptions: function(terms) {
+            if (!terms) return;
+            var opt_list = [];
+            for (var i = 0; i < terms.length; i++) {
+                var term = terms[i];
+                var name = term.get("name");
+                var option = {name: name, term: term};
+                opt_list.push(option);
+                (name == "DefaultCategory") && (this.option_selected = ko.observable(option));
+            }
+            this.option_list = opt_list;
+        },
+        fillFromPostModel: function(postModel) {
+            this.post_title(postModel.post_title);
+            this.post_content(postModel.post_content);
+            this.is_private(postModel.post_status == "private");
+            this.postModel = postModel;
+        },
+        setSelectedCategory: function(postCategoryListModel) {
+            // todo... multi-selected
+            var selected = "DefaultCategory";
+            if (postCategoryListModel && postCategoryListModel[0])
+                selected = postCategoryListModel[0].name;
+            for (var i = 0; i < this.option_list.length; i++) {
+                var option = this.option_list[i];
+                if (selected == option.name) {
+                    this.option_selected = ko.observable(option);
+                    break;
+                }
+            }
+        },
+        getSelectedCategory: function() {
+            // todo... multi-selected
+            return this.option_selected().term;
+        }
+    });
+
+    var CategoryModel = Model.extend("CategoryModel", {}, {
+        init: function(opt) {
+            $.extend(this, opt);
+        }
+    });
+
+    var CategoryListModel = MyCollection.extend("CategoryListModel", {}, {
+        getTermList: function() {
+            var list = [];
+            for (var i = 0; i < this.length; i++) {
+                list.push(this[i].term);
+            }
+            return list;
+        }
+    });
+
     function PostController() {
         $.extend(PostController.prototype, {
             newPost: function() {
@@ -720,8 +791,9 @@ Date.prototype.format = function (format, isUTC) {
                 loadTinymceDynamically();
                 $("#page").hide(), $("#post_full").hide(), $("#post_editor").show();
                 var postEditorModel = new PostEditorModel();
-                postEditorModel.fillCategoryOptions(Cache.terms, postModel.post_category[0].name);
                 postEditorModel.fillFromPostModel(postModel);
+                postEditorModel.fillCategoryOptions(Cache.terms);
+                postEditorModel.setSelectedCategory(postModel.postCategoryListModel);
                 ko.applyBindings(postEditorModel, $("#post_editor").get(0));
             },
             savePost: function(postEditorModel) {
@@ -732,7 +804,7 @@ Date.prototype.format = function (format, isUTC) {
                 if (!postEditorModel.postModel) {
                     API.savePost(postModel).done(function(p){
                         log("--->new post saved success.", p);
-                        var term = postEditorModel.category_selected().term;
+                        var term = postEditorModel.getSelectedCategory();
                         // insert new record into TermRelationships
                         var relationship = TermRelationships.create();
                         relationship.set("object_id", p.get("ID"));
@@ -744,7 +816,7 @@ Date.prototype.format = function (format, isUTC) {
                             // update Terms count
                             term.increment("count", 1);
                             API.saveTerm(term).done(function(t){
-                                log("--->update term count success.", t);
+                                log("--->update term count success.", t.get("count"), t);
                             });
                             $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
                         }).fail(notifyFail);
@@ -752,8 +824,8 @@ Date.prototype.format = function (format, isUTC) {
                 } else {
                     API.savePost(postModel).done(function(p){
                         log("post updated success.", p);
-                        var term = postEditorModel.category_selected().term;
-                        var origTerm = postEditorModel.orig_category.term;
+                        var term = postEditorModel.getSelectedCategory();
+                        var origTermList = postModel.postCategoryListModel.getTermList();
                         // update TermRelationships
                         var query = new Parse.Query(TermRelationships);
                         query.equalTo("post", p);
@@ -771,17 +843,18 @@ Date.prototype.format = function (format, isUTC) {
                             relationship.set("term", term);
                             API.saveRelationship(relationship).done(function(r){
                                 log("--->new relationship saved success.", r);
-                                if (term != origTerm) {
-                                    // update Terms count
-                                    term.increment("count", 1);
-                                    API.saveTerm(term).done(function(t){
-                                        log("--->update new term count success.", t.get("count"), t);
-                                    });
+                                // update Terms count
+                                term.increment("count", 1);
+                                API.saveTerm(term).done(function(t){
+                                    log("--->update new term count success.", t.get("count"), t);
+                                });
+                                $.each(origTermList, function(){
+                                    var origTerm = this;
                                     origTerm.increment("count", -1);
                                     API.saveTerm(origTerm).done(function(t){
                                         log("--->update orig term count success.", t.get("count"), t);
                                     });
-                                }
+                                });
                                 $(".notifications").notify({message: "成功更新文章《" + p.get("post_title") + "》"}).show();
                             }).fail(notifyFail);
                         });
@@ -805,36 +878,28 @@ Date.prototype.format = function (format, isUTC) {
                             var query = new Parse.Query(TermRelationships);
                             query.equalTo("post", p);
                             wrapParseDeferred(query.find, query).done(function(results){
+                                var deferList = [];
                                 $.each(results, function(){
                                     var r = this;
-                                    wrapParseDeferred(r.destroy, r).done(function(obj){
-                                        log("-->delete a relationship:", obj);
-                                    }).fail(notifyFail);
+                                    deferList.push(wrapParseDeferred(r.destroy, r).done(function(obj){
+                                        log("--->delete a relationship:", obj);
+                                    }));
                                 });
-                            });
-                            //
-                            var termName = postModel.post_category[0].name;
-                            var termId = postModel.post_category[0].term_id;
-                            var terms = Cache.terms;
-                            var termToModify;
-                            for (var i = 0; i < terms.length; i++) {
-                                var term = terms[i];
-                                var name = term.get("name");
-                                var id = term.get("term_id");
-                                if (name == termName && termId == id) {
-                                    termToModify = term;
-                                    break;
-                                }
-                            }
-                            if (termToModify) {
-                                termToModify.increment("count", -1);
-                                API.saveTerm(termToModify).done(function(t){
-                                    log("update term count success.", t.get("count"), t);
-                                }).fail(function(arg, err){
-                                        log("update term count fail:" + err.code + ":" + err.message);
+                                $.when.apply(this, deferList).done(function(){
+                                    log("--->all relationship deleted.");
+                                    var termList = postModel.postCategoryListModel.getTermList();
+                                    $.each(termList, function(){
+                                        var term = this;
+                                        term.increment("count", -1);
+                                        API.saveTerm(term).done(function(t){
+                                            log("--->update term count success.", t.get("count"), t);
+                                        }).fail(function(arg, err){
+                                                log("--->update term count fail:" + err.code + ":" + err.message);
+                                            });
                                     });
-                            }
-                            $(".notifications").notify({message: "成功删除文章《" + postModel.post_title + "》"}).show();
+                                    $(".notifications").notify({message: "成功删除文章《" + postModel.post_title + "》"}).show();
+                                }).fail(notifyFail);
+                            });
                         }).fail(notifyFail);
                         $dlg.modal("hide");
                     });

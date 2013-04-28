@@ -139,7 +139,7 @@
               <div id="post_editor" style="display: none;">
                 <h2>编辑文章</h2>
                 <div>
-                  <select data-bind="options: category_list, optionsText: 'name', value: category_selected"></select>
+                  <select data-bind="options: option_list, optionsText: 'name', value: option_selected"></select>
                   <input type="checkbox" data-bind="checked: is_private">仅自己可见</input>
                   <button id="save" data-bind="click: postController.savePost">发布</button>
                   <button id="draft">保存草稿</button>
@@ -172,7 +172,7 @@
                 <li class="postmeta">
                   Post by <span data-bind="text: post_author">jfo</span> at 
                   <span data-bind="text: post_year">2011</span>. Category:
-                  <% var last = _.last(post_category); _.each(post_category, function(category){ %>
+                  <% var last = _.last(postCategoryListModel); _.each(postCategoryListModel, function(category){ %>
                     <a data-bind="text: category.name, attr: { href: '#tag/' + category.term_id }">android</a><span data-bind="text: last == category ? '.' : ','"></span>
                   <% }) %>
                   <span data-bind="text: post_views">40</span> Views.
