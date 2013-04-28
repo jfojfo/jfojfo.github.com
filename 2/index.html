@@ -159,7 +159,7 @@
 
           </script>
           <script id='post_template' type='text/x-jquery-tmpl'>
-            <div class="post">
+            <div class="post" data-bind="elem: $element">
 
               <ul class="date">
                 <li class="month" data-bind="text: post_month">二</li>
@@ -944,7 +944,16 @@
               return { controlsDescendantBindings: !shouldAllowBindings };
           }
       };
-      
+      ko.bindingHandlers.elem = {
+        init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+          // Make a modified binding context, with a extra properties, and apply it to descendant elements
+          var newProperties = valueAccessor();
+          bindingContext.$data.$elem = newProperties;
+
+          // Also tell KO to continue bind the descendants itself
+          return { controlsDescendantBindings: false };
+        }
+      };
       ko.applyBindings(data);
       initLogin();
     </script>

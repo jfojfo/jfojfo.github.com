@@ -1,7 +1,8 @@
 /**
  * Ctrl+Q quick document
  * Ctrl+O(F12) quick outline
- *
+ * Ctrl+Shift+I  view quick definition of symbol
+ * Ctrl+B  jump to function definition
  */
 var DEBUG = true;
 var console = console || { log: function() {} };
@@ -699,7 +700,7 @@ Date.prototype.format = function (format, isUTC) {
     var PostModel = Model.extend("PostModel", {}, {
         fillFromPostEditorModel: function (postEditorModel) {
             if (postEditorModel.postModel && this != postEditorModel.postModel) {
-                $.extend(this, postModel);
+                $.extend(this, postEditorModel.postModel);
             }
             this.post_title = postEditorModel.post_title();
             this.post_content = postEditorModel.post_content();
@@ -759,7 +760,11 @@ Date.prototype.format = function (format, isUTC) {
 
     var CategoryModel = Model.extend("CategoryModel", {}, {
         init: function(opt) {
-            $.extend(this, opt);
+            $.extend(this, {
+                name: "",
+                term_id: 0,
+                term: null
+            }, opt);
         }
     });
 
@@ -770,6 +775,12 @@ Date.prototype.format = function (format, isUTC) {
                 list.push(this[i].term);
             }
             return list;
+        },
+        setTermList: function(categoryModelList) {
+            var args = categoryModelList.slice();
+            args.unshift(this.length);
+            args.unshift(0);
+            this.splice.apply(this, args);
         }
     });
 
@@ -818,13 +829,19 @@ Date.prototype.format = function (format, isUTC) {
                                 log("--->update term count success.", t.get("count"), t);
                             });
                             $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
-                            app_router.showHome();
+                            goHome();
                         }).fail(notifyFail);
                     }).fail(notifyFail);
                 } else {
                     API.savePost(postModel).done(function(p){
                         log("post updated success.", p);
                         var term = postEditorModel.getSelectedCategory();
+                        var newPostCategoryModel = new CategoryModel({
+                            name: term.get("name"),
+                            term_id: term.get("term_id"),
+                            term: term
+                        });
+                        postModel.postCategoryListModel.setTermList([newPostCategoryModel]);
                         var origTermList = postModel.postCategoryListModel.getTermList();
                         // update TermRelationships
                         var query = new Parse.Query(TermRelationships);
@@ -856,7 +873,7 @@ Date.prototype.format = function (format, isUTC) {
                                     });
                                 });
                                 $(".notifications").notify({message: "成功更新文章《" + p.get("post_title") + "》"}).show();
-                                app_router.showHome();
+                                goHome();
                             }).fail(notifyFail);
                         });
                     }).fail(notifyFail);
@@ -899,7 +916,7 @@ Date.prototype.format = function (format, isUTC) {
                                             });
                                     });
                                     $(".notifications").notify({message: "成功删除文章《" + postModel.post_title + "》"}).show();
-                                    app_router.showHome();
+                                    goHome();
                                 }).fail(notifyFail);
                             });
                         }).fail(notifyFail);
@@ -911,9 +928,13 @@ Date.prototype.format = function (format, isUTC) {
                 }
             },
             cancel: function() {
-                app_router.showHome();
+                goHome();
             }
         });
+    }
+
+    function goHome() {
+        window.location.href = "";
     }
 
     var AppRouter = Backbone.Router.extend({
@@ -1499,6 +1520,59 @@ Date.prototype.format = function (format, isUTC) {
                 });
                 Parse.Object.saveAll(list);
             });
+        });
+    }
+
+    function updateTermRelationshipsACL() {
+        login().done(function() {
+            var query = new Parse.Query(TermRelationships);
+            query.descending("object_id");
+            queryAll(query).progress(function(list){
+                $.each(list, function(){
+                    log("object_id:" + this.get("object_id"), this);
+                    var ACL = new Parse.ACL(Parse.User.current());
+                    ACL.setPublicReadAccess(true);
+                    this.setACL(ACL);
+                });
+                Parse.Object.saveAll(list);
+            });
+        });
+    }
+    function updateTermsACL() {
+        login().done(function() {
+            var query = new Parse.Query(Terms);
+            query.descending("term_id");
+            queryAll(query).progress(function(list){
+                $.each(list, function(){
+                    log("term_id:" + this.get("term_id"), this.get("name"), this.get("count"), this);
+                    var ACL = new Parse.ACL(Parse.User.current());
+                    ACL.setPublicReadAccess(true);
+                    this.setACL(ACL);
+                });
+                Parse.Object.saveAll(list);
+            });
+        });
+    }
+    function checkTermRelationshipsACL() {
+        login().done(function() {
+            var query = new Parse.Query(TermRelationships);
+            query.descending("object_id");
+            var problemList = [];
+            queryAll(query).progress(function(list){
+                $.each(list, function(){
+                    log("object_id:" + this.get("object_id"), this);
+                    var ACL = this.getACL();
+                    if (!ACL) {
+                        problemList.push(this);
+                    }
+                });
+            }).done(function(){
+                    log("problemList:", problemList);
+                    for (var i = 0; i < problemList.length; i++) {
+                        var relation = problemList[i];
+                        console.warn("object_id:" + relation.get("object_id"), this);
+                    }
+                });
         });
     }
 
