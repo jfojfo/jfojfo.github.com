@@ -706,8 +706,7 @@ Date.prototype.format = function (format, isUTC) {
             this.post_excerpt = this.post_content.slice(0, 1000);
             this.post_status = postEditorModel.post_status();  // publish or private
             this.post_type = postEditorModel.post_type();  // post or draft
-            // todo... escape is not correct ==> %u....
-            this.post_name = escape(this.post_title);
+            this.post_name = escapeToUrl(this.post_title, "UTF-8");
         }
     });
 
