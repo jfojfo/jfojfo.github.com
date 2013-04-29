@@ -651,48 +651,6 @@ Date.prototype.format = function (format, isUTC) {
         }
     };
 
-    function loadTinymceDynamically() {
-        if (typeof(tinymce) == "undefined") {
-            log("loading tinymce...");
-            function removeScript(event){
-//                event.target.parentNode.removeChild(event.target);
-            }
-            function initTinymce(){
-                var script = document.createElement('script');
-                script.type = "text/javascript";
-                script.textContent = "(" + function(opt){
-                    if (!tinymce.dom.Event.domLoaded) {
-                        tinymce.dom.Event.domLoaded = true;
-                    }
-                    tinymce.init(opt);
-                } + ")(" + JSON.stringify(TINYMCE_OPT) + ");";
-                script.onload = removeScript;
-                (document.head || document.documentElement).appendChild(script);
-            }
-            function loadTinymceCore(callback) {
-                var tinymceScript = document.createElement('script');
-                tinymceScript.type = "text/javascript";
-                tinymceScript.src = TINYMCE_URL;
-                tinymceScript.onload = callback;
-                (document.head || document.documentElement).appendChild(tinymceScript);
-            }
-            function loadTinymcePreview(callback) {
-                var tinymcePreviewScript = document.createElement('script');
-                tinymcePreviewScript.type = "text/javascript";
-                tinymcePreviewScript.src = TINYMCE_PREVIEW_PLUGIN_URL;
-                tinymcePreviewScript.onload = callback;
-                (document.head || document.documentElement).appendChild(tinymcePreviewScript);
-            }
-            loadTinymceCore(function(event){
-                removeScript(event);
-                loadTinymcePreview(function(event){
-                    removeScript(event);
-                    initTinymce();
-                });
-            });
-        }
-    }
-
     function MyObject(){}
     MyObject.prototype.init = MyObject;
     MyObject.extend = function(name, instanceProperties, classProperties){
