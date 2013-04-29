@@ -119,7 +119,7 @@
               <li><h4 data-bind="text: title">Admin</h4></li>
               <li class="divider"></li>
               <% _.each(list, function(d){ %>
-                <li><a data-bind="attr: { href: d.link }, click: postController.newPost"><i class="icon-post-item"></i><span data-bind="text: d.text"></span></a></li>
+                <li><a data-bind="attr: { href: d.link }, click: d.func"><i class="icon-post-item"></i><span data-bind="text: d.text"></span></a></li>
               <% }) %>
             </ul>
           </script>
@@ -183,7 +183,7 @@
               </ul>
 
               <div class="clearfix"></div>
-              <div class="entry" data-bind="html: post_content">xxx...</div>
+              <div class="entry" data-bind="html: (showReadMore ? post_excerpt : post_content)">xxx...</div>
               <div class="clearfix"></div>
               <div class="pull-right footer">
                 <a class="item" data-bind="visible: showReadMore, attr: { href: post_link}">阅读全文</a>

@@ -205,7 +205,10 @@ Date.prototype.format = function (format, isUTC) {
             $("#sidebar_admin").show();
             ko.applyBindings({
                 title: "Admin",
-                list: [{text:"发布文章", link:"#post/new"}]
+                list: [
+                    {text:"发布文章", link:"#post/new", func: postController.newPost},
+                    {text:"Check category count", link:"", func: postController.checkCategoryCount},
+                ]
             }, $("#sidebar_admin").get(0));
         } else {
             $("#sidebar_admin").hide();
@@ -284,6 +287,9 @@ Date.prototype.format = function (format, isUTC) {
                 var post = new Posts();
                 post.id = id;
                 return wrapParseDeferred(post.destroy, post);
+            },
+            doDeleteRelationship: function(relationship) {
+                return wrapParseDeferred(relationship.destroy, relationship);
             }
         });
     }
@@ -369,7 +375,9 @@ Date.prototype.format = function (format, isUTC) {
     function toPageBindData(list) {
         var arr = [];
         $.each(list, function(){
-            arr.push(toPostBindData(this));
+            var postModel = toPostBindData(this);
+            postModel.showReadMore = true;
+            arr.push(postModel);
         });
         return arr;
     }
@@ -388,7 +396,8 @@ Date.prototype.format = function (format, isUTC) {
         post.post_title = obj.get('post_title');
         post.post_author = obj.get('post_author').get('username');
         post.comment_count = obj.get('comment_count');
-        post.post_content = obj.get('post_excerpt');
+        post.post_content = obj.get('post_content');
+        post.post_excerpt = obj.get('post_excerpt');
         post.post_link = "#post/" + post.id;
         post.post_status = obj.get('post_status');
 
@@ -398,7 +407,6 @@ Date.prototype.format = function (format, isUTC) {
         post.comment_link = 'comment_link';
         //this.get('comment_link');
         post.post_views = obj.get('post_views');;
-        post.showReadMore = true;
         post.username = Parse.User.current() ? Parse.User.current().get("username") : "";
         log(post, obj);
         return post;
@@ -452,8 +460,8 @@ Date.prototype.format = function (format, isUTC) {
             return;
         log("show page:", page);
         getPage(page).done(function(r) {
-            var data = toPageBindData(r);
-            ko.applyBindings(data, $("#posts").get(0));
+            var postModelList = toPageBindData(r);
+            ko.applyBindings(postModelList, $("#posts").get(0));
             $('#post_full').hide(), $('#page').show(), $('#post_editor').hide();
             mPage = page;
             scroll(0,0);
@@ -474,12 +482,27 @@ Date.prototype.format = function (format, isUTC) {
         if (!id) return;
         var query = new Parse.Query(Posts);
         wrapParseDeferred(query.get, query, id).done(function(result){
-            var data = toPostBindData(result);
-            data.post_content = result.get('post_content');
-            data.showReadMore = false;
-            ko.applyBindings(data, $("#article").get(0));
-            $('#page').hide(), $('#post_full').show(), $('#post_editor').hide();
-            scroll(0,0);
+            var postModel = toPostBindData(result);
+            postModel.showReadMore = false;
+
+            var query = new Parse.Query(TermRelationships);
+            query.equalTo('post', result);
+            query.include('term');
+            wrapParseDeferred(query.find, query).done(function(relation_list){
+                var list = new CategoryListModel();
+                $.each(relation_list, function(){
+                    var term = this.get("term");
+                    list.push(new CategoryModel({
+                        name: term.get("name"),
+                        term_id: term.get("term_id"),
+                        term: term
+                    }));
+                });
+                postModel.postCategoryListModel = list;
+                ko.applyBindings(postModel, $("#article").get(0));
+                $('#page').hide(), $('#post_full').show(), $('#post_editor').hide();
+                scroll(0,0);
+            });
         });
     }
 
@@ -813,7 +836,7 @@ Date.prototype.format = function (format, isUTC) {
                 postModel.fillFromPostEditorModel(postEditorModel);
                 if (!postEditorModel.postModel) {
                     API.savePost(postModel).done(function(p){
-                        log("--->new post saved success.", p);
+                        log("--->new post saved success.", p.toJSON());
                         var term = postEditorModel.getSelectedCategory();
                         // insert new record into TermRelationships
                         var relationship = TermRelationships.create();
@@ -822,64 +845,78 @@ Date.prototype.format = function (format, isUTC) {
                         relationship.set("post", p);
                         relationship.set("term", term);
                         API.saveRelationship(relationship).done(function(r){
-                            log("--->new relationship saved success.", r);
+                            log("--->new relationship saved success.", r.toJSON());
                             // update Terms count
                             term.increment("count", 1);
                             API.saveTerm(term).done(function(t){
-                                log("--->update term count success.", t.get("count"), t);
-                            });
-                            $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
-                            goHome();
+                                log("--->update term count success.", t.toJSON());
+                                $(".notifications").notify({message: "成功发表文章《" + p.get("post_title") + "》"}).show();
+                                goHome();
+                            }).fail(notifyFail);
                         }).fail(notifyFail);
                     }).fail(notifyFail);
                 } else {
                     API.savePost(postModel).done(function(p){
-                        log("post updated success.", p);
+                        log("--->post updated success.", p.toJSON());
                         var term = postEditorModel.getSelectedCategory();
+                        var origTermList = postModel.postCategoryListModel.getTermList();
                         var newPostCategoryModel = new CategoryModel({
                             name: term.get("name"),
                             term_id: term.get("term_id"),
                             term: term
                         });
                         postModel.postCategoryListModel.setTermList([newPostCategoryModel]);
-                        var origTermList = postModel.postCategoryListModel.getTermList();
                         // update TermRelationships
                         var query = new Parse.Query(TermRelationships);
                         query.equalTo("post", p);
                         wrapParseDeferred(query.find, query).done(function(results){
+                            var deferList = [];
                             $.each(results, function(){
                                 var r = this;
-                                wrapParseDeferred(r.destroy, r).done(function(obj){
-                                    log("--->delete a relationship:", obj);
-                                }).fail(notifyFail);
+                                deferList.push(API.deleteRelationship(r).done(function(obj){
+                                    log("--->delete a relationship success:", obj.toJSON());
+                                }).fail(function(obj, err){
+                                        log("--->delete a relationship fail:" + err.code + ":" + err.message);
+                                    }));
                             });
-                            var relationship = TermRelationships.create();
-                            relationship.set("object_id", p.get("ID"));
-                            relationship.set("term_id", term.get("term_id"));
-                            relationship.set("post", p);
-                            relationship.set("term", term);
-                            API.saveRelationship(relationship).done(function(r){
-                                log("--->new relationship saved success.", r);
-                                // update Terms count
-                                term.increment("count", 1);
-                                API.saveTerm(term).done(function(t){
-                                    log("--->update new term count success.", t.get("count"), t);
-                                });
-                                $.each(origTermList, function(){
-                                    var origTerm = this;
-                                    origTerm.increment("count", -1);
-                                    API.saveTerm(origTerm).done(function(t){
-                                        log("--->update orig term count success.", t.get("count"), t);
-                                    });
-                                });
-                                $(".notifications").notify({message: "成功更新文章《" + p.get("post_title") + "》"}).show();
-                                goHome();
+                            $.when.apply(this, deferList).done(function(){
+                                log("--->all relationship deleted.");
+                                var relationship = TermRelationships.create();
+                                relationship.set("object_id", p.get("ID"));
+                                relationship.set("term_id", term.get("term_id"));
+                                relationship.set("post", p);
+                                relationship.set("term", term);
+                                API.saveRelationship(relationship).done(function(r){
+                                    log("--->new relationship saved success.", r.toJSON());
+                                    // update Terms count
+                                    term.increment("count", 1);
+                                    API.saveTerm(term).done(function(t){
+                                        log("--->update new term count success.", t.toJSON());
+                                        var deferList = [];
+                                        $.each(origTermList, function(){
+                                            var origTerm = this;
+                                            origTerm.increment("count", -1);
+                                            deferList.push(API.saveTerm(origTerm).done(function(t){
+                                                log("--->update orig term count success.", t.toJSON());
+                                            }).fail(function(obj, err){
+                                                    log("--->update orig term count fail:" + err.code + ":" + err.message);
+                                                }));
+                                        });
+                                        $.when.apply(this, deferList).done(function(){
+                                            log("--->all orig term count updated.");
+                                            $(".notifications").notify({message: "成功更新文章《" + p.get("post_title") + "》"}).show();
+                                            goHome();
+                                        }).fail(notifyFail);
+                                    }).fail(function(obj, err){
+                                            log("--->update new term count fail:" + err.code + ":" + err.message, obj.toJSON());
+                                        }).fail(notifyFail);
+                                }).fail(notifyFail);
                             }).fail(notifyFail);
-                        });
+                        }).fail(notifyFail);
                     }).fail(notifyFail);
                 }
                 function notifyFail(arg, err) {
-                    log("save post fail.", err);
+                    log("save post fail.", err, arg);
                     $(".notifications").notify({message: "发表文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
                 }
             },
@@ -892,49 +929,101 @@ Date.prototype.format = function (format, isUTC) {
                     body: "是否删除文章：《" + postModel.post_title + "》"
                 }).confirm(function($dlg){
                         API.deletePost(postModel.id).done(function(p){
-                            log("delete post success");
+                            log("--->delete post success", p.toJSON());
                             var query = new Parse.Query(TermRelationships);
                             query.equalTo("post", p);
                             wrapParseDeferred(query.find, query).done(function(results){
                                 var deferList = [];
                                 $.each(results, function(){
                                     var r = this;
-                                    deferList.push(wrapParseDeferred(r.destroy, r).done(function(obj){
-                                        log("--->delete a relationship:", obj);
-                                    }));
+                                    deferList.push(API.deleteRelationship(r).done(function(obj){
+                                        log("--->delete a relationship success:", obj.toJSON());
+                                    }).fail(function(obj, err){
+                                            log("--->delete a relationship fail:" + err.code + ":" + err.message, obj.toJSON());
+                                        }));
                                 });
                                 $.when.apply(this, deferList).done(function(){
                                     log("--->all relationship deleted.");
+                                    var deferList = [];
                                     var termList = postModel.postCategoryListModel.getTermList();
                                     $.each(termList, function(){
                                         var term = this;
                                         term.increment("count", -1);
-                                        API.saveTerm(term).done(function(t){
-                                            log("--->update term count success.", t.get("count"), t);
-                                        }).fail(function(arg, err){
-                                                log("--->update term count fail:" + err.code + ":" + err.message);
-                                            });
+                                        deferList.push(API.saveTerm(term).done(function(t){
+                                            log("--->update term count success.", t.toJSON());
+                                        }).fail(function(obj, err){
+                                                log("--->update term count fail:" + err.code + ":" + err.message, obj.toJSON());
+                                            }));
                                     });
-                                    $(".notifications").notify({message: "成功删除文章《" + postModel.post_title + "》"}).show();
-                                    goHome();
+                                    $.when.apply(this, deferList).done(function(){
+                                        log("--->all term count updated.");
+                                        $(".notifications").notify({message: "成功删除文章《" + postModel.post_title + "》"}).show();
+                                        goHome();
+                                    }).fail(notifyFail);
                                 }).fail(notifyFail);
-                            });
+                            }).fail(notifyFail);
                         }).fail(notifyFail);
                         $dlg.modal("hide");
                     });
                 function notifyFail(arg, err) {
-                    log("delete post fail.", err);
+                    log("delete post fail.", err, arg);
                     $(".notifications").notify({message: "删除文章失败:" + err.code + ":" + err.message, type: 'error'}).show();
                 }
             },
             cancel: function() {
                 goHome();
-            }
+            },
+            checkCategoryCount: checkTermsCount
         });
     }
 
     function goHome() {
         window.location.href = "";
+    }
+    function checkTermsCount() {
+        var count = {};
+        var query = new Parse.Query(TermRelationships);
+        query.descending("object_id");
+        //query.include("post");
+        queryAll(query).progress(function(list){
+            $.each(list, function(){
+                log("object_id:", this.get("object_id"), this.toJSON());
+                var term = this.get("term");
+                var post = this.get("post");
+                var termId = term.id;
+                count[termId] || (count[termId] = 0);
+                count[termId] += 1;
+            });
+        }).done(function(list){
+                var oldCount = {};
+                query = new Parse.Query(Terms);
+                query.descending("term_id");
+                queryAll(query).done(function(list){
+                    var termNameMap = {};
+                    $.each(list, function(){
+                        var termId = this.id;
+                        var name = this.get("name");
+                        oldCount[termId] = this.get("count");
+                        termNameMap[termId] = name;
+                    });
+                    var problemList = [];
+                    for (var termId in oldCount) {
+                        if (!count[termId] || count[termId] != oldCount[termId])
+                            problemList.push({termId:termId, oldCount:oldCount[termId], count:count[termId]});
+                    }
+                    for (var i = 0; i < problemList.length; i++) {
+                        var p = problemList[i];
+                        p.termName = termNameMap[p.termId];
+                    }
+                    log("===>count:", count);
+                    log("===>oldCount:", oldCount);
+                    log("===>problem list:", problemList);
+                    for (var i = 0; i < problemList.length; i++) {
+                        var p = JSON.stringify(problemList[i]);
+                        log(p);
+                    }
+                });
+            });
     }
 
     var AppRouter = Backbone.Router.extend({
@@ -1573,55 +1662,6 @@ Date.prototype.format = function (format, isUTC) {
                         console.warn("object_id:" + relation.get("object_id"), this);
                     }
                 });
-        });
-    }
-
-    function checkTermsCount() {
-        login().done(function(){
-            var count = {};
-            var query = new Parse.Query(TermRelationships);
-            query.descending("object_id");
-            //query.include("post");
-            queryAll(query).progress(function(list){
-                $.each(list, function(){
-                    log("object_id:" + this.get("object_id"), this);
-                    var term = this.get("term");
-                    var post = this.get("post");
-                    var termId = term.id;
-                    count[termId] || (count[termId] = 0);
-                    count[termId] += 1;
-                });
-            }).done(function(list){
-                    var oldCount = {};
-                    query = new Parse.Query(Terms);
-                    query.descending("term_id");
-                    queryAll(query).done(function(list){
-                        var termNameMap = {};
-                        $.each(list, function(){
-                            var termId = this.id;
-                            var name = this.get("name");
-                            oldCount[termId] = this.get("count");
-                            termNameMap[termId] = name;
-                        });
-                        var problemList = [];
-                        for (var termId in oldCount) {
-                            if (!count[termId] || count[termId] != oldCount[termId])
-                                problemList.push({termId:termId, oldCount:oldCount[termId], count:count[termId]});
-                        }
-                        for (var i = 0; i < problemList.length; i++) {
-                            var p = problemList[i];
-                            p.termName = termNameMap[p.termId];
-                        }
-                        log("===>count:", count);
-                        log("===>oldCount:", oldCount);
-                        log("===>problem list:", problemList);
-                        for (var i = 0; i < problemList.length; i++) {
-                            var p = JSON.stringify(problemList[i]);
-                            log(p);
-                        }
-                    });
-                });
-
         });
     }
 
