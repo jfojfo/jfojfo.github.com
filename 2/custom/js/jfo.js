@@ -501,6 +501,10 @@ Date.prototype.format = function (format, isUTC) {
                 postModel.postCategoryListModel = list;
                 ko.applyBindings(postModel, $("#article").get(0));
                 $('#page').hide(), $('#post_full').show(), $('#post_editor').hide();
+                // todo...
+                loadSyntaxHighlighterDynamically(["shBrushJScript.js", "shBrushJava.js",
+                    "shBrushPlain.js", "shBrushAS3.js"
+                ]);
                 scroll(0,0);
             });
         });

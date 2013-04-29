@@ -3,8 +3,6 @@
     var TINYMCE_BASE = "/libs/js/tinymce4";
     var SYNTAXHIGHLIGHTER_BASE = "/libs/js/syntaxhighlighter2";
     var SYNTAXHIGHLIGHTER_CSS_BASE = "/libs/css/syntaxhighlighter2";
-    var TINYMCE_URL = _T("tinymce.min.js");
-    var TINYMCE_PREVIEW_PLUGIN_URL = _T("plugins/preview/plugin.js");
     var TINYMCE_OPT = {
         selector: "textarea",
         theme: "modern",
@@ -32,8 +30,9 @@
             _S("shBrushRuby.js"), _S("shBrushScala.js"), _S("shBrushSql.js"),
             _S("shBrushVb.js"), _S("shBrushXml.js"),
             _S("shLegacy.js")],
-        clipboardSwf: "http://127.0.0.1:86/libs/js/syntaxhighlighter2/clipboard.swf"
+        clipboardSwf: _S("clipboard.swf")
     };
+
     function _T(str) {
         return CODES_RES_URL_PREFIX + TINYMCE_BASE + "/" + str;
     }
@@ -45,49 +44,113 @@
         return CODES_RES_URL_PREFIX + SYNTAXHIGHLIGHTER_CSS_BASE + "/" + str;
     }
 
+    function loadJS(url) {
+        var defer = $.Deferred();
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.src = url;
+        script.onload = function(event) {
+            defer.resolve(script);
+        };
+        (document.head || document.documentElement).appendChild(script);
+        return defer.promise();
+    }
+
+    function loadJSContent(content) {
+        var defer = $.Deferred();
+        var script = document.createElement('script');
+        script.type = "text/javascript";
+        script.textContent = content;
+        script.onload = function(event) {
+            defer.resolve(script);
+        };
+        (document.head || document.documentElement).appendChild(script);
+        return defer.promise();
+    }
+
+    function loadCSS(url) {
+        var defer = $.Deferred();
+        var script = document.createElement('link');
+        script.setAttribute("rel", "stylesheet");
+        script.setAttribute("type", "text/css");
+        script.setAttribute("href", url);
+        script.onload = function(event) {
+            defer.resolve(script);
+        };
+        (document.head || document.documentElement).appendChild(script);
+        return defer.promise();
+    }
+
+    function removeScript(script){
+        // script.parentNode.removeChild(script);
+    }
+
     function loadTinymceDynamically() {
         if (typeof(tinymce) == "undefined") {
             log("loading tinymce...");
-            function removeScript(event){
-//                event.target.parentNode.removeChild(event.target);
-            }
-            function initTinymce(){
-                var script = document.createElement('script');
-                script.type = "text/javascript";
-                script.textContent = "(" + function(opt){
+            var deferList = [];
+            deferList.push(loadJS(_T("tinymce.min.js")));
+            deferList.push(loadJS(_T("plugins/preview/plugin.js")));
+            $.when.apply(this, deferList).done(function(){
+                var results = Array.prototype.slice.call(arguments, 0, arguments.length);
+                $.each(results, function(){
+                    removeScript(this);
+                });
+                loadJSContent("(" + function(opt){
                     if (!tinymce.dom.Event.domLoaded) {
                         tinymce.dom.Event.domLoaded = true;
                     }
                     tinymce.init(opt);
-                } + ")(" + JSON.stringify(TINYMCE_OPT) + ");";
-                script.onload = removeScript;
-                (document.head || document.documentElement).appendChild(script);
+                    log("loading tinymce done.");
+                } + ")(" + JSON.stringify(TINYMCE_OPT) + ");").done(function(script){
+                        removeScript(script);
+                    });
+            });
+        }
+    }
+
+    function loadSyntaxHighlighterDynamically(brushList) {
+        if (typeof(SyntaxHighlighter) == "undefined") {
+            log("loading SyntaxHighlighter...");
+            var deferList = [];
+            deferList.push(loadJS(_S("shCore.js")));
+            for (var i = 0; i < brushList.length; i++) {
+                deferList.push(loadJS(_S(brushList[i])));
             }
-            function loadTinymceCore(callback) {
-                var tinymceScript = document.createElement('script');
-                tinymceScript.type = "text/javascript";
-                tinymceScript.src = TINYMCE_URL;
-                tinymceScript.onload = callback;
-                (document.head || document.documentElement).appendChild(tinymceScript);
-            }
-            function loadTinymcePreview(callback) {
-                var tinymcePreviewScript = document.createElement('script');
-                tinymcePreviewScript.type = "text/javascript";
-                tinymcePreviewScript.src = TINYMCE_PREVIEW_PLUGIN_URL;
-                tinymcePreviewScript.onload = callback;
-                (document.head || document.documentElement).appendChild(tinymcePreviewScript);
-            }
-            loadTinymceCore(function(event){
-                removeScript(event);
-                loadTinymcePreview(function(event){
-                    removeScript(event);
-                    initTinymce();
+            deferList.push(loadCSS(_Scss("shCore.css")));
+            deferList.push(loadCSS(_Scss("shThemeDefault.css")));
+            $.when.apply(this, deferList).done(function(){
+                var results = Array.prototype.slice.call(arguments, 0, arguments.length);
+                $.each(results, function(){
+                    removeScript(this);
                 });
+                loadJSContent("(" + function(swfUrl){
+                    var origAbout = SyntaxHighlighter.config.strings.aboutDialog;
+                    SyntaxHighlighter.config.clipboardSwf = swfUrl;
+                    SyntaxHighlighter.config.strings = {
+                        expandSource : '展开代码',
+                        viewSource : '查看代码',
+                        copyToClipboard : '复制代码',
+                        copyToClipboardConfirmation : '代码复制成功',
+                        print : '打印',
+                        help: '?',
+                        noBrush: '不能找到刷子: ',
+                        brushNotHtmlScript: '刷子没有配置html-script选项',
+                        alert : "",
+                        aboutDialog: origAbout
+                    };
+                    SyntaxHighlighter.highlight();
+                    log("loading SyntaxHighlighter done.");
+                } + ")('" + _S("clipboard.swf") + "');").done(function(script){
+                        removeScript(script);
+                    });
             });
         }
     }
 
     $.extend(scope, {
-        loadTinymceDynamically: loadTinymceDynamically
+        loadTinymceDynamically: loadTinymceDynamically,
+        loadSyntaxHighlighterDynamically: loadSyntaxHighlighterDynamically
     });
+
 })(this);
