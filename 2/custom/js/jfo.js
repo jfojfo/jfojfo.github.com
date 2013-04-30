@@ -499,12 +499,18 @@ Date.prototype.format = function (format, isUTC) {
                     }));
                 });
                 postModel.postCategoryListModel = list;
-                ko.applyBindings(postModel, $("#article").get(0));
+                var dom = $("#article").get(0);
+                ko.applyBindings(postModel, dom);
                 $('#page').hide(), $('#post_full').show(), $('#post_editor').hide();
                 // todo...
                 loadSyntaxHighlighterDynamically(["shBrushJScript.js", "shBrushJava.js",
                     "shBrushPlain.js", "shBrushAS3.js"
-                ]);
+                ]).done(function(){
+                        var elems = $(SyntaxHighlighter.config.tagName, dom).get();
+                        $.each(elems, function(){
+                            SyntaxHighlighter.highlight({}, this);
+                        });
+                    });
                 scroll(0,0);
             });
         });

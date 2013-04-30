@@ -61,10 +61,15 @@
         var script = document.createElement('script');
         script.type = "text/javascript";
         script.textContent = content;
+        // onload will not be called for content script !!!
         script.onload = function(event) {
             defer.resolve(script);
         };
+        script.onreadystatechange = function(){
+            log("readyState===>", this.readyState);
+        };
         (document.head || document.documentElement).appendChild(script);
+        defer.resolve(script);
         return defer.promise();
     }
 
@@ -100,15 +105,16 @@
                         tinymce.dom.Event.domLoaded = true;
                     }
                     tinymce.init(opt);
-                    log("loading tinymce done.");
                 } + ")(" + JSON.stringify(TINYMCE_OPT) + ");").done(function(script){
                         removeScript(script);
+                        log("loading tinymce done.");
                     });
             });
         }
     }
 
     function loadSyntaxHighlighterDynamically(brushList) {
+        var defer = $.Deferred();
         if (typeof(SyntaxHighlighter) == "undefined") {
             log("loading SyntaxHighlighter...");
             loadJS(_S("shCore.js")).done(function(script){
@@ -139,14 +145,17 @@
                             alert : "",
                             aboutDialog: origAbout
                         };
-                        SyntaxHighlighter.highlight();
-                        log("loading SyntaxHighlighter done.");
                     } + ")('" + _S("clipboard.swf") + "');").done(function(script){
                             removeScript(script);
+                            log("loading SyntaxHighlighter done.");
+                            defer.resolve();
                         });
                 });
             });
+        } else {
+            defer.resolve();
         }
+        return defer.promise();
     }
 
     $.extend(scope, {
