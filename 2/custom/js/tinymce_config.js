@@ -111,38 +111,40 @@
     function loadSyntaxHighlighterDynamically(brushList) {
         if (typeof(SyntaxHighlighter) == "undefined") {
             log("loading SyntaxHighlighter...");
-            var deferList = [];
-            deferList.push(loadJS(_S("shCore.js")));
-            for (var i = 0; i < brushList.length; i++) {
-                deferList.push(loadJS(_S(brushList[i])));
-            }
-            deferList.push(loadCSS(_Scss("shCore.css")));
-            deferList.push(loadCSS(_Scss("shThemeDefault.css")));
-            $.when.apply(this, deferList).done(function(){
-                var results = Array.prototype.slice.call(arguments, 0, arguments.length);
-                $.each(results, function(){
-                    removeScript(this);
-                });
-                loadJSContent("(" + function(swfUrl){
-                    var origAbout = SyntaxHighlighter.config.strings.aboutDialog;
-                    SyntaxHighlighter.config.clipboardSwf = swfUrl;
-                    SyntaxHighlighter.config.strings = {
-                        expandSource : '展开代码',
-                        viewSource : '查看代码',
-                        copyToClipboard : '复制代码',
-                        copyToClipboardConfirmation : '代码复制成功',
-                        print : '打印',
-                        help: '?',
-                        noBrush: '不能找到刷子: ',
-                        brushNotHtmlScript: '刷子没有配置html-script选项',
-                        alert : "",
-                        aboutDialog: origAbout
-                    };
-                    SyntaxHighlighter.highlight();
-                    log("loading SyntaxHighlighter done.");
-                } + ")('" + _S("clipboard.swf") + "');").done(function(script){
-                        removeScript(script);
+            loadJS(_S("shCore.js")).done(function(script){
+                removeScript(script);
+                var deferList = [];
+                for (var i = 0; i < brushList.length; i++) {
+                    deferList.push(loadJS(_S(brushList[i])));
+                }
+                deferList.push(loadCSS(_Scss("shCore.css")));
+                deferList.push(loadCSS(_Scss("shThemeDefault.css")));
+                $.when.apply(this, deferList).done(function(){
+                    var results = Array.prototype.slice.call(arguments, 0, arguments.length);
+                    $.each(results, function(){
+                        removeScript(this);
                     });
+                    loadJSContent("(" + function(swfUrl){
+                        var origAbout = SyntaxHighlighter.config.strings.aboutDialog;
+                        SyntaxHighlighter.config.clipboardSwf = swfUrl;
+                        SyntaxHighlighter.config.strings = {
+                            expandSource : '展开代码',
+                            viewSource : '查看代码',
+                            copyToClipboard : '复制代码',
+                            copyToClipboardConfirmation : '代码复制成功',
+                            print : '打印',
+                            help: '?',
+                            noBrush: '不能找到刷子: ',
+                            brushNotHtmlScript: '刷子没有配置html-script选项',
+                            alert : "",
+                            aboutDialog: origAbout
+                        };
+                        SyntaxHighlighter.highlight();
+                        log("loading SyntaxHighlighter done.");
+                    } + ")('" + _S("clipboard.swf") + "');").done(function(script){
+                            removeScript(script);
+                        });
+                });
             });
         }
     }
