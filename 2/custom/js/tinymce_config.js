@@ -1,5 +1,5 @@
 (function(scope) {
-    var CODES_RES_URL_PREFIX = "http://127.0.0.1:86";
+    var CODES_RES_URL_PREFIX = "http://codesbase.github.com";
     var TINYMCE_BASE = "/libs/js/tinymce4";
     var SYNTAXHIGHLIGHTER_BASE = "/libs/js/syntaxhighlighter2";
     var SYNTAXHIGHLIGHTER_CSS_BASE = "/libs/css/syntaxhighlighter2";
@@ -10,10 +10,10 @@
             "advlist autolink lists link image charmap print preview hr anchor pagebreak",
             "searchreplace wordcount visualblocks visualchars code fullscreen",
             "insertdatetime media nonbreaking save table contextmenu directionality",
-            "emoticons template paste syntaxhl"
+            "emoticons template paste syntaxhl previewsyntaxhl"
         ],
         toolbar1: "insertfile undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent",
-        toolbar2: "print media | forecolor backcolor emoticons | link image | syntaxhl preview",
+        toolbar2: "print media | forecolor backcolor emoticons | link image | syntaxhl previewsyntaxhl",
         templates: [
             {title: 'Test template 1', content: 'Test 1'},
             {title: 'Test template 2', content: 'Test 2'}
@@ -90,7 +90,6 @@
             log("loading tinymce...");
             var deferList = [];
             deferList.push(loadJS(_T("tinymce.min.js")));
-            deferList.push(loadJS(_T("plugins/preview/plugin.js")));
             $.when.apply(this, deferList).done(function(){
                 var results = Array.prototype.slice.call(arguments, 0, arguments.length);
                 $.each(results, function(){
