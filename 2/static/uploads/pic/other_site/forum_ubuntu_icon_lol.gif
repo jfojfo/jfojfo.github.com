@@ -1,0 +1,778 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="ltr" lang="zh-cn" xml:lang="zh-cn">
+<head>
+<script type="text/javascript" src="./mobiquo/tapatalkdetect.js"></script>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-language" content="zh-cn" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="imagetoolbar" content="no" />
+<meta name="resource-type" content="document" />
+<meta name="distribution" content="global" />
+<meta name="copyright" content="2000, 2002, 2005, 2007 phpBB Group" />
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7" />
+
+<title>首页 &bull; Ubuntu中文论坛</title>
+
+
+<link rel="alternate" type="application/atom+xml" title="ATOM - Ubuntu中文论坛" href="http://forum.ubuntu.org.cn/feed.php" /><link rel="alternate" type="application/atom+xml" title="ATOM - 全部版面" href="http://forum.ubuntu.org.cn/feed.php?mode=forums" /><link rel="alternate" type="application/atom+xml" title="ATOM - { FEED_TOPICS_NEW }" href="http://forum.ubuntu.org.cn/feed.php?mode=topics" /><link rel="alternate" type="application/atom+xml" title="ATOM - { FEED_TOPICS_ACTIVE }" href="http://forum.ubuntu.org.cn/feed.php?mode=topics_active" />
+
+
+<link rel="stylesheet" href="./styles/ubuntu/theme/stylesheet.css" type="text/css" />
+
+<script type="text/javascript">
+// <![CDATA[
+
+
+function popup(url, width, height, name)
+{
+	if (!name)
+	{
+		name = '_popup';
+	}
+
+	window.open(url.replace(/&amp;/g, '&'), name, 'height=' + height + ',resizable=yes,scrollbars=yes,width=' + width);
+	return false;
+}
+
+function jumpto()
+{
+	var page = prompt('填入您想前往的页数:', '');
+	var perpage = '';
+	var base_url = '';
+
+	if (page !== null && !isNaN(page) && page > 0)
+	{
+		document.location.href = base_url.replace(/&amp;/g, '&') + '&start=' + ((page - 1) * perpage);
+	}
+}
+
+/**
+* Find a member
+*/
+function find_username(url)
+{
+	popup(url, 760, 570, '_usersearch');
+	return false;
+}
+
+/**
+* Mark/unmark checklist
+* id = ID of parent container, name = name prefix, state = state [true/false]
+*/
+function marklist(id, name, state)
+{
+	var parent = document.getElementById(id);
+	if (!parent)
+	{
+		eval('parent = document.' + id);
+	}
+
+	if (!parent)
+	{
+		return;
+	}
+
+	var rb = parent.getElementsByTagName('input');
+	
+	for (var r = 0; r < rb.length; r++)
+	{
+		if (rb[r].name.substr(0, name.length) == name)
+		{
+			rb[r].checked = state;
+		}
+	}
+}
+
+
+
+// ]]>
+</script>
+
+<script type="text/javascript" src="./styles/ubuntu/theme/highslide/highslide-full.js"></script>
+<link rel="stylesheet" href="./styles/ubuntu/theme/highslide.css" type="text/css" />
+<script type="text/javascript" src="./styles/ubuntu/template/xs_bbcode_fn.js"></script>
+<script type="text/javascript" src="./classes/scripts/select_expand_bbcodes.js"></script>
+<link rel="stylesheet" href="./styles/ubuntu/theme/ul_syntaxhighlighter.css" type="text/css" />
+
+
+<script type="text/javascript">
+        hs.showCredits = 0;
+        hs.graphicsDir = './styles/ubuntu/theme/highslide/graphics/';
+        hs.align = 'center';
+        hs.transitions = ['expand', 'crossfade'];
+        hs.outlineType = 'glossy-dark';
+        hs.wrapperClassName = 'glossy-dark';
+        hs.fadeInOut = true;
+        hs.dimmingOpacity = 0.3;
+        //hs.padToMinWidth = true;
+
+        if (hs.addSlideshow) hs.addSlideshow({
+            interval: 5000,
+            repeat: false,
+            useControls: true,
+            fixedControls: 'fit',
+            overlayOptions: {
+                opacity: .6,
+                position: 'bottom center',
+                hideOnMouseOut: true
+            }
+        });
+
+</script>
+
+</head>
+<body class="ltr">
+
+<a name="top"></a>
+
+<div id="wrapheader">
+
+	<div id="logodesc">
+
+			 <div id="mastWrapper">
+			 <div id="masthead">	
+    <!--////////////////////////////////////////////////////////////-->
+    <a id="logo" href="./index.php?sid=72694025a86d3ea54b1fadd6a59720c0" style="position:absolute;display:block;width:454px;height:70px;"></a> 
+    <!--////////////////////////////////////////////////////////////-->
+				<div id="nav1">
+                                  <ul>
+				         <li><a href="http://www.ubuntu.org.cn/">Ubuntu</a></li>
+                                         <li id="current"><a href="http://forum.ubuntu.org.cn">Forum</a></li>
+                                         <li><a href="http://wiki.ubuntu.org.cn">Wiki</a></li>
+                                         <li><a href="http://linux.ubuntu.org.cn">Linux</a></li>
+                                         <li><a href="http://blog.ubuntu.org.cn/">Blog</a></li>
+                                         <li><a href="http://paste.ubuntu.org.cn">Paste</a></li>
+                                         <li><a href="http://webchat.freenode.net/?channels=ubuntu-cn">Chat</a></li>
+
+                                  </ul>
+                                </div></div></div>
+<div id='sitesearch'>
+<!-- SiteSearch Google -->
+<form method="get" action="http://www.google.com.hk/search" target="google_window">
+
+<input type="text" name="as_q" size="31" maxlength="255" value=""/>
+<input type="submit" name="sa" value="搜索"/>
+<input name="as_sitesearch" value="ubuntu.org.cn" type="hidden"/>
+<input name="newwindow" value="1" type="hidden"/>
+<input name="complete" value="1" type="hidden"/>
+<input name="forid" value="zh-CN" type="hidden"/>
+<input type="hidden" name="num" value="10"/>
+<input name="btnG" value="Google+%E6%90%9C%E7%B4%A2&" type="hidden"/>
+<input name="as_ft" value="1" type="hidden"/>
+<input name="as_qdr" value="all" type="hidden"/>
+<input name="as_occt" value="any" type="hidden"/>
+<input name="as_dt" value="i" type="hidden"/>
+</form>
+<!-- SiteSearch Google -->
+</div>
+
+
+
+
+	</div>
+
+	<div id="menubar">
+		<table width="100%" cellspacing="0">
+		<tr>
+			<td class="genmed">
+				<a href="./ucp.php?mode=login&amp;sid=72694025a86d3ea54b1fadd6a59720c0"><img src="./styles/ubuntu/theme/images/icon_mini_login.gif" width="12" height="13" alt="*" /> 登录</a>&nbsp; &nbsp;<a href="./ucp.php?mode=register&amp;sid=72694025a86d3ea54b1fadd6a59720c0"><img src="./styles/ubuntu/theme/images/icon_mini_register.gif" width="12" height="13" alt="*" /> 注册</a>
+					
+			</td>
+			<td class="genmed" align="right">
+				<a href="./faq.php?sid=72694025a86d3ea54b1fadd6a59720c0"><img src="./styles/ubuntu/theme/images/icon_mini_faq.gif" width="12" height="13" alt="*" /> FAQ</a>
+				
+			</td>
+		</tr>
+<!--
+		</table>
+	</div>
+
+	<div id="datebar">
+		<table width="100%" cellspacing="0">
+
+		<tr>
+			<td class="gensmall"></td>
+			<td class="gensmall" align="right">现在的时间是 2012-12-05  21:38<br /></td>
+		</tr>
+-->
+		</table>
+	</div>
+
+</div>
+
+<div id="wrapcentre">
+
+	
+
+	<br style="clear: both;" />
+
+	<table class="tablebg" width="100%" cellspacing="1" cellpadding="0" style="margin-top: 5px;">
+	<tr>
+		<td class="row1">
+			<p class="breadcrumbs"><a href="./index.php?sid=72694025a86d3ea54b1fadd6a59720c0">论坛首页</a></p>
+			<p class="datetime">当前时区为 UTC + 8 小时</p>
+		</td>
+	</tr>
+	</table>
+
+	<br /><table class="tablebg" cellspacing="1" width="100%">
+<tr>
+	<td class="cat" colspan="5" align="right">&nbsp;</td>
+</tr>
+<tr>
+	<th colspan="2">&nbsp;版面&nbsp;</th>
+	<th width="50">&nbsp;主题&nbsp;</th>
+	<th width="50">&nbsp;帖子&nbsp;</th>
+	<th>&nbsp;最新文章&nbsp;</th>
+</tr>
+
+		<tr>
+			<td class="cat" colspan="2"><h4><a href="./viewforum.php?f=140&amp;sid=72694025a86d3ea54b1fadd6a59720c0">公告/注意事项</a></h4></td>
+			<td class="catdiv" colspan="3">&nbsp;</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=1&amp;sid=72694025a86d3ea54b1fadd6a59720c0">新闻和通知</a>
+				<p class="forumdesc">最新ubuntu/linux/开源新闻或者其它IT相关资讯</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">2797</p></td>
+			<td class="row2" align="center"><p class="topicdetails">49801</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  21:27</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=411323&amp;sid=72694025a86d3ea54b1fadd6a59720c0">1by1</a>
+						<a href="./viewtopic.php?f=1&amp;p=2894933&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894933"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read_subforum.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=127&amp;sid=72694025a86d3ea54b1fadd6a59720c0">校园社团支持</a>
+				<p class="forumdesc">需要面对面帮助？请寻求当地校园社团支持！</p>
+					
+					<p class="forumdesc">子版面:  <a href="./viewforum.php?f=128&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">华东校区</a>, <a href="./viewforum.php?f=129&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">华南校区</a>, <a href="./viewforum.php?f=130&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">华北校区</a>, <a href="./viewforum.php?f=131&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">华中校区</a>, <a href="./viewforum.php?f=132&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">东北校区</a>, <a href="./viewforum.php?f=134&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">西北校区</a>, <a href="./viewforum.php?f=135&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">港澳台校区</a>, <a href="./viewforum.php?f=136&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">国外校区</a></p>
+				
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">2821</p></td>
+			<td class="row2" align="center"><p class="topicdetails">25540</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  12:57</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=413030&amp;sid=72694025a86d3ea54b1fadd6a59720c0">cuick</a>
+						<a href="./viewtopic.php?f=129&amp;p=2894631&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894631"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=95&amp;sid=72694025a86d3ea54b1fadd6a59720c0">软件推荐</a>
+				<p class="forumdesc">仅仅用于软件推荐，不适合发求软件或软件使用问题方面的贴子</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">2165</p></td>
+			<td class="row2" align="center"><p class="topicdetails">33658</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  21:08</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=251067&amp;sid=72694025a86d3ea54b1fadd6a59720c0">bcsflilong</a>
+						<a href="./viewtopic.php?f=95&amp;p=2894921&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894921"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=163&amp;sid=72694025a86d3ea54b1fadd6a59720c0">非常任务</a>
+				<p class="forumdesc">除了美化之外，还可以来尝试挑战一下任务</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">60</p></td>
+			<td class="row2" align="center"><p class="topicdetails">1890</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-11-30  20:40</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=85152&amp;sid=72694025a86d3ea54b1fadd6a59720c0">sunfish</a>
+						<a href="./viewtopic.php?f=163&amp;p=2892472&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2892472"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="cat" colspan="2"><h4><a href="./viewforum.php?f=141&amp;sid=72694025a86d3ea54b1fadd6a59720c0">系统安装区</a></h4></td>
+			<td class="catdiv" colspan="3">&nbsp;</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=120&amp;sid=72694025a86d3ea54b1fadd6a59720c0">教学和常见问答</a>
+				<p class="forumdesc">新手涉及到的教学或入门贴，推荐新手必看，版主维护</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">149</p></td>
+			<td class="row2" align="center"><p class="topicdetails">17447</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  11:09</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=375280&amp;sid=72694025a86d3ea54b1fadd6a59720c0">a595154899</a>
+						<a href="./viewtopic.php?f=120&amp;p=2894584&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894584"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=48&amp;sid=72694025a86d3ea54b1fadd6a59720c0">初学者园地</a>
+				<p class="forumdesc">我们是菜鸟，很想起飞，请多点耐心关注和指点</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">1022</p></td>
+			<td class="row2" align="center"><p class="topicdetails">7324</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  21:19</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=239551&amp;sid=72694025a86d3ea54b1fadd6a59720c0">mobilefzb</a>
+						<a href="./viewtopic.php?f=48&amp;p=2894932&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894932"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read_subforum.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=77&amp;sid=72694025a86d3ea54b1fadd6a59720c0">系统安装和升级</a>
+				<p class="forumdesc">系统安装、升级讨论</p>
+					
+					<p class="forumdesc">子版面:  <a href="./viewforum.php?f=52&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">新立得和软件源</a>, <a href="./viewforum.php?f=159&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">Wubi安装讨论</a></p>
+				
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">28324</p></td>
+			<td class="row2" align="center"><p class="topicdetails">185020</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  21:15</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=62354&amp;sid=72694025a86d3ea54b1fadd6a59720c0">TeliuTe</a>
+						<a href="./viewtopic.php?f=77&amp;p=2894928&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894928"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=139&amp;sid=72694025a86d3ea54b1fadd6a59720c0">启动和引导</a>
+				<p class="forumdesc">启动讨论  grub/grub2/syslinux/grub4dos/Lilo </p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">7206</p></td>
+			<td class="row2" align="center"><p class="topicdetails">47909</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  20:25</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=151292&amp;sid=72694025a86d3ea54b1fadd6a59720c0">must520</a>
+						<a href="./viewtopic.php?f=139&amp;p=2894890&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894890"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read_subforum.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=116&amp;sid=72694025a86d3ea54b1fadd6a59720c0">网卡问题以及网络和拨号</a>
+				<p class="forumdesc">包含网卡/无线网的网络问题和ADSL/校园网/宽带拨号支持及代理/共享等网络使用问题</p>
+					
+					<p class="forumdesc">子版面:  <a href="./viewforum.php?f=156&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">校园网拨号</a></p>
+				
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">11149</p></td>
+			<td class="row2" align="center"><p class="topicdetails">52129</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  21:36</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=411561&amp;sid=72694025a86d3ea54b1fadd6a59720c0">attajob</a>
+						<a href="./viewtopic.php?f=116&amp;p=2894938&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894938"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=126&amp;sid=72694025a86d3ea54b1fadd6a59720c0">笔记本、UMPC、MID支持</a>
+				<p class="forumdesc">笔记本/超便携移动PC/掌上电脑软硬件相关支持，包括硬件、安装和驱动等</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">4445</p></td>
+			<td class="row2" align="center"><p class="topicdetails">30840</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-04  22:48</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=412976&amp;sid=72694025a86d3ea54b1fadd6a59720c0">cadeeper</a>
+						<a href="./viewtopic.php?f=126&amp;p=2894414&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894414"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=42&amp;sid=72694025a86d3ea54b1fadd6a59720c0">常用硬件支持</a>
+				<p class="forumdesc">声卡/显卡/打印机/USB设备等硬件问题(网卡问题请发上面的网卡板块)</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">13643</p></td>
+			<td class="row2" align="center"><p class="topicdetails">68165</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  20:28</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=413085&amp;sid=72694025a86d3ea54b1fadd6a59720c0">huazhu111</a>
+						<a href="./viewtopic.php?f=42&amp;p=2894892&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894892"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=85&amp;sid=72694025a86d3ea54b1fadd6a59720c0">系统架构支持</a>
+				<p class="forumdesc">包含64位CPU、PPC、龙芯等所有非i386芯片</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">935</p></td>
+			<td class="row2" align="center"><p class="topicdetails">7847</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  15:53</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=24779&amp;sid=72694025a86d3ea54b1fadd6a59720c0">onlylove</a>
+						<a href="./viewtopic.php?f=85&amp;p=2894726&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894726"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="cat" colspan="2"><h4><a href="./viewforum.php?f=142&amp;sid=72694025a86d3ea54b1fadd6a59720c0">配置美化区</a></h4></td>
+			<td class="catdiv" colspan="3">&nbsp;</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read_subforum.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=8&amp;sid=72694025a86d3ea54b1fadd6a59720c0">字体美化和中文支持</a>
+				<p class="forumdesc">系统字体配置、中文显示和输入法问题</p>
+					
+					<p class="forumdesc">子版面:  <a href="./viewforum.php?f=24&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">个人配置文件存放点</a></p>
+				
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">9613</p></td>
+			<td class="row2" align="center"><p class="topicdetails">70247</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  18:39</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=336684&amp;sid=72694025a86d3ea54b1fadd6a59720c0">fanmaguohe</a>
+						<a href="./viewtopic.php?f=24&amp;p=2894817&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894817"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=94&amp;sid=72694025a86d3ea54b1fadd6a59720c0">桌面特效</a>
+				<p class="forumdesc">GnomeShell/Unity/Beryl/AiGLX/XGL/Compiz Fusion</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">8985</p></td>
+			<td class="row2" align="center"><p class="topicdetails">57290</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  19:53</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=351890&amp;sid=72694025a86d3ea54b1fadd6a59720c0">zuriaake2011</a>
+						<a href="./viewtopic.php?f=94&amp;p=2894878&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894878"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=168&amp;sid=72694025a86d3ea54b1fadd6a59720c0">窗口管理器</a>
+				<p class="forumdesc">讨论openbox，awesome，FVWM等WM</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">737</p></td>
+			<td class="row2" align="center"><p class="topicdetails">7317</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  11:00</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=305292&amp;sid=72694025a86d3ea54b1fadd6a59720c0">Hi-Stupid</a>
+						<a href="./viewtopic.php?f=168&amp;p=2894577&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894577"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=12&amp;sid=72694025a86d3ea54b1fadd6a59720c0">屏幕抓图</a>
+				<p class="forumdesc">桌面秀，不同桌面、不同风格。</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">3368</p></td>
+			<td class="row2" align="center"><p class="topicdetails">38834</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-04  22:40</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=239048&amp;sid=72694025a86d3ea54b1fadd6a59720c0">debub</a>
+						<a href="./viewtopic.php?f=12&amp;p=2894408&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894408"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="cat" colspan="2"><h4><a href="./viewforum.php?f=143&amp;sid=72694025a86d3ea54b1fadd6a59720c0">软件使用</a></h4></td>
+			<td class="catdiv" colspan="3">&nbsp;</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read_subforum.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=35&amp;sid=72694025a86d3ea54b1fadd6a59720c0">办公、图像、机械电子设计等</a>
+				<p class="forumdesc">OOo,TeX,KO,ABI,GIMP,Picasa,ProE,QCAD</p>
+					
+					<p class="forumdesc">子版面:  <a href="./viewforum.php?f=68&amp;sid=72694025a86d3ea54b1fadd6a59720c0" class="subforum read" title="">Vim和Emacs</a></p>
+				
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">11446</p></td>
+			<td class="row2" align="center"><p class="topicdetails">76850</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  21:33</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=83198&amp;sid=72694025a86d3ea54b1fadd6a59720c0">photor</a>
+						<a href="./viewtopic.php?f=35&amp;p=2894937&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894937"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=73&amp;sid=72694025a86d3ea54b1fadd6a59720c0">因特网相关软件</a>
+				<p class="forumdesc">上网、浏览、聊天、下载等</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">14297</p></td>
+			<td class="row2" align="center"><p class="topicdetails">109172</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  19:24</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=348938&amp;sid=72694025a86d3ea54b1fadd6a59720c0">惟吾无为</a>
+						<a href="./viewtopic.php?f=73&amp;p=2894849&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894849"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=74&amp;sid=72694025a86d3ea54b1fadd6a59720c0">影音多媒体</a>
+				<p class="forumdesc">Totem,mplayer,sopcast,realplayer,bmp</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">10357</p></td>
+			<td class="row2" align="center"><p class="topicdetails">71423</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  21:14</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=111144&amp;sid=72694025a86d3ea54b1fadd6a59720c0">leni</a>
+						<a href="./viewtopic.php?f=74&amp;p=2894926&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894926"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=121&amp;sid=72694025a86d3ea54b1fadd6a59720c0">Wine及其分支</a>
+				<p class="forumdesc">Wine、Cedega、CrossOver 等配置</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">5785</p></td>
+			<td class="row2" align="center"><p class="topicdetails">38427</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  21:05</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=151978&amp;sid=72694025a86d3ea54b1fadd6a59720c0">fracting</a>
+						<a href="./viewtopic.php?f=121&amp;p=2894917&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894917"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=34&amp;sid=72694025a86d3ea54b1fadd6a59720c0">游戏和游戏模拟器</a>
+				<p class="forumdesc">游戏讨论</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">3283</p></td>
+			<td class="row2" align="center"><p class="topicdetails">24996</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-03  19:44</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=224577&amp;sid=72694025a86d3ea54b1fadd6a59720c0">waaa141</a>
+						<a href="./viewtopic.php?f=34&amp;p=2893875&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2893875"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=65&amp;sid=72694025a86d3ea54b1fadd6a59720c0">虚拟机和虚拟化</a>
+				<p class="forumdesc">Kvm、VMware、Virtualbox、Xen、Qemu 等</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">6725</p></td>
+			<td class="row2" align="center"><p class="topicdetails">34890</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  20:30</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=99669&amp;sid=72694025a86d3ea54b1fadd6a59720c0">自由建客</a>
+						<a href="./viewtopic.php?f=65&amp;p=2894896&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894896"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=122&amp;sid=72694025a86d3ea54b1fadd6a59720c0">其它类软件</a>
+				<p class="forumdesc">其它类软件，非上述版软件</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">1598</p></td>
+			<td class="row2" align="center"><p class="topicdetails">9503</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  14:06</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=45445&amp;sid=72694025a86d3ea54b1fadd6a59720c0">luojie-dune</a>
+						<a href="./viewtopic.php?f=122&amp;p=2894660&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894660"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="cat" colspan="2"><h4><a href="./viewforum.php?f=144&amp;sid=72694025a86d3ea54b1fadd6a59720c0">服务器管理</a></h4></td>
+			<td class="catdiv" colspan="3">&nbsp;</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=54&amp;sid=72694025a86d3ea54b1fadd6a59720c0">服务器基础应用</a>
+				<p class="forumdesc">Web、Mail、Ftp、DNS、Proxy、VPN、Samba、LDAP 等基础网络服务</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">6591</p></td>
+			<td class="row2" align="center"><p class="topicdetails">30483</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  19:55</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=351890&amp;sid=72694025a86d3ea54b1fadd6a59720c0">zuriaake2011</a>
+						<a href="./viewtopic.php?f=54&amp;p=2894880&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894880"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=44&amp;sid=72694025a86d3ea54b1fadd6a59720c0">数据库管理</a>
+				<p class="forumdesc">数据库服务和管理，MySQL/PostgreSQL/Oracle/Sybase 等</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">1340</p></td>
+			<td class="row2" align="center"><p class="topicdetails">5732</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<p class="topicdetails">2012-12-05  21:14</p>
+					<p class="topicdetails"><a href="./memberlist.php?mode=viewprofile&amp;u=251067&amp;sid=72694025a86d3ea54b1fadd6a59720c0">bcsflilong</a>
+						<a href="./viewtopic.php?f=44&amp;p=2894924&amp;sid=72694025a86d3ea54b1fadd6a59720c0#p2894924"><img src="./styles/ubuntu/imageset/icon_topic_latest.gif" width="18" height="9" alt="查看最新帖子" title="查看最新帖子" /></a>
+					</p>
+				
+			</td>
+		</tr>
+	
+		<tr>
+			<td class="row1" width="50" align="center"><img src="./styles/ubuntu/imageset/forum_read.gif" width="46" height="25" alt="NO_UNREAD_POSTS" title="NO_UNREAD_POSTS" /></td>
+			<td class="row1" width="100%">
+				
+				<a class="forumlink" href="./viewforum.php?f=124&amp;sid=72694025a86d3ea54b1fadd6a59720c0">服务器维护和硬件相关</a>
+				<p class="forumdesc">漏洞扫描、网关、防火墙、补丁升级、数据备份和迁移、系统故障排除</p>
+					
+			</td>
+			<td class="row2" align="center"><p class="topicdetails">639</p></td>
+			<td class="row2" align="center"><p class="topicdetails">3157</p></td>
+			<td class="row2" align="center" nowrap="nowrap">
+				
+					<
