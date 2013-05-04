@@ -477,43 +477,52 @@ Date.prototype.format = function (format, isUTC) {
         showPage(mPage - 1);
     }
 
-    function showPost(id) {
-        log("showPost:" + id);
-        if (!id) return;
-        var query = new Parse.Query(Posts);
-        wrapParseDeferred(query.get, query, id).done(function(result){
-            var postModel = toPostBindData(result);
-            postModel.showReadMore = false;
+    function _showPost(result) {
+        var postModel = toPostBindData(result);
+        postModel.showReadMore = false;
 
-            var query = new Parse.Query(TermRelationships);
-            query.equalTo('post', result);
-            query.include('term');
-            wrapParseDeferred(query.find, query).done(function(relation_list){
-                var list = new CategoryListModel();
-                $.each(relation_list, function(){
-                    var term = this.get("term");
-                    list.push(new CategoryModel({
-                        name: term.get("name"),
-                        term_id: term.get("term_id"),
-                        term: term
-                    }));
-                });
-                postModel.postCategoryListModel = list;
-                var dom = $("#article").get(0);
-                ko.applyBindings(postModel, dom);
-                $('#page').hide(), $('#post_full').show(), $('#post_editor').hide();
-                // todo...
-                loadSyntaxHighlighterDynamically(["shBrushJScript.js", "shBrushJava.js",
-                    "shBrushPlain.js", "shBrushAS3.js"
-                ]).done(function(){
-                        var elems = $(SyntaxHighlighter.config.tagName, dom).get();
-                        $.each(elems, function(){
-                            SyntaxHighlighter.highlight({}, this);
-                        });
-                    });
-                scroll(0,0);
+        var query = new Parse.Query(TermRelationships);
+        query.equalTo('post', result);
+        query.include('term');
+        wrapParseDeferred(query.find, query).done(function(relation_list){
+            var list = new CategoryListModel();
+            $.each(relation_list, function(){
+                var term = this.get("term");
+                list.push(new CategoryModel({
+                    name: term.get("name"),
+                    term_id: term.get("term_id"),
+                    term: term
+                }));
             });
+            postModel.postCategoryListModel = list;
+            var dom = $("#article").get(0);
+            ko.applyBindings(postModel, dom);
+            $('#page').hide(), $('#post_full').show(), $('#post_editor').hide();
+            // todo...
+            loadSyntaxHighlighterDynamically(["shBrushJScript.js", "shBrushJava.js",
+                "shBrushPlain.js", "shBrushAS3.js"
+            ]).done(function(){
+                    var elems = $(SyntaxHighlighter.config.tagName, dom).get();
+                    $.each(elems, function(){
+                        SyntaxHighlighter.highlight({}, this);
+                    });
+                });
+            scroll(0,0);
         });
+    }
+
+    function showPostByID(ID) {
+        log("showPost:" + ID);
+        var query = new Parse.Query(Posts);
+        query.equalTo("ID", ID);
+        wrapParseDeferred(query.first, query).done(_showPost);
+    }
+
+    function showPost(objectId) {
+        log("showPost:" + objectId);
+        if (!objectId) return;
+        var query = new Parse.Query(Posts);
+        wrapParseDeferred(query.get, query, objectId).done(_showPost);
     }
 
     function initArchivePagination(date) {
@@ -1002,6 +1011,7 @@ Date.prototype.format = function (format, isUTC) {
             "page/:id": "showPage",
             "tag/:id": "initCategoryPagination",
             "archive/:date": "initArchivePagination",
+            "post/?ID=:id": "showPostById",
             "post/:id": "showPost",
             "post/:id/edit": "editPost",
             "post/:id/del": "deletePost",
@@ -1020,6 +1030,9 @@ Date.prototype.format = function (format, isUTC) {
             showPage(parseInt(page));
         },
         showPost: showPost,
+        showPostById: function(ID){
+            showPostByID(parseInt(ID));
+        },
         editPost: function(id){
             API.editPost(id);
         },
@@ -1699,8 +1712,7 @@ Date.prototype.format = function (format, isUTC) {
             var tmp = [];
             var query = new Parse.Query(Posts);
             query.descending("ID");
-//            query.lessThan("ID", 40);
-            query.equalTo("ID", 28);
+//            query.lessThan("ID", 100);
             queryAll(query).progress(function(list){
                 var saveList = [];
                 $.each(list, function(){
@@ -1708,7 +1720,7 @@ Date.prototype.format = function (format, isUTC) {
                     var needSave = false;
                     var cl = [];
                     var content = this.get("post_content");
-                    content = content.replace(/href=(["|'])http:\/\/localhost\/wp-content\/uploads\/pic\/([^'"]+)\1/g, function(target, quote, picFileName, index, src){
+                    content = content.replace(/href=(["|'])http:\/\/hi.baidu.com\/([^'"]+)\1/g, function(target, quote, picFileName, index, src){
                         var ret = 'href="static/uploads/pic/' + picFileName + '"';
                         log("===>", target, ret);
                         var start = index;
@@ -1739,7 +1751,7 @@ Date.prototype.format = function (format, isUTC) {
                     }
                 });
                 if (saveList.length > 0) {
-                    Parse.Object.saveAll(saveList);
+//                    Parse.Object.saveAll(saveList);
                 }
             }).done(function(){
                     log("replaceList:", replaceList);
